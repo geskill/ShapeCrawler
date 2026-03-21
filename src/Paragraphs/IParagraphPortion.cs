@@ -15,12 +15,12 @@ public interface IParagraphPortion
     ///     Gets font.
     /// </summary>
     /// <remarks>
-    ///     Returns <see langword="null" /> if the portion type doesn't support font, e.g., when it is a Line Break.
+    ///     Returns <see langword="null"/> if the portion type doesn't support font, e.g., when it is a Line Break.
     /// </remarks>
     ITextPortionFont? Font { get; }
 
     /// <summary>
-    ///     Gets Hyperlink. Returns <see langword="null" /> if the portion type doesn't support hyperlink.
+    ///     Gets Hyperlink. Returns <see langword="null"/> if the portion type doesn't support hyperlink.
     /// </summary>
     IHyperlink? Link { get; }
 

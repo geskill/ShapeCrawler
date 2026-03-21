@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using DocumentFormat.OpenXml.Packaging;
+
 #if DEBUG
 #endif
 
@@ -14,7 +15,7 @@ namespace ShapeCrawler;
 public interface IUserSlide
 {
     /// <summary>
-    ///     Gets or sets custom data. Returns <see langword="null" /> if the custom data is not presented.
+    ///     Gets or sets custom data. Returns <see langword="null"/> if the custom data is not presented.
     /// </summary>
     string? CustomData { get; set; }
 
@@ -46,7 +47,7 @@ public interface IUserSlide
     /// <summary>
     ///     Gets all text content from shapes on the slide.
     /// </summary>
-    IList<ITextBox> GetTexts();
+    public IList<ITextBox> GetTexts();
 
     /// <summary>
     ///     Hides slide.
@@ -107,7 +108,7 @@ public interface IUserSlide
     void SaveImageTo(string file);
 
     /// <summary>
-    ///     Gets a copy of the underlying parent <see cref="PresentationPart" />.
+    ///     Gets a copy of the underlying parent <see cref="PresentationPart"/>.
     /// </summary>
     PresentationPart GetSdkPresentationPart(); // NOSONAR
 

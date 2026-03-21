@@ -10,5 +10,5 @@ public interface IChartPoint
     /// <summary>
     ///     Gets or sets chart point value.
     /// </summary>
-    double Value { get; set; }
+    public double Value { get; set; }
 }

@@ -25,14 +25,14 @@ internal sealed class TextPortionFont(
     {
         get
         {
-            if (ALatinFont().Typeface == "+mj-lt")
+            if (this.ALatinFont().Typeface == "+mj-lt")
             {
                 return themeFontScheme.MajorLatinFont();
             }
 
-            return ALatinFont().Typeface!;
+            return this.ALatinFont().Typeface!;
         }
-        set => UpdateLatinName(value!);
+        set => this.UpdateLatinName(value!);
     }
 
     public string EastAsianName
@@ -43,14 +43,14 @@ internal sealed class TextPortionFont(
 
     public bool IsBold
     {
-        get => ParseBoldFlag();
-        set => UpdateBoldFlag(value);
+        get => this.ParseBoldFlag();
+        set => this.UpdateBoldFlag(value);
     }
 
     public bool IsItalic
     {
-        get => GetItalicFlag();
-        set => SetItalicFlag(value);
+        get => this.GetItalicFlag();
+        set => this.SetItalicFlag(value);
     }
 
     public IFontColor Color => fontColor.Value;
@@ -89,8 +89,8 @@ internal sealed class TextPortionFont(
 
     public int OffsetEffect
     {
-        get => GetOffsetEffect();
-        set => SetOffset(value);
+        get => this.GetOffsetEffect();
+        set => this.SetOffset(value);
     }
 
     private void SetOffset(int value)
@@ -167,7 +167,7 @@ internal sealed class TextPortionFont(
             return true;
         }
 
-        var isFontBold = new ReferencedFont(new ReferencedFontColor(aText), aText).BoldFlagOrNull();
+        bool? isFontBold = new ReferencedFont(new ReferencedFontColor(aText), aText).BoldFlagOrNull();
         if (isFontBold.HasValue)
         {
             return isFontBold.Value;

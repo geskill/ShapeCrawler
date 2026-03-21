@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using NUnit.Framework.Internal.Builders;
+using ShapeCrawler.Presentations;
 
 namespace ShapeCrawler.DevTests.Helpers;
 
@@ -14,7 +15,7 @@ public class MasterPortionAttribute(string pptxName, string shapeName, int parag
         var portionQuery = new TestMasterPortionQuery(shapeName, paragraphNumber, portionNumber);
 
         var parameters = new TestCaseParameters(new object[] { pres, portionQuery });
-
+        
         yield return new NUnitTestCaseBuilder().BuildTestMethod(method, suite, parameters);
     }
 }

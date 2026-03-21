@@ -17,10 +17,10 @@ internal class PortionFontSize(A.Text aText) : IFontSize
         get
         {
             // Try getting font size from run properties
-            var runPropertiesFontSize = GetRunPropertiesFontSizeOrNull();
+            var runPropertiesFontSize = this.GetRunPropertiesFontSizeOrNull();
             if (runPropertiesFontSize.HasValue)
             {
-                return ApplyNormAutofitScaling(runPropertiesFontSize.Value);
+                return this.ApplyNormAutofitScaling(runPropertiesFontSize.Value);
             }
 
             // Try getting font size from referenced indent level
@@ -32,10 +32,10 @@ internal class PortionFontSize(A.Text aText) : IFontSize
 
             // Try getting font size from slide master and shapes
             var indentLevel = new SCAParagraph(aText.Ancestors<A.Paragraph>().First()).GetIndentLevel();
-            var slideMasterPart = GetSlideMasterPart();
+            var slideMasterPart = this.GetSlideMasterPart();
 
             // Try placeholder shapes
-            var parentShape = GetParentShapeOrNull();
+            var parentShape = this.GetParentShapeOrNull();
             if (parentShape != null)
             {
                 var placeholderFontSize = GetFontSizeFromPlaceholder(parentShape, slideMasterPart, indentLevel);
@@ -46,7 +46,7 @@ internal class PortionFontSize(A.Text aText) : IFontSize
             }
 
             // Try presentation default styles
-            var presentationFontSize = GetFontSizeFromPresentationDefaults(indentLevel);
+            var presentationFontSize = this.GetFontSizeFromPresentationDefaults(indentLevel);
             if (presentationFontSize.HasValue)
             {
                 return presentationFontSize.Value;
@@ -62,7 +62,7 @@ internal class PortionFontSize(A.Text aText) : IFontSize
             }
 
             // Try theme object defaults
-            var themeDefaultFontSize = GetFontSizeFromThemeDefaults(indentLevel);
+            var themeDefaultFontSize = this.GetFontSizeFromThemeDefaults(indentLevel);
             if (themeDefaultFontSize.HasValue)
             {
                 return themeDefaultFontSize.Value;
@@ -198,7 +198,7 @@ internal class PortionFontSize(A.Text aText) : IFontSize
         var normAutofit = bodyPr?.GetFirstChild<A.NormalAutoFit>();
         if (normAutofit?.FontScale != null)
         {
-            var fontScale = normAutofit.FontScale.Value / 100000m;
+            decimal fontScale = normAutofit.FontScale.Value / 100000m;
             size = Math.Round(size * fontScale, MidpointRounding.AwayFromZero);
         }
 

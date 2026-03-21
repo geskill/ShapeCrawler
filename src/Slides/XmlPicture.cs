@@ -1,5 +1,3 @@
-using DocumentFormat.OpenXml.Linq;
-using DocumentFormat.OpenXml.Office2019.Drawing.SVG;
 using DocumentFormat.OpenXml.Packaging;
 using ShapeCrawler.Units;
 using A = DocumentFormat.OpenXml.Drawing;
@@ -33,7 +31,8 @@ internal sealed class XmlPicture(SlidePart slidePart, uint shapeId, string shape
         var nonVisualPictureProperties = new P.NonVisualPictureProperties();
         var nonVisualDrawingProperties = new P.NonVisualDrawingProperties
         {
-            Id = shapeId, Name = $"{shapeName} {shapeId}"
+            Id = shapeId,
+            Name = $"{shapeName} {shapeId}"
         };
         var nonVisualPictureDrawingProperties = new P.NonVisualPictureDrawingProperties();
         var appNonVisualDrawingProperties = new P.ApplicationNonVisualDrawingProperties();
@@ -75,7 +74,8 @@ internal sealed class XmlPicture(SlidePart slidePart, uint shapeId, string shape
         var nonVisualPictureProperties = new P.NonVisualPictureProperties();
         var nonVisualDrawingProperties = new P.NonVisualDrawingProperties
         {
-            Id = shapeId, Name = $"{shapeName} {shapeId}"
+            Id = shapeId,
+            Name = $"{shapeName} {shapeId}"
         };
         var nonVisualPictureDrawingProperties = new P.NonVisualPictureDrawingProperties();
         var appNonVisualDrawingProperties = new P.ApplicationNonVisualDrawingProperties();
@@ -117,10 +117,10 @@ internal sealed class XmlPicture(SlidePart slidePart, uint shapeId, string shape
         aBlipExtension.AppendChild(a14UseLocalDpi);
         aBlipExtensionList.AppendChild(aBlipExtension);
         aBlipExtension = new A.BlipExtension { Uri = "{96DAC541-7B7A-43D3-8B79-37D633B846F1}" };
-        var svgBlip = new SVGBlip { Embed = svgPartRId };
+        var svgBlip = new DocumentFormat.OpenXml.Office2019.Drawing.SVG.SVGBlip() { Embed = svgPartRId };
 
         // "http://schemas.microsoft.com/office/drawing/2016/SVG/main"
-        var asvg = ASVG.asvg;
+        var asvg = DocumentFormat.OpenXml.Linq.ASVG.asvg;
 
         svgBlip.AddNamespaceDeclaration(nameof(asvg), asvg.NamespaceName);
         aBlipExtension.AppendChild(svgBlip);

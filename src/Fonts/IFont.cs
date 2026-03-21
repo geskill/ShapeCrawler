@@ -3,7 +3,7 @@ namespace ShapeCrawler;
 #pragma warning restore IDE0130
 
 /// <summary>
-///     Represents a font.
+///    Represents a font.
 /// </summary>
 public interface IFont
 {

@@ -10,27 +10,28 @@ public interface ITableStyle
 {
     /// <summary>
     ///     Gets the name.
-    /// </summary>
-    string Name { get; }
+    /// </summary> 
+    public string Name { get; }
 }
 
 internal class TableStyle(string name) : ITableStyle
 {
-    public string Guid { get; init; } = string.Empty;
     public string Name { get; } = name;
+
+    public string Guid { get; init; } = string.Empty;
 
     public override bool Equals(object? obj)
     {
         return obj is TableStyle style &&
-               Name == style.Name &&
-               Guid == style.Guid;
+               this.Name == style.Name &&
+               this.Guid == style.Guid;
     }
 
     public override int GetHashCode()
     {
-        var hashCode = 1242478914;
-        hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Name);
-        hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Guid);
+        int hashCode = 1242478914;
+        hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(this.Name);
+        hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(this.Guid);
         return hashCode;
     }
 }

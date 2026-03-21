@@ -8,7 +8,7 @@ namespace ShapeCrawler;
 public enum AudioType
 {
     /// <summary>
-    ///     MP3 audio.
+    ///    MP3 audio.
     /// </summary>
     // ReSharper disable once InconsistentNaming
     MP3,

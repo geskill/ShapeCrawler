@@ -7,11 +7,11 @@ namespace ShapeCrawler.DevTests.Helpers;
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 public class SlideShapeAttribute : Attribute, ITestBuilder
 {
+    private readonly int slideNumber;
+    private readonly int? shapeId;
     private readonly object? expectedResult;
     private readonly string pptxName;
-    private readonly int? shapeId;
     private readonly string shapeName;
-    private readonly int slideNumber;
 
     public SlideShapeAttribute(string pptxName, int slideNumber, string shapeName)
     {
@@ -19,7 +19,7 @@ public class SlideShapeAttribute : Attribute, ITestBuilder
         this.slideNumber = slideNumber;
         this.shapeName = shapeName;
     }
-
+    
     public SlideShapeAttribute(string pptxName, int slideNumber, int shapeId, object expectedResult)
     {
         this.pptxName = pptxName;
@@ -27,7 +27,7 @@ public class SlideShapeAttribute : Attribute, ITestBuilder
         this.shapeId = shapeId;
         this.expectedResult = expectedResult;
     }
-
+    
     public SlideShapeAttribute(string pptxName, int slideNumber, string shapeName, object expectedResult)
     {
         this.pptxName = pptxName;
@@ -38,16 +38,16 @@ public class SlideShapeAttribute : Attribute, ITestBuilder
 
     public IEnumerable<TestMethod> BuildFrom(IMethodInfo method, Test suite)
     {
-        var pptxStream = SCTest.TestAsset(pptxName);
+        var pptxStream = SCTest.TestAsset(this.pptxName);
         var pres = new Presentation(pptxStream);
-        var shape = shapeId.HasValue
-            ? pres.Slide(slideNumber).Shapes.GetById<IShape>(shapeId.Value)
-            : pres.Slide(slideNumber).Shapes.Shape<IShape>(shapeName);
+        var shape = this.shapeId.HasValue 
+            ? pres.Slide(slideNumber).Shapes.GetById<IShape>(this.shapeId.Value) 
+            : pres.Slide(slideNumber).Shapes.Shape<IShape>(this.shapeName);
 
-        var parameters = expectedResult != null
-            ? new TestCaseParameters(new[] { shape, expectedResult })
+        var parameters = this.expectedResult != null
+            ? new TestCaseParameters(new[] { shape, this.expectedResult })
             : new TestCaseParameters(new[] { shape });
-
+        
         yield return new NUnitTestCaseBuilder().BuildTestMethod(method, suite, parameters);
     }
 }

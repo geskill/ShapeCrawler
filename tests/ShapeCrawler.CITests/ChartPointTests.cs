@@ -27,7 +27,7 @@ public class ChartPointTests : SCTest
         point.Value.Should().Be(newChartPointValue);
     }
 
-
+    
     [Test]
     [TestCase("009_table.pptx", 3, "Chart 5")]
     [TestCase("005 chart.pptx", 1, "chart")]
@@ -50,7 +50,7 @@ public class ChartPointTests : SCTest
         point = chart.SeriesCollection[0].Points[0];
         point.Value.Should().Be(newChartPointValue);
     }
-
+    
     [Test]
     [TestCase("021.pptx", 2, "Chart 3")]
     public void Value_Setter_updates_Area_chart_point(string file, int slideNumber, string shapeName)
@@ -72,7 +72,7 @@ public class ChartPointTests : SCTest
         point = chart.SeriesCollection[0].Points[0];
         point.Value.Should().Be(newChartPointValue);
     }
-
+    
     [Test]
     [TestCase("024_chart.pptx", 3, "Chart 4")]
     [TestCase("002.pptx", 1, "Chart 8")]
@@ -96,7 +96,7 @@ public class ChartPointTests : SCTest
         point = chart.SeriesCollection[0].Points[0];
         point.Value.Should().Be(newChartPointValue);
     }
-
+    
     [Test]
     public void Value_Getter_returns_point_value_of_Line_chart()
     {
@@ -106,7 +106,7 @@ public class ChartPointTests : SCTest
         var point = chart.SeriesCollection[1].Points[0];
 
         // Act
-        var lineChartPointValue = point.Value;
+        double lineChartPointValue = point.Value;
 
         // Assert
         Assert.That(lineChartPointValue, Is.EqualTo(17.35));

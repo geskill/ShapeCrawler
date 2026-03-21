@@ -22,7 +22,10 @@ public class SlideParagraphAttribute(
 
         var parameters = new TestCaseParameters(new[] { paragraph, expectedResult });
 
-        if (!string.IsNullOrEmpty(caseName)) parameters.TestName = caseName;
+        if (!string.IsNullOrEmpty(caseName))
+        {
+            parameters.TestName = caseName;
+        }
 
         yield return new NUnitTestCaseBuilder().BuildTestMethod(method, suite, parameters);
     }

@@ -12,7 +12,7 @@ internal sealed class LineShape : DrawingShape
         P.ConnectionShape pConnectionShape)
         : base(position, shapeSize, shapeId, pConnectionShape)
     {
-        Line = new Line(pConnectionShape, this);
+        this.Line = new Line(pConnectionShape, this);
     }
 
     public override ILine? Line { get; }

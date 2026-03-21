@@ -1,18 +1,19 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Drawing;
 using ShapeCrawler.Units;
+using A = DocumentFormat.OpenXml.Drawing;
 
 namespace ShapeCrawler.Tables;
 
-internal class TopBorder(TableCellProperties aTableCellProperties) : IBorder
+internal class TopBorder(A.TableCellProperties aTableCellProperties) : IBorder
 {
     public decimal Width
     {
-        get => GetWidth();
-        set => UpdateWidth(value);
+        get => this.GetWidth();
+        set => this.UpdateWidth(value);
     }
 
-    public string? Color { get => GetColor(); set => SetColor(value!); }
+    public string? Color { get => this.GetColor(); set => this.SetColor(value!); }
 
     private string? GetColor()
     {
@@ -21,20 +22,20 @@ internal class TopBorder(TableCellProperties aTableCellProperties) : IBorder
 
     private void SetColor(string color)
     {
-        aTableCellProperties.TopBorderLineProperties ??= new TopBorderLineProperties
+        aTableCellProperties.TopBorderLineProperties ??= new A.TopBorderLineProperties
         {
             Width = (Int32Value)new Points(1).AsEmus()
         };
 
-        var solidFill = aTableCellProperties.TopBorderLineProperties.GetFirstChild<SolidFill>();
+        var solidFill = aTableCellProperties.TopBorderLineProperties.GetFirstChild<A.SolidFill>();
 
         if (solidFill is null)
         {
-            solidFill = new SolidFill();
+            solidFill = new A.SolidFill();
             aTableCellProperties.TopBorderLineProperties.AppendChild(solidFill);
         }
 
-        solidFill.RgbColorModelHex ??= new RgbColorModelHex();
+        solidFill.RgbColorModelHex ??= new A.RgbColorModelHex();
 
         solidFill.RgbColorModelHex.Val = new HexBinaryValue(color);
     }
@@ -43,8 +44,11 @@ internal class TopBorder(TableCellProperties aTableCellProperties) : IBorder
     {
         if (aTableCellProperties.TopBorderLineProperties is null)
         {
-            var aSolidFill = new SolidFill { SchemeColor = new SchemeColor { Val = SchemeColorValues.Text1 } };
-            aTableCellProperties.TopBorderLineProperties = new TopBorderLineProperties();
+            var aSolidFill = new A.SolidFill
+            {
+                SchemeColor = new A.SchemeColor { Val = SchemeColorValues.Text1 }
+            };
+            aTableCellProperties.TopBorderLineProperties = new A.TopBorderLineProperties();
             aTableCellProperties.TopBorderLineProperties.AppendChild(aSolidFill);
         }
 

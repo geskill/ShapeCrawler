@@ -22,7 +22,7 @@ public sealed class DraftClusteredBarChartShape
     /// </summary>
     public DraftClusteredBarChartShape X(int x)
     {
-        ShapeX = x;
+        this.ShapeX = x;
         return this;
     }
 
@@ -31,7 +31,7 @@ public sealed class DraftClusteredBarChartShape
     /// </summary>
     public DraftClusteredBarChartShape Y(int y)
     {
-        ShapeY = y;
+        this.ShapeY = y;
         return this;
     }
 
@@ -40,7 +40,7 @@ public sealed class DraftClusteredBarChartShape
     /// </summary>
     public DraftClusteredBarChartShape Width(int width)
     {
-        ShapeWidth = width;
+        this.ShapeWidth = width;
         return this;
     }
 
@@ -49,7 +49,7 @@ public sealed class DraftClusteredBarChartShape
     /// </summary>
     public DraftClusteredBarChartShape Height(int height)
     {
-        ShapeHeight = height;
+        this.ShapeHeight = height;
         return this;
     }
 
@@ -61,7 +61,7 @@ public sealed class DraftClusteredBarChartShape
     {
         var builder = new DraftChart();
         configure(builder);
-        DraftChartBuilder = builder;
+        this.DraftChartBuilder = builder;
         return this;
     }
 }

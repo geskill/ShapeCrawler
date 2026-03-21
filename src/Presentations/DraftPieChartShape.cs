@@ -22,7 +22,7 @@ public sealed class DraftPieChartShape
     /// </summary>
     public DraftPieChartShape X(int x)
     {
-        ShapeX = x;
+        this.ShapeX = x;
         return this;
     }
 
@@ -31,7 +31,7 @@ public sealed class DraftPieChartShape
     /// </summary>
     public DraftPieChartShape Y(int y)
     {
-        ShapeY = y;
+        this.ShapeY = y;
         return this;
     }
 
@@ -40,7 +40,7 @@ public sealed class DraftPieChartShape
     /// </summary>
     public DraftPieChartShape Width(int width)
     {
-        ShapeWidth = width;
+        this.ShapeWidth = width;
         return this;
     }
 
@@ -49,7 +49,7 @@ public sealed class DraftPieChartShape
     /// </summary>
     public DraftPieChartShape Height(int height)
     {
-        ShapeHeight = height;
+        this.ShapeHeight = height;
         return this;
     }
 
@@ -61,7 +61,7 @@ public sealed class DraftPieChartShape
     {
         var builder = new DraftPieChart();
         configure(builder);
-        DraftPieChartBuilder = builder;
+        this.DraftPieChartBuilder = builder;
         return this;
     }
 }

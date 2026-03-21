@@ -28,9 +28,11 @@ public interface IShapeGeometry
     /// <remarks>
     ///     These are a set of geometry-specific adjustments with varying ranges and
     ///     meanings, unique to each kind of geometry.
+    ///
     ///     An empty result may mean that a shape does not allow adjustments, or it
     ///     may mean that the user simply hasn't set any, so the adjustments are in
     ///     their default position(s).
+    ///
     ///     Setting adjustments is only allowed for rounded or snipped rectangles,
     ///     in which case it adjusts the percentage of roundedness or snipping (0-100).
     /// </remarks>

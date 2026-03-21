@@ -27,8 +27,7 @@ public interface IFooter
     void RemoveSlideNumber();
 
     /// <summary>
-    ///     Adds text footer on all slides with specified content. If a slide already has a text footer, the content will be
-    ///     replaced.
+    ///     Adds text footer on all slides with specified content. If a slide already has a text footer, the content will be replaced.
     /// </summary>
     /// <param name="text">Text content.</param>
     void AddText(string text);
@@ -39,13 +38,12 @@ public interface IFooter
     void RemoveText();
 
     /// <summary>
-    ///     Adds text footer on a specific slide with specified content. If the slide already has a text footer, the content
-    ///     will be replaced.
+    ///     Adds text footer on a specific slide with specified content. If the slide already has a text footer, the content will be replaced.
     /// </summary>
     /// <param name="slideNumber">Slide number.</param>
     /// <param name="text">Text content.</param>
     /// <exception cref="ArgumentOutOfRangeException">
-    ///     Thrown when <paramref name="slideNumber" /> is less than 1 or greater than the number of slides.
+    /// Thrown when <paramref name="slideNumber"/> is less than 1 or greater than the number of slides.
     /// </exception>
     void AddTextOnSlide(int slideNumber, string text);
 
@@ -54,7 +52,7 @@ public interface IFooter
     /// </summary>
     /// <param name="slideNumber">Slide number.</param>
     /// <exception cref="ArgumentOutOfRangeException">
-    ///     Thrown when <paramref name="slideNumber" /> is less than 1 or greater than the number of slides.
+    /// Thrown when <paramref name="slideNumber"/> is less than 1 or greater than the number of slides.
     /// </exception>
     void RemoveTextOnSlide(int slideNumber);
 }
@@ -69,7 +67,7 @@ internal sealed class Footer(UpdatedSlideCollection slides) : IFooter
 
     public void AddSlideNumber()
     {
-        if (SlideNumberAdded())
+        if (this.SlideNumberAdded())
         {
             return;
         }
@@ -88,7 +86,7 @@ internal sealed class Footer(UpdatedSlideCollection slides) : IFooter
 
     public void RemoveSlideNumber()
     {
-        if (!SlideNumberAdded())
+        if (!this.SlideNumberAdded())
         {
             return;
         }
@@ -106,7 +104,7 @@ internal sealed class Footer(UpdatedSlideCollection slides) : IFooter
     {
         for (var i = 1; i <= slides.Count; i++)
         {
-            AddTextOnSlide(i, text);
+            this.AddTextOnSlide(i, text);
         }
     }
 
@@ -114,7 +112,7 @@ internal sealed class Footer(UpdatedSlideCollection slides) : IFooter
     {
         for (var i = 1; i <= slides.Count; i++)
         {
-            RemoveTextOnSlide(i);
+            this.RemoveTextOnSlide(i);
         }
     }
 
@@ -151,8 +149,7 @@ internal sealed class Footer(UpdatedSlideCollection slides) : IFooter
             throw new ArgumentOutOfRangeException(nameof(slideNumber));
         }
 
-        var footerShape = slides[slideNumber - 1].Shapes
-            .FirstOrDefault(shape => shape.PlaceholderType == PlaceholderType.Footer);
+        var footerShape = slides[slideNumber - 1].Shapes.FirstOrDefault(shape => shape.PlaceholderType == PlaceholderType.Footer);
         footerShape?.Remove();
     }
 }

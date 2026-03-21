@@ -10,58 +10,55 @@ namespace ShapeCrawler.Texts;
 
 internal sealed class Field : IParagraphPortion
 {
-    private readonly A.Field aField;
-    private readonly A.Text? aText;
-    private readonly FieldPortionText fieldPortionText;
     private readonly Lazy<ITextPortionFont> font;
     private readonly Lazy<Hyperlink> hyperlink;
+    private readonly A.Field aField;
+    private readonly FieldPortionText fieldPortionText;
+    private readonly A.Text? aText;
 
     internal Field(A.Field aField)
     {
-        aText = aField.GetFirstChild<A.Text>()!;
+        this.aText = aField.GetFirstChild<A.Text>()!;
         this.aField = aField;
-        font = new Lazy<ITextPortionFont>(() =>
+        this.font = new Lazy<ITextPortionFont>(() =>
         {
-            var textPortionSize = new PortionFontSize(aText!);
-            var openXmlPart = aText.Ancestors<OpenXmlPartRootElement>().First().OpenXmlPart!;
+            var textPortionSize = new PortionFontSize(this.aText!);
+            var openXmlPart = this.aText.Ancestors<OpenXmlPartRootElement>().First().OpenXmlPart!;
             return
                 new TextPortionFont(
                     textPortionSize,
-                    new Lazy<FontColor>(() => new FontColor(aText)),
+                    new Lazy<FontColor>(() => new FontColor(this.aText)),
                     new ThemeFontScheme(openXmlPart),
-                    aText!
+                    this.aText!
                 );
         });
-        fieldPortionText = new FieldPortionText(this.aField);
-        hyperlink = new Lazy<Hyperlink>(() => new Hyperlink(this.aField.RunProperties!));
+        this.fieldPortionText = new FieldPortionText(this.aField);
+        this.hyperlink = new Lazy<Hyperlink>(() => new Hyperlink(this.aField.RunProperties!));
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public string Text
     {
-        get => fieldPortionText.Value;
-        set => fieldPortionText.Update(value);
+        get => this.fieldPortionText.Value;
+        set => this.fieldPortionText.Update(value);
     }
 
-    /// <inheritdoc />
-    public ITextPortionFont Font => font.Value;
+    /// <inheritdoc/>
+    public ITextPortionFont Font => this.font.Value;
 
-    public IHyperlink Link => hyperlink.Value;
+    public IHyperlink Link => this.hyperlink.Value;
 
     public Color TextHighlightColor
     {
-        get => ParseTextHighlight();
-        set => UpdateTextHighlight(value);
+        get => this.ParseTextHighlight();
+        set => this.UpdateTextHighlight(value);
     }
 
-    public void Remove()
-    {
-        aField.Remove();
-    }
+    public void Remove() => this.aField.Remove();
 
     private Color ParseTextHighlight()
     {
-        var arPr = aText!.PreviousSibling<A.RunProperties>();
+        var arPr = this.aText!.PreviousSibling<A.RunProperties>();
 
         // Ensure RgbColorModelHex exists and his value is not null.
         if (arPr?.GetFirstChild<A.Highlight>()?.RgbColorModelHex is not A.RgbColorModelHex aSrgbClr
@@ -85,7 +82,7 @@ internal sealed class Field : IParagraphPortion
 
     private void UpdateTextHighlight(Color color)
     {
-        var arPr = aText!.PreviousSibling<A.RunProperties>() ?? aText.Parent!.AddRunProperties();
+        var arPr = this.aText!.PreviousSibling<A.RunProperties>() ?? this.aText.Parent!.AddRunProperties();
 
         arPr.AddAHighlight(color);
     }

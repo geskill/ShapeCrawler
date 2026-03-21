@@ -28,7 +28,7 @@ public sealed class DraftPresentation
     public DraftPresentation Slide()
     {
         var slideDraft = new DraftSlide();
-        actions.Add(p => slideDraft.ApplyTo(p));
+        this.actions.Add(p => slideDraft.ApplyTo(p));
         return this;
     }
 
@@ -40,7 +40,7 @@ public sealed class DraftPresentation
     {
         var slideDraft = new DraftSlide();
         configure(slideDraft);
-        actions.Add(p => slideDraft.ApplyTo(p));
+        this.actions.Add(p => slideDraft.ApplyTo(p));
         return this;
     }
 
@@ -49,7 +49,7 @@ public sealed class DraftPresentation
     /// </summary>
     public DraftPresentation Slide(ILayoutSlide layout)
     {
-        actions.Add(p =>
+        this.actions.Add(p =>
         {
             // If no slides yet, create the initial slide first to ensure consistent numbering
             if (p.Slides.Count == 0)
@@ -73,7 +73,7 @@ public sealed class DraftPresentation
             throw new ArgumentException("Layout name must be provided", nameof(layoutName));
         }
 
-        actions.Add(p =>
+        this.actions.Add(p =>
         {
             var layout = p.SlideMaster(1).SlideLayout(layoutName);
             if (p.Slides.Count == 0)
@@ -91,17 +91,17 @@ public sealed class DraftPresentation
     /// </summary>
     public IMasterSlide SlideMaster(int number)
     {
-        if (presentation == null)
+        if (this.presentation == null)
         {
             throw new InvalidOperationException("Presentation has not been initialized.");
         }
 
-        return presentation.SlideMaster(number);
+        return this.presentation.SlideMaster(number);
     }
 
     internal void ApplyTo(Presentation paramPresentation)
     {
-        foreach (var action in actions)
+        foreach (var action in this.actions)
         {
             action(paramPresentation);
         }

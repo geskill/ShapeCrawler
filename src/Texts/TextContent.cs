@@ -22,27 +22,27 @@ internal sealed class TextContent(
         var firstParagraph = paragraphsList.FirstOrDefault();
 
         // Store LatinName from first portion if available
-        var latinNameToPreserve = GetLatinNameToPreserve(firstParagraph);
+        string? latinNameToPreserve = GetLatinNameToPreserve(firstParagraph);
 
         // Store font color hex from first portion if available
-        var colorHexToPreserve = GetFontColorHexToPreserve(firstParagraph);
+        string? colorHexToPreserve = GetFontColorHexToPreserve(firstParagraph);
 
         // Clear existing content and ensure we have a first paragraph
-        firstParagraph = PrepareContainer(firstParagraph, paragraphsList);
+        firstParagraph = this.PrepareContainer(firstParagraph, paragraphsList);
 
         // Add new text with preserved font
         var paragraphLines = text.Split([Environment.NewLine], StringSplitOptions.None);
-        AddToParagraphs(paragraphLines, firstParagraph, latinNameToPreserve);
+        this.AddToParagraphs(paragraphLines, firstParagraph, latinNameToPreserve);
         if (colorHexToPreserve != null)
         {
-            for (var i = 0; i < paragraphLines.Length; i++)
+            for (int i = 0; i < paragraphLines.Length; i++)
             {
                 var portion = paragraphs[i].Portions.Last();
                 portion.Font!.Color.Set(colorHexToPreserve);
             }
         }
 
-        ApplyFormatting();
+        this.ApplyFormatting();
     }
 
     private static string? GetLatinNameToPreserve(IParagraph? firstParagraph)
@@ -98,7 +98,7 @@ internal sealed class TextContent(
         ApplyLatinNameIfNeeded(firstParagraph.Portions.Last(), latinNameToPreserve);
 
         // Add remaining lines as new paragraphs
-        for (var i = 1; i < paragraphLines.Length; i++)
+        for (int i = 1; i < paragraphLines.Length; i++)
         {
             paragraphs.Add();
             paragraphs[i].Portions.AddText(paragraphLines[i]);

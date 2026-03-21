@@ -12,47 +12,26 @@ namespace ShapeCrawler.Groups;
 
 internal sealed class GroupedShapeCollection(IEnumerable<OpenXmlCompositeElement> pGroupElements) : IShapeCollection
 {
-    public int Count => GetGroupedShapes().Count;
+    public int Count => this.GetGroupedShapes().Count;
 
-    public IShape this[int index] => GetGroupedShapes()[index];
+    public IShape this[int index] => this.GetGroupedShapes()[index];
 
-    public IShape GetById(int id)
-    {
-        return GetById<IShape>(id);
-    }
+    public IShape GetById(int id) => this.GetById<IShape>(id);
 
     public T GetById<T>(int id)
-        where T : IShape
-    {
-        return (T)GetGroupedShapes().First(shape => shape.Id == id);
-    }
+        where T : IShape => (T)this.GetGroupedShapes().First(shape => shape.Id == id);
 
-    public IShape Shape(string name)
-    {
-        return GetGroupedShapes().First(shape => shape.Name == name);
-    }
+    public IShape Shape(string name) => this.GetGroupedShapes().First(shape => shape.Name == name);
 
     public T Shape<T>(string name)
-        where T : IShape
-    {
-        return (T)GetGroupedShapes().First(shape => shape.Name == name);
-    }
+        where T : IShape => (T)this.GetGroupedShapes().First(shape => shape.Name == name);
 
     public T Last<T>()
-        where T : IShape
-    {
-        return (T)GetGroupedShapes().Last(shape => shape is T);
-    }
+        where T : IShape => (T)this.GetGroupedShapes().Last(shape => shape is T);
 
-    public IEnumerator<IShape> GetEnumerator()
-    {
-        return GetGroupedShapes().GetEnumerator();
-    }
+    public IEnumerator<IShape> GetEnumerator() => this.GetGroupedShapes().GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
     private List<IShape> GetGroupedShapes()
     {
@@ -71,7 +50,7 @@ internal sealed class GroupedShapeCollection(IEnumerable<OpenXmlCompositeElement
                         pShape,
                         new DrawingTextBox(new TextBoxMargins(pShape.TextBody), pShape.TextBody),
                         new GroupedShape(new Position(pShape), new ShapeSize(pShape), new ShapeId(pShape), pShape)
-                    );
+                        );
                     break;
 
                 case P.Shape pShape:
@@ -89,6 +68,9 @@ internal sealed class GroupedShapeCollection(IEnumerable<OpenXmlCompositeElement
 
                         break;
                     }
+
+                default:
+                    break;
             }
 
             if (shape != null)

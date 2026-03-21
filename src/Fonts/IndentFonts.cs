@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using DocumentFormat.OpenXml;
+using ShapeCrawler.Extensions;
 using A = DocumentFormat.OpenXml.Drawing;
 using P = DocumentFormat.OpenXml.Presentation;
 
@@ -24,25 +24,24 @@ internal readonly struct IndentFonts(OpenXmlCompositeElement openXmlCompositeEle
         }
 
         // Fallback for level 1
-        return indentLevel == 1 ? FindFontFromTextBody() : null;
+        return indentLevel == 1 ? this.FindFontFromTextBody() : null;
     }
 
     internal bool? BoldFlagOrNull(int indentLevel)
     {
-        var indentFont = FontOrNull(indentLevel);
+        var indentFont = this.FontOrNull(indentLevel);
 
         return indentFont?.IsBold;
     }
 
     internal A.LatinFont? ALatinFontOrNull(int indentLevel)
     {
-        var indentFont = FontOrNull(indentLevel);
+        var indentFont = this.FontOrNull(indentLevel);
 
         return indentFont?.ALatinFont;
     }
 
-    private static IndentFont? FindFontFromLevelProperties(IEnumerable<OpenXmlElement> lvlParagraphPropertyList,
-        int targetLevel)
+    private static IndentFont? FindFontFromLevelProperties(IEnumerable<OpenXmlElement> lvlParagraphPropertyList, int targetLevel)
     {
         foreach (var textPr in lvlParagraphPropertyList)
         {
@@ -72,9 +71,8 @@ internal readonly struct IndentFonts(OpenXmlCompositeElement openXmlCompositeEle
             System.Globalization.CultureInfo.CurrentCulture);
 #else
         var nameSpan = localName.AsSpan();
-        var level = nameSpan.Slice(3,
-            1); // the fourth character contains level number, eg. "lvl1pPr -> 1, lvl2pPr -> 2, etc."
-        return int.Parse(level, NumberStyles.Number, CultureInfo.CurrentCulture);
+        var level = nameSpan.Slice(3, 1); // the fourth character contains level number, eg. "lvl1pPr -> 1, lvl2pPr -> 2, etc."
+        return int.Parse(level, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.CurrentCulture);
 #endif
     }
 
@@ -101,21 +99,19 @@ internal readonly struct IndentFonts(OpenXmlCompositeElement openXmlCompositeEle
         };
     }
 
-    private static (A.RgbColorModelHex? ARgbColorModelHex, A.SchemeColor? ASchemeColor, A.SystemColor? ASystemColor,
-        A.PresetColor? APresetColor) ExtractColorProperties(A.DefaultRunProperties aDefRPr)
+    private static (A.RgbColorModelHex? ARgbColorModelHex, A.SchemeColor? ASchemeColor, A.SystemColor? ASystemColor, A.PresetColor? APresetColor) ExtractColorProperties(A.DefaultRunProperties aDefRPr)
     {
         var aSolidFill = aDefRPr.GetFirstChild<A.SolidFill>();
         if (aSolidFill != null)
         {
-            return (aSolidFill.RgbColorModelHex, aSolidFill.SchemeColor, aSolidFill.SystemColor,
-                aSolidFill.PresetColor);
+            return (aSolidFill.RgbColorModelHex, aSolidFill.SchemeColor, aSolidFill.SystemColor, aSolidFill.PresetColor);
         }
 
         var aGradientStop = aDefRPr.GetFirstChild<A.GradientFill>()?.GradientStopList?
             .GetFirstChild<A.GradientStop>();
 
         return (aGradientStop?.RgbColorModelHex, aGradientStop?.SchemeColor,
-            aGradientStop?.SystemColor, aGradientStop?.PresetColor);
+                aGradientStop?.SystemColor, aGradientStop?.PresetColor);
     }
 
     private IndentFont? FindFontFromTextBody()
@@ -133,6 +129,9 @@ internal readonly struct IndentFonts(OpenXmlCompositeElement openXmlCompositeEle
             return null;
         }
 
-        return new IndentFont { Size = endParaRunPrFs };
+        return new IndentFont
+        {
+            Size = endParaRunPrFs
+        };
     }
 }

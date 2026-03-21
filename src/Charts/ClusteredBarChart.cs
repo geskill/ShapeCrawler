@@ -26,7 +26,7 @@ internal sealed class ClusteredBarChart(
         var plotArea = chart.PlotArea!;
         var barChart = plotArea.GetFirstChild<DocumentFormat.OpenXml.Drawing.Charts.BarChart>()!;
 
-        AddSeries(barChart);
+        this.AddSeries(barChart);
         AddAxes(plotArea);
 
         var legend = new Legend();
@@ -57,8 +57,7 @@ internal sealed class ClusteredBarChart(
         var chartSpace = new ChartSpace(new EditingLanguage { Val = "en-US" }, new RoundedCorners { Val = false });
         chartSpace.AddNamespaceDeclaration("c", "http://schemas.openxmlformats.org/drawingml/2006/chart"); // NOSONAR
         chartSpace.AddNamespaceDeclaration("a", "http://schemas.openxmlformats.org/drawingml/2006/main"); // NOSONAR
-        chartSpace.AddNamespaceDeclaration("r",
-            "http://schemas.openxmlformats.org/officeDocument/2006/relationships"); // NOSONAR
+        chartSpace.AddNamespaceDeclaration("r", "http://schemas.openxmlformats.org/officeDocument/2006/relationships"); // NOSONAR
 
         var chart = new DocumentFormat.OpenXml.Drawing.Charts.Chart();
         chart.AppendChild(new AutoTitleDeleted { Val = false });
@@ -123,11 +122,11 @@ internal sealed class ClusteredBarChart(
             series.AppendChild(seriesText);
 
             var categoryAxisData = new CategoryAxisData();
-            AddCategories(categoryAxisData);
+            this.AddCategories(categoryAxisData);
             series.AppendChild(categoryAxisData);
 
             var values = new Values();
-            AddValues(values, i);
+            this.AddValues(values, i);
             series.AppendChild(values);
 
             barChart.AppendChild(series);
@@ -141,15 +140,15 @@ internal sealed class ClusteredBarChart(
 
     private void AddCategories(CategoryAxisData categoryAxisData)
     {
-        var isMultiLevel = categories.Any(c => c.Count > 1);
+        bool isMultiLevel = categories.Any(c => c.Count > 1);
 
         if (isMultiLevel)
         {
-            AddMultiLevelCategories(categoryAxisData);
+            this.AddMultiLevelCategories(categoryAxisData);
         }
         else
         {
-            AddSingleLevelCategories(categoryAxisData);
+            this.AddSingleLevelCategories(categoryAxisData);
         }
     }
 
@@ -157,22 +156,22 @@ internal sealed class ClusteredBarChart(
     {
         var categoriesCount = UInt32Value.FromUInt32((uint)categories.Count);
         var multiLevelStringReference = new MultiLevelStringReference();
-        var maxLevel = categories.Max(c => c.Count);
+        int maxLevel = categories.Max(c => c.Count);
         var endColumnLetter = ColumnLetter(maxLevel);
         multiLevelStringReference.AppendChild(new Formula($"Sheet1!$A$1:${endColumnLetter}${categories.Count}"));
         var multiLevelStringCache = new MultiLevelStringCache();
         multiLevelStringCache.AppendChild(new PointCount { Val = categoriesCount });
 
-        for (var levelIndex = 0; levelIndex < maxLevel; levelIndex++)
+        for (int levelIndex = 0; levelIndex < maxLevel; levelIndex++)
         {
             var level = new Level();
-            for (var catIndex = 0; catIndex < categories.Count; catIndex++)
+            for (int catIndex = 0; catIndex < categories.Count; catIndex++)
             {
                 var catList = categories[catIndex];
 
                 // Map the innermost (leaf) category to Level 0 and its parents to higher levels,
                 // by reversing the list index so OpenXML multi-level categories are leaf-first.
-                var listIndex = catList.Count - 1 - levelIndex;
+                int listIndex = (catList.Count - 1) - levelIndex;
                 if (listIndex < 0)
                 {
                     continue;
@@ -213,8 +212,7 @@ internal sealed class ClusteredBarChart(
         for (uint j = 0; j < seriesData[(int)seriesIndex].Values.Length; j++)
         {
             var point = new NumericPoint { Index = j };
-            point.AppendChild(new NumericValue(seriesData[(int)seriesIndex].Values[j]
-                .ToString(CultureInfo.InvariantCulture)));
+            point.AppendChild(new NumericValue(seriesData[(int)seriesIndex].Values[j].ToString(CultureInfo.InvariantCulture)));
             numberLiteral.AppendChild(point);
         }
 

@@ -14,12 +14,12 @@ public sealed class DraftParagraph
     internal string BulletCharacter { get; private set; } = "•";
 
     /// <summary>
-    ///     Gets draft font.
+    ///    Gets draft font.
     /// </summary>
     internal DraftFont? FontDraft { get; private set; }
 
     /// <summary>
-    ///     Gets draft indentation.
+    ///    Gets draft indentation.
     /// </summary>
     internal DraftIndentation? IndentationDraft { get; private set; }
 
@@ -28,7 +28,7 @@ public sealed class DraftParagraph
     /// </summary>
     public DraftParagraph Text(string text)
     {
-        Content = text;
+        this.Content = text;
         return this;
     }
 
@@ -37,8 +37,8 @@ public sealed class DraftParagraph
     /// </summary>
     public DraftParagraph Font(Action<DraftFont> configure)
     {
-        FontDraft = new DraftFont();
-        configure(FontDraft);
+        this.FontDraft = new DraftFont();
+        configure(this.FontDraft);
         return this;
     }
 
@@ -47,8 +47,8 @@ public sealed class DraftParagraph
     /// </summary>
     public DraftParagraph Indentation(Action<DraftIndentation> configure)
     {
-        IndentationDraft = new DraftIndentation();
-        configure(IndentationDraft);
+        this.IndentationDraft = new DraftIndentation();
+        configure(this.IndentationDraft);
         return this;
     }
 
@@ -57,7 +57,7 @@ public sealed class DraftParagraph
     /// </summary>
     public DraftParagraph BulletedList()
     {
-        IsBulletedList = true;
+        this.IsBulletedList = true;
         return this;
     }
 
@@ -66,8 +66,8 @@ public sealed class DraftParagraph
     /// </summary>
     public DraftParagraph BulletedList(string character)
     {
-        IsBulletedList = true;
-        BulletCharacter = character;
+        this.IsBulletedList = true;
+        this.BulletCharacter = character;
         return this;
     }
 }

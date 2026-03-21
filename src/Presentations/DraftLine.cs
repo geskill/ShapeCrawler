@@ -1,5 +1,4 @@
 using System;
-using DocumentFormat.OpenXml.Drawing;
 
 namespace ShapeCrawler.Presentations;
 
@@ -19,17 +18,17 @@ public sealed class DraftLine
     internal int DraftHeight { get; private set; }
 
     internal DraftStroke? DraftStroke { get; private set; }
+    
+    internal DocumentFormat.OpenXml.Drawing.LineEndValues? DraftHeadEndType { get; private set; }
 
-    internal LineEndValues? DraftHeadEndType { get; private set; }
-
-    internal LineEndValues? DraftTailEndType { get; private set; }
+    internal DocumentFormat.OpenXml.Drawing.LineEndValues? DraftTailEndType { get; private set; }
 
     /// <summary>
     ///     Sets name.
     /// </summary>
     public DraftLine Name(string name)
     {
-        DraftName = name;
+        this.DraftName = name;
         return this;
     }
 
@@ -38,7 +37,7 @@ public sealed class DraftLine
     /// </summary>
     public DraftLine X(int x)
     {
-        DraftX = x;
+        this.DraftX = x;
         return this;
     }
 
@@ -47,7 +46,7 @@ public sealed class DraftLine
     /// </summary>
     public DraftLine Y(int y)
     {
-        DraftY = y;
+        this.DraftY = y;
         return this;
     }
 
@@ -56,7 +55,7 @@ public sealed class DraftLine
     /// </summary>
     public DraftLine Width(int width)
     {
-        DraftWidth = width;
+        this.DraftWidth = width;
         return this;
     }
 
@@ -65,7 +64,7 @@ public sealed class DraftLine
     /// </summary>
     public DraftLine Height(int height)
     {
-        DraftHeight = height;
+        this.DraftHeight = height;
         return this;
     }
 
@@ -74,26 +73,26 @@ public sealed class DraftLine
     /// </summary>
     public DraftLine Line(Action<DraftStroke> configure)
     {
-        DraftStroke = new DraftStroke();
-        configure(DraftStroke);
+        this.DraftStroke = new DraftStroke();
+        configure(this.DraftStroke);
         return this;
     }
 
     /// <summary>
     ///     Sets the arrow head type for the end of the line.
     /// </summary>
-    public DraftLine EndArrow(LineEndValues type)
+    public DraftLine EndArrow(DocumentFormat.OpenXml.Drawing.LineEndValues type)
     {
-        DraftTailEndType = type;
+        this.DraftTailEndType = type;
         return this;
     }
 
     /// <summary>
     ///     Sets the arrow head type for the start of the line.
     /// </summary>
-    public DraftLine StartArrow(LineEndValues type)
+    public DraftLine StartArrow(DocumentFormat.OpenXml.Drawing.LineEndValues type)
     {
-        DraftHeadEndType = type;
+        this.DraftHeadEndType = type;
         return this;
     }
 }

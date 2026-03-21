@@ -1,4 +1,5 @@
 using FluentAssertions;
+using NUnit.Framework;
 using ShapeCrawler.DevTests.Helpers;
 
 namespace ShapeCrawler.DevTests;
@@ -103,9 +104,9 @@ public class ParagraphTests : SCTest
         var textBox2 = new Presentation(TestAsset("009_table.pptx")).Slide(3).Shape(3).Table.Rows[0].Cells[0].TextBox;
 
         // Act
-        var paragraphTextCase1 = textBox1.Paragraphs[0].Text;
-        var paragraphTextCase2 = textBox1.Paragraphs[1].Text;
-        var paragraphTextCase3 = textBox2.Paragraphs[0].Text;
+        string paragraphTextCase1 = textBox1.Paragraphs[0].Text;
+        string paragraphTextCase2 = textBox1.Paragraphs[1].Text;
+        string paragraphTextCase3 = textBox2.Paragraphs[0].Text;
 
         // Assert
         paragraphTextCase1.Should().BeEquivalentTo("P1t1 P1t2");

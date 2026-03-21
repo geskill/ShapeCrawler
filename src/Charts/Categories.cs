@@ -11,30 +11,24 @@ namespace ShapeCrawler.Charts;
 
 internal sealed class Categories(ChartPart chartPart) : IReadOnlyList<ICategory>
 {
-    public int Count => CategoryList().Count;
+    public int Count => this.CategoryList().Count;
 
-    public ICategory this[int index] => CategoryList()[index];
+    public ICategory this[int index] => this.CategoryList()[index];
 
-    public IEnumerator<ICategory> GetEnumerator()
-    {
-        return CategoryList().GetEnumerator();
-    }
+    public IEnumerator<ICategory> GetEnumerator() => this.CategoryList().GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
     private static int ColumnIndex(string column)
     {
         const int asciiOffsetForA = 64;
         const int alphabetSize = 26;
-        var result = 0;
-        var col = column.ToUpper();
-        for (var iChar = col.Length - 1; iChar >= 0; iChar--)
+        int result = 0;
+        string col = column.ToUpper();
+        for (int iChar = col.Length - 1; iChar >= 0; iChar--)
         {
-            var columnPiece = col[iChar];
-            var columnNumber = columnPiece - asciiOffsetForA;
+            char columnPiece = col[iChar];
+            int columnNumber = columnPiece - asciiOffsetForA;
             result += columnNumber * (int)Math.Pow(alphabetSize, col.Length - (iChar + 1));
         }
 
@@ -66,9 +60,9 @@ internal sealed class Categories(ChartPart chartPart) : IReadOnlyList<ICategory>
         var indexToCategory = new List<KeyValuePair<uint, ICategory>>();
         var topDownLevels = levels.Reverse().ToList();
 
-        for (var i = 0; i < topDownLevels.Count; i++)
+        for (int i = 0; i < topDownLevels.Count; i++)
         {
-            indexToCategory = ProcessLevel(topDownLevels[i], i, sheetName, startRow, startColumnIndex, indexToCategory);
+            indexToCategory = this.ProcessLevel(topDownLevels[i], i, sheetName, startRow, startColumnIndex, indexToCategory);
         }
 
         return [.. indexToCategory.Select(kvp => kvp.Value)];
@@ -82,12 +76,12 @@ internal sealed class Categories(ChartPart chartPart) : IReadOnlyList<ICategory>
         int startColumnIndex,
         List<KeyValuePair<uint, ICategory>> parentCategories)
     {
-        var addressPrefix = sheetName != null ? ColumnLetter(startColumnIndex + levelIndex) : null;
+        string? addressPrefix = sheetName != null ? ColumnLetter(startColumnIndex + levelIndex) : null;
         var cStringPoints = cLevel.Elements<C.StringPoint>();
         var nextIndexToCategory = new List<KeyValuePair<uint, ICategory>>();
         var descOrderedMains = parentCategories.OrderByDescending(kvp => kvp.Key).ToList();
 
-        foreach (var cStrPoint in cStringPoints)
+        foreach (C.StringPoint cStrPoint in cStringPoints)
         {
             var index = cStrPoint.Index!.Value;
             var cachedCatName = cStrPoint.NumericValue;
@@ -96,7 +90,7 @@ internal sealed class Categories(ChartPart chartPart) : IReadOnlyList<ICategory>
                 continue;
             }
 
-            var address = addressPrefix != null ? $"{addressPrefix}{startRow + (int)index}" : null;
+            string? address = addressPrefix != null ? $"{addressPrefix}{startRow + (int)index}" : null;
             ICategory category;
             if (descOrderedMains.Count != 0)
             {
@@ -127,26 +121,23 @@ internal sealed class Categories(ChartPart chartPart) : IReadOnlyList<ICategory>
         if (cMultiLvlStringRef != null)
         {
             string? sheetName = null;
-            var startRow = 0;
-            var startColumnIndex = 0;
+            int startRow = 0;
+            int startColumnIndex = 0;
 
             if (cMultiLvlStringRef.Formula != null)
             {
                 var formula = cMultiLvlStringRef.Formula.Text;
                 var normalizedFormula = formula.Replace("'", string.Empty).Replace("$", string.Empty);
-                sheetName = Regex.Match(normalizedFormula, @".+(?=\!)", RegexOptions.None,
-                    TimeSpan.FromMilliseconds(1000)).Value;
-                var range = Regex.Match(normalizedFormula, @"(?<=\!).+", RegexOptions.None,
-                    TimeSpan.FromMilliseconds(1000)).Value;
+                sheetName = Regex.Match(normalizedFormula, @".+(?=\!)", RegexOptions.None, TimeSpan.FromMilliseconds(1000)).Value;
+                var range = Regex.Match(normalizedFormula, @"(?<=\!).+", RegexOptions.None, TimeSpan.FromMilliseconds(1000)).Value;
                 var rangeStart = range.Split(':')[0];
-                var match = Regex.Match(rangeStart, @"([A-Z]+)(\d+)", RegexOptions.None,
-                    TimeSpan.FromMilliseconds(1000));
+                var match = Regex.Match(rangeStart, @"([A-Z]+)(\d+)", RegexOptions.None, TimeSpan.FromMilliseconds(1000));
                 var startColumn = match.Groups[1].Value;
                 startRow = int.Parse(match.Groups[2].Value);
                 startColumnIndex = ColumnIndex(startColumn);
             }
 
-            return MultiCategories(
+            return this.MultiCategories(
                 cMultiLvlStringRef.MultiLevelStringCache!.Elements<C.Level>(),
                 sheetName,
                 startRow,

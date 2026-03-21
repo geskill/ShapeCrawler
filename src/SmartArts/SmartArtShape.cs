@@ -9,7 +9,7 @@ internal sealed class SmartArtShape : DrawingShape
     internal SmartArtShape(Position position, ShapeSize shapeSize, ShapeId shapeId, OpenXmlElement pShapeTreeElement)
         : base(position, shapeSize, shapeId, pShapeTreeElement)
     {
-        SmartArt = new SmartArt(new SmartArtNodeCollection());
+        this.SmartArt = new SmartArt(new SmartArtNodeCollection());
     }
 
     public override ISmartArt? SmartArt { get; }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,19 +26,13 @@ public interface IParagraphCollection : IReadOnlyList<IParagraph>
 
 internal class ParagraphCollection(OpenXmlElement textBody) : IParagraphCollection
 {
-    public int Count => Paragraphs().Count();
+    public int Count => this.Paragraphs().Count();
 
-    public IParagraph this[int index] => Paragraphs().ElementAt(index);
+    public IParagraph this[int index] => this.Paragraphs().ElementAt(index);
 
-    public IEnumerator<IParagraph> GetEnumerator()
-    {
-        return Paragraphs().GetEnumerator();
-    }
+    public IEnumerator<IParagraph> GetEnumerator() => this.Paragraphs().GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
     public void Add()
     {
@@ -55,13 +48,13 @@ internal class ParagraphCollection(OpenXmlElement textBody) : IParagraphCollecti
         var aParagraphs = textBody.Elements<A.Paragraph>().ToList();
         if (index < 0 || index > aParagraphs.Count)
         {
-            throw new ArgumentOutOfRangeException(nameof(index));
+            throw new System.ArgumentOutOfRangeException(nameof(index));
         }
 
         if (index == aParagraphs.Count)
         {
-            Add();
-            Paragraphs().Last().Text = content;
+            this.Add();
+            this.Paragraphs().Last().Text = content;
         }
         else
         {

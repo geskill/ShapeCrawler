@@ -32,23 +32,17 @@ internal sealed class Section : ISection, IRemovable
 
     private Section(P14.Section p14Section, IReadOnlyList<IUserSlide> slides)
     {
-        P14Section = p14Section;
-        Slides = slides;
+        this.P14Section = p14Section;
+        this.Slides = slides;
     }
 
-    private P14.Section P14Section { get; }
-
-    public void Remove()
-    {
-        P14Section.Remove();
-    }
-
-    public string Name => GetName();
+    public string Name => this.GetName();
 
     public IReadOnlyList<IUserSlide> Slides { get; }
 
-    private string GetName()
-    {
-        return P14Section.Name!;
-    }
+    private P14.Section P14Section { get; }
+
+    public void Remove() => this.P14Section.Remove();
+
+    private string GetName() => this.P14Section.Name!;
 }

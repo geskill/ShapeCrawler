@@ -1,10 +1,9 @@
 // ReSharper disable CheckNamespace
 // ReSharper disable InconsistentNaming
-
-using ShapeCrawler.Texts;
-
 #pragma warning disable IDE0130
 namespace ShapeCrawler;
+
+using ShapeCrawler.Texts;
 #pragma warning restore IDE0130
 
 /// <summary>
@@ -65,15 +64,15 @@ public interface ITextBox
     /// <summary>
     ///     Gets XPath.
     /// </summary>
-    string SdkXPath { get; }
+    public string SdkXPath { get; }
 
     /// <summary>
     ///     Sets text.
     /// </summary>
-    void SetText(string text);
+    public void SetText(string text);
 
     /// <summary>
     ///     Sets Markdown text.
     /// </summary>
-    void SetMarkdownText(string text);
+    public void SetMarkdownText(string text);
 }

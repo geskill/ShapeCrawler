@@ -4,64 +4,60 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Drawing.Charts;
 using DocumentFormat.OpenXml.Packaging;
+using ShapeCrawler.Positions;
 using ShapeCrawler.Presentations;
 using ShapeCrawler.Shapes;
-using ShapeCrawler.Units;
 using SkiaSharp;
 using P = DocumentFormat.OpenXml.Presentation;
-using Position = ShapeCrawler.Positions.Position;
 
 namespace ShapeCrawler.Charts;
 
-internal sealed class ChartShape(Chart chartModel, P.GraphicFrame pGraphicFrame) : DrawingShape(
-    new Position(pGraphicFrame),
+internal sealed class ChartShape(Chart chartModel, P.GraphicFrame pGraphicFrame) : DrawingShape(new Position(pGraphicFrame),
     new ShapeSize(pGraphicFrame), new ShapeId(pGraphicFrame), pGraphicFrame)
 {
     private readonly Chart chart = chartModel;
 
-    public override IBarChart? BarChart => IsBarChart(BarDirectionValues.Bar) ? chart : null;
+    public override IBarChart? BarChart => this.IsBarChart(BarDirectionValues.Bar) ? this.chart : null;
 
-    public override IColumnChart? ColumnChart => IsBarChart(BarDirectionValues.Column) ? chart : null;
+    public override IColumnChart? ColumnChart => this.IsBarChart(BarDirectionValues.Column) ? this.chart : null;
 
     public override ILineChart? LineChart =>
-        IsChartType(ChartType.LineChart, ChartType.Line3DChart)
-        || (chart.Type == ChartType.Combination
-            && (HasChartElement<LineChart>()
-                || HasChartElement<Line3DChart>()))
-            ? chart
+        this.IsChartType(ChartType.LineChart, ChartType.Line3DChart)
+        || (this.chart.Type == ChartType.Combination
+            && (this.HasChartElement<global::DocumentFormat.OpenXml.Drawing.Charts.LineChart>()
+                || this.HasChartElement<global::DocumentFormat.OpenXml.Drawing.Charts.Line3DChart>()))
+            ? this.chart
             : null;
 
     public override IPieChart? PieChart =>
-        IsChartType(ChartType.PieChart, ChartType.Pie3DChart, ChartType.DoughnutChart)
-        || (chart.Type == ChartType.Combination
-            && (HasChartElement<DocumentFormat.OpenXml.Drawing.Charts.PieChart>()
-                || HasChartElement<Pie3DChart>()
-                || HasChartElement<DoughnutChart>()))
-            ? chart
+        this.IsChartType(ChartType.PieChart, ChartType.Pie3DChart, ChartType.DoughnutChart)
+        || (this.chart.Type == ChartType.Combination
+            && (this.HasChartElement<global::DocumentFormat.OpenXml.Drawing.Charts.PieChart>()
+                || this.HasChartElement<global::DocumentFormat.OpenXml.Drawing.Charts.Pie3DChart>()
+                || this.HasChartElement<global::DocumentFormat.OpenXml.Drawing.Charts.DoughnutChart>()))
+            ? this.chart
             : null;
 
     public override IScatterChart? ScatterChart =>
-        IsChartType(ChartType.ScatterChart)
-        || (chart.Type == ChartType.Combination &&
-            HasChartElement<DocumentFormat.OpenXml.Drawing.Charts.ScatterChart>())
-            ? chart
+        this.IsChartType(ChartType.ScatterChart)
+        || (this.chart.Type == ChartType.Combination && this.HasChartElement<global::DocumentFormat.OpenXml.Drawing.Charts.ScatterChart>())
+            ? this.chart
             : null;
 
     public override IBubbleChart? BubbleChart =>
-        IsChartType(ChartType.BubbleChart)
-        || (chart.Type == ChartType.Combination && HasChartElement<DocumentFormat.OpenXml.Drawing.Charts.BubbleChart>())
-            ? chart
+        this.IsChartType(ChartType.BubbleChart)
+        || (this.chart.Type == ChartType.Combination && this.HasChartElement<global::DocumentFormat.OpenXml.Drawing.Charts.BubbleChart>())
+            ? this.chart
             : null;
 
     public override IAreaChart? AreaChart =>
-        IsChartType(ChartType.AreaChart, ChartType.Area3DChart)
-        || (chart.Type == ChartType.Combination
-            && (HasChartElement<AreaChart>()
-                || HasChartElement<Area3DChart>()))
-            ? chart
+        this.IsChartType(ChartType.AreaChart, ChartType.Area3DChart)
+        || (this.chart.Type == ChartType.Combination
+            && (this.HasChartElement<global::DocumentFormat.OpenXml.Drawing.Charts.AreaChart>()
+                || this.HasChartElement<global::DocumentFormat.OpenXml.Drawing.Charts.Area3DChart>()))
+            ? this.chart
             : null;
 
     public override ShapeContentType ContentType => ShapeContentType.Chart;
@@ -72,10 +68,10 @@ internal sealed class ChartShape(Chart chartModel, P.GraphicFrame pGraphicFrame)
         set => throw new SCException("Geometry type cannot be set for Chart shape.");
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public override void CopyTo(P.ShapeTree pShapeTree)
     {
-        var pGraphicFrame = (P.GraphicFrame)PShapeTreeElement;
+        var pGraphicFrame = (P.GraphicFrame)this.PShapeTreeElement;
 
         // Clone the graphic frame and add it to the target shape tree
         new SCPShapeTree(pShapeTree).Add(pGraphicFrame);
@@ -117,19 +113,19 @@ internal sealed class ChartShape(Chart chartModel, P.GraphicFrame pGraphicFrame)
 
     internal override void Render(SKCanvas canvas)
     {
-        if (chart.Type == ChartType.PieChart)
+        if (this.chart.Type == ChartType.PieChart)
         {
-            RenderPieChart(canvas);
+            this.RenderPieChart(canvas);
         }
-        else if (chart.Type == ChartType.BarChart)
+        else if (this.chart.Type == ChartType.BarChart)
         {
-            RenderBarChart(canvas);
+            this.RenderBarChart(canvas);
         }
         else
         {
             // For other chart types, render as a placeholder rectangle
             // Charts use GraphicFrame which lacks ShapeProperties, so we render directly
-            RenderChartPlaceholder(canvas);
+            this.RenderChartPlaceholder(canvas);
         }
     }
 
@@ -343,11 +339,11 @@ internal sealed class ChartShape(Chart chartModel, P.GraphicFrame pGraphicFrame)
         return GetTitleFromStringCache(chartText);
     }
 
-    private static string GetTitleFromRichText(OpenXmlElement richText)
+    private static string GetTitleFromRichText(DocumentFormat.OpenXml.OpenXmlElement richText)
     {
         return string.Concat(
             richText
-                .Descendants<Run>()
+                .Descendants<DocumentFormat.OpenXml.Drawing.Run>()
                 .Select(r => r.Text?.Text ?? string.Empty));
     }
 
@@ -473,10 +469,10 @@ internal sealed class ChartShape(Chart chartModel, P.GraphicFrame pGraphicFrame)
 
         // Draw X axis (horizontal line at the bottom)
         canvas.DrawLine(
-            chartAreaX,
-            chartAreaY + chartAreaHeight,
+            chartAreaX, 
+            chartAreaY + chartAreaHeight, 
             chartAreaX + chartAreaWidth,
-            chartAreaY + chartAreaHeight,
+            chartAreaY + chartAreaHeight, 
             axisPaint);
 
         // Draw X axis ticks and labels
@@ -492,8 +488,7 @@ internal sealed class ChartShape(Chart chartModel, P.GraphicFrame pGraphicFrame)
             var tickValue = (maxValue * i / tickCount).ToString("F0", CultureInfo.InvariantCulture);
 
             canvas.DrawLine(tickX, chartAreaY + chartAreaHeight, tickX, chartAreaY + chartAreaHeight + 5, axisPaint);
-            canvas.DrawText(tickValue, tickX, chartAreaY + chartAreaHeight + 15, SKTextAlign.Center, tickFont,
-                tickPaint);
+            canvas.DrawText(tickValue, tickX, chartAreaY + chartAreaHeight + 15, SKTextAlign.Center, tickFont, tickPaint);
         }
     }
 
@@ -560,15 +555,12 @@ internal sealed class ChartShape(Chart chartModel, P.GraphicFrame pGraphicFrame)
         sourceStream.CopyTo(destinationStream);
     }
 
-    private bool IsChartType(params ChartType[] types)
-    {
-        return types.Contains(chart.Type);
-    }
+    private bool IsChartType(params ChartType[] types) => types.Contains(this.chart.Type);
 
     private bool HasChartElement<T>()
         where T : OpenXmlElement
     {
-        var chartPart = GetChartPart();
+        var chartPart = this.GetChartPart();
         var chartSpace = chartPart?.ChartSpace;
         if (chartSpace == null)
         {
@@ -580,15 +572,15 @@ internal sealed class ChartShape(Chart chartModel, P.GraphicFrame pGraphicFrame)
 
     private bool IsBarChart(BarDirectionValues direction)
     {
-        if (!IsChartType(ChartType.BarChart, ChartType.Bar3DChart, ChartType.Combination))
+        if (!this.IsChartType(ChartType.BarChart, ChartType.Bar3DChart, ChartType.Combination))
         {
             return false;
         }
 
-        var barDirection = GetBarDirection();
+        var barDirection = this.GetBarDirection();
         if (barDirection == null)
         {
-            return IsChartType(ChartType.BarChart, ChartType.Bar3DChart) && direction == BarDirectionValues.Column;
+            return this.IsChartType(ChartType.BarChart, ChartType.Bar3DChart) && direction == BarDirectionValues.Column;
         }
 
         return barDirection == direction;
@@ -596,7 +588,7 @@ internal sealed class ChartShape(Chart chartModel, P.GraphicFrame pGraphicFrame)
 
     private BarDirectionValues? GetBarDirection()
     {
-        var chartPart = GetChartPart();
+        var chartPart = this.GetChartPart();
         if (chartPart?.ChartSpace == null)
         {
             return null;
@@ -612,17 +604,17 @@ internal sealed class ChartShape(Chart chartModel, P.GraphicFrame pGraphicFrame)
         }
 
         var bar3DChart = chartPart.ChartSpace
-            .Descendants<Bar3DChart>()
+            .Descendants<DocumentFormat.OpenXml.Drawing.Charts.Bar3DChart>()
             .FirstOrDefault();
         return bar3DChart?.BarDirection?.Val?.Value;
     }
 
     private void RenderChartPlaceholder(SKCanvas canvas)
     {
-        var x = (float)new Points(X).AsPixels();
-        var y = (float)new Points(Y).AsPixels();
-        var width = (float)new Points(Width).AsPixels();
-        var height = (float)new Points(Height).AsPixels();
+        var x = (float)new Units.Points(this.X).AsPixels();
+        var y = (float)new Units.Points(this.Y).AsPixels();
+        var width = (float)new Units.Points(this.Width).AsPixels();
+        var height = (float)new Units.Points(this.Height).AsPixels();
         var rect = new SKRect(x, y, x + width, y + height);
 
         using var fillPaint = new SKPaint();
@@ -643,7 +635,7 @@ internal sealed class ChartShape(Chart chartModel, P.GraphicFrame pGraphicFrame)
     {
         var chart = this.chart;
 
-        var bounds = CalculateChartBounds();
+        var bounds = this.CalculateChartBounds();
         var colors = GetPieChartColors();
 
         // Draw a white background
@@ -682,7 +674,7 @@ internal sealed class ChartShape(Chart chartModel, P.GraphicFrame pGraphicFrame)
         var categoryCount = categories.Count;
         var seriesCount = seriesCollection.Count;
         var categoryHeight = chartAreaHeight / categoryCount;
-        var barHeight = categoryHeight * 0.7f / seriesCount;
+        var barHeight = (categoryHeight * 0.7f) / seriesCount;
         var categoryPadding = categoryHeight * 0.15f;
 
         for (var catIndex = 0; catIndex < categoryCount; catIndex++)
@@ -722,7 +714,7 @@ internal sealed class ChartShape(Chart chartModel, P.GraphicFrame pGraphicFrame)
 
     private void RenderPieChart(SKCanvas canvas)
     {
-        var chartData = GetPieChartData();
+        var chartData = this.GetPieChartData();
         if (chartData == null || chartData.Values.Count == 0)
         {
             return;
@@ -734,7 +726,7 @@ internal sealed class ChartShape(Chart chartModel, P.GraphicFrame pGraphicFrame)
             return;
         }
 
-        var bounds = CalculateChartBounds();
+        var bounds = this.CalculateChartBounds();
         var layout = CalculateChartLayout(bounds, chartData);
         var colors = GetPieChartColors();
 
@@ -747,15 +739,15 @@ internal sealed class ChartShape(Chart chartModel, P.GraphicFrame pGraphicFrame)
     private ChartBounds CalculateChartBounds()
     {
         return new ChartBounds(
-            (float)new Points(X).AsPixels(),
-            (float)new Points(Y).AsPixels(),
-            (float)new Points(Width).AsPixels(),
-            (float)new Points(Height).AsPixels());
+            (float)new Units.Points(this.X).AsPixels(),
+            (float)new Units.Points(this.Y).AsPixels(),
+            (float)new Units.Points(this.Width).AsPixels(),
+            (float)new Units.Points(this.Height).AsPixels());
     }
 
     private PieChartData? GetPieChartData()
     {
-        var chartPart = GetChartPart();
+        var chartPart = this.GetChartPart();
         if (chartPart == null)
         {
             return null;
@@ -783,7 +775,7 @@ internal sealed class ChartShape(Chart chartModel, P.GraphicFrame pGraphicFrame)
 
     private ChartPart? GetChartPart()
     {
-        var pGraphicFrame = (P.GraphicFrame)PShapeTreeElement;
+        var pGraphicFrame = (P.GraphicFrame)this.PShapeTreeElement;
         var graphicData = pGraphicFrame.Graphic?.GraphicData;
         if (graphicData == null)
         {

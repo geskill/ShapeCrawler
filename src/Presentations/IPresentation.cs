@@ -64,15 +64,15 @@ public interface IPresentation : IDisposable
     /// <summary>
     ///     Saves presentation and copies in the specified file.
     /// </summary>
-    void Save(string file);
+    public void Save(string file);
 
     /// <summary>
     ///     Returns the presentation as a string in Markdown format.
     /// </summary>
-    string AsMarkdown();
+    public string AsMarkdown();
 
     /// <summary>
-    ///     Gets a copy of the underlying <see cref="PresentationDocument" />.
+    ///     Gets a copy of the underlying <see cref="PresentationDocument"/>.
     /// </summary>
     // ReSharper disable once InconsistentNaming
     PresentationDocument GetSdkPresentationDocument();

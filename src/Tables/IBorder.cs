@@ -15,5 +15,5 @@ public interface IBorder
     /// <summary>
     ///     Gets or sets the border color.
     /// </summary>
-    string? Color { get; set; }
+    public string? Color { get; set; }
 }

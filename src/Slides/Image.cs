@@ -11,9 +11,9 @@ namespace ShapeCrawler.Slides;
 /// </summary>
 internal sealed class Image
 {
-    private readonly MagickFormat format;
     private readonly MagickImage image;
     private readonly Stream stream;
+    private readonly MagickFormat format;
 
     internal Image(Stream stream)
     {
@@ -24,47 +24,47 @@ internal sealed class Image
             stream.Position = 0;
         }
 
-        image = CreateMagickImage(stream);
-        format = image.Format;
+        this.image = CreateMagickImage(stream);
+        this.format = this.image.Format;
 
-        EnsureSupportedImageFormat(image);
-        HandleSvgFormat(image, format);
+        EnsureSupportedImageFormat(this.image);
+        HandleSvgFormat(this.image, this.format);
 
-        var width = image.Width;
-        var height = image.Height;
+        var width = this.image.Width;
+        var height = this.image.Height;
 
-        if (format == MagickFormat.Svg)
+        if (this.format == MagickFormat.Svg)
         {
-            ResizeSvgImageIfNeeded(image, ref width, ref height);
+            ResizeSvgImageIfNeeded(this.image, ref width, ref height);
         }
 
-        Width = width;
-        Height = height;
+        this.Width = width;
+        this.Height = height;
     }
 
     internal uint Width { get; }
 
     internal uint Height { get; }
 
-    internal bool IsSvg => format == MagickFormat.Svg;
+    internal bool IsSvg => this.format == MagickFormat.Svg;
 
     internal bool IsOriginalFormatPreserved =>
-        format is MagickFormat.Gif or MagickFormat.Jpeg or MagickFormat.Png ||
-        format is MagickFormat.Tif or MagickFormat.Tiff;
+        (this.format is MagickFormat.Gif or MagickFormat.Jpeg or MagickFormat.Png) ||
+        (this.format is MagickFormat.Tif or MagickFormat.Tiff);
 
-    internal string MimeType => GetMimeType(IsOriginalFormatPreserved ? format : image.Format);
+    internal string MimeType => GetMimeType(this.IsOriginalFormatPreserved ? this.format : this.image.Format);
 
     internal string Hash
     {
         get
         {
-            if (IsOriginalFormatPreserved)
+            if (this.IsOriginalFormatPreserved)
             {
-                stream.Position = 0;
-                return new ImageStream(stream).Base64Hash;
+                this.stream.Position = 0;
+                return new ImageStream(this.stream).Base64Hash;
             }
 
-            using var rasterStream = GetRasterStream();
+            using var rasterStream = this.GetRasterStream();
             return new ImageStream(rasterStream).Base64Hash;
         }
     }
@@ -73,8 +73,8 @@ internal sealed class Image
     {
         get
         {
-            stream.Position = 0;
-            return new ImageStream(stream).Base64Hash;
+            this.stream.Position = 0;
+            return new ImageStream(this.stream).Base64Hash;
         }
     }
 
@@ -84,9 +84,9 @@ internal sealed class Image
     internal MemoryStream GetRasterStream()
     {
         var rasterStream = new MemoryStream();
-        image.Settings.SetDefines(new PngWriteDefines { ExcludeChunks = PngChunkFlags.date });
-        image.Settings.SetDefine("png:exclude-chunk", "tIME");
-        image.Write(rasterStream);
+        this.image.Settings.SetDefines(new PngWriteDefines { ExcludeChunks = PngChunkFlags.date });
+        this.image.Settings.SetDefine("png:exclude-chunk", "tIME");
+        this.image.Write(rasterStream);
         rasterStream.Position = 0;
         return rasterStream;
     }
@@ -96,8 +96,8 @@ internal sealed class Image
     /// </summary>
     internal Stream GetOriginalStream()
     {
-        stream.Position = 0;
-        return stream;
+        this.stream.Position = 0;
+        return this.stream;
     }
 
     private static MagickImage CreateMagickImage(Stream imageStream)
@@ -108,7 +108,7 @@ internal sealed class Image
 
         return new MagickImage(
             imageStream,
-            new MagickReadSettings { Format = format, BackgroundColor = MagickColors.Transparent });
+            new MagickReadSettings { Format = format, BackgroundColor = MagickColors.Transparent, });
     }
 
     private static bool IsIco(Stream stream)
@@ -172,9 +172,7 @@ internal sealed class Image
         {
             image.Format = MagickFormat.Png;
             image.Density =
-                new Density(384,
-                    DensityUnit
-                        .PixelsPerInch); // in PowerPoint, the resolution of the rasterized version of SVG is set to 384 PPI
+                new Density(384, DensityUnit.PixelsPerInch); // in PowerPoint, the resolution of the rasterized version of SVG is set to 384 PPI
         }
     }
 

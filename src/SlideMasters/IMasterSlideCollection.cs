@@ -20,22 +20,14 @@ public interface IMasterSlideCollection : IEnumerable<IMasterSlide>
 
 internal sealed class MasterSlideCollection(IEnumerable<SlideMasterPart> slideMasterParts) : IMasterSlideCollection
 {
-    public IMasterSlide this[int index] => SlideMasters().ElementAt(index);
+    public IMasterSlide this[int index] => this.SlideMasters().ElementAt(index);
 
-    public IEnumerator<IMasterSlide> GetEnumerator()
-    {
-        return SlideMasters().GetEnumerator();
-    }
+    public IEnumerator<IMasterSlide> GetEnumerator() => this.SlideMasters().GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-    internal MasterSlide SlideMaster(int number)
-    {
-        return SlideMasters().First(slideMaster => slideMaster.Number == number);
-    }
+    internal MasterSlide SlideMaster(int number) =>
+        this.SlideMasters().First(slideMaster => slideMaster.Number == number);
 
     private IEnumerable<MasterSlide> SlideMasters()
     {

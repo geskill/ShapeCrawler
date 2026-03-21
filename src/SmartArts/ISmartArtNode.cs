@@ -25,31 +25,31 @@ internal class SmartArtNode : ISmartArtNode
 
     internal SmartArtNode(string modelId, string text, SmartArtNodeCollection nodeCollection)
     {
-        ModelId = modelId;
-        textValue = text;
+        this.ModelId = modelId;
+        this.textValue = text;
         this.nodeCollection = nodeCollection;
     }
-
-    internal string ModelId { get; }
 
     /// <summary>
     ///     Gets or sets the text of the SmartArt node.
     /// </summary>
     public string Text
     {
-        get => textValue;
+        get => this.textValue;
         set
         {
-            if (textValue != value)
+            if (this.textValue != value)
             {
-                textValue = value;
-                nodeCollection?.UpdateNodeText(ModelId, value);
+                this.textValue = value;
+                this.nodeCollection?.UpdateNodeText(this.ModelId, value);
             }
         }
     }
 
+    internal string ModelId { get; }
+
     internal void UpdateText(string text)
     {
-        textValue = text;
+        this.textValue = text;
     }
 }

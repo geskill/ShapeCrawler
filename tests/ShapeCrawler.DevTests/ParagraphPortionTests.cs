@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using NUnit.Framework;
 using ShapeCrawler.DevTests.Helpers;
 
 namespace ShapeCrawler.DevTests;
@@ -15,12 +16,12 @@ public class ParagraphPortionTests : SCTest
             .Paragraphs[0].Portions[0];
 
         // Act
-        var paragraphPortionText = portion.Text;
+        string paragraphPortionText = portion.Text;
 
         // Assert
         paragraphPortionText.Should().BeEquivalentTo("0:0_p1_lvl1");
     }
-
+    
     [Test]
     public void Text_Setter_updates_text()
     {
@@ -36,7 +37,7 @@ public class ParagraphPortionTests : SCTest
         // Assert
         portion.Text.Should().Be("test");
     }
-
+    
     [Test]
     [TestCase("001.pptx", "TextBox 3")]
     [TestCase("autoshape-case001.pptx", "AutoShape 1")]
@@ -59,7 +60,7 @@ public class ParagraphPortionTests : SCTest
         portion = autoShape.TextBox.Paragraphs[0].Portions[0];
         portion.Link!.File.Should().Be("https://github.com/ShapeCrawler/ShapeCrawler");
     }
-
+    
     [Test]
     public void Hyperlink_Setter_sets_hyperlink_for_two_shape_on_the_Same_slide()
     {
@@ -79,14 +80,14 @@ public class ParagraphPortionTests : SCTest
         portion3.Link.File.Should().Be("https://github.com/ShapeCrawler/ShapeCrawler");
         portion4.Link.File.Should().Be("https://github.com/ShapeCrawler/ShapeCrawler");
     }
-
+    
     [Test]
     public void Link_SlideNumber_Setter_sets_Slide_Hyperlink()
     {
         // Arrange
         var pres = new Presentation(TestAsset("autoshape-case018_rotation.pptx"));
         var portion = pres.Slide(1).Shape("NoRotationTextBox").TextBox.Paragraphs[0].Portions[0];
-
+        
         // Act
         portion.Link!.AddSlideNumber(2);
 
@@ -94,7 +95,7 @@ public class ParagraphPortionTests : SCTest
         portion.Link.SlideNumber.Should().Be(2);
         ValidatePresentation(pres);
     }
-
+    
     [Test]
     public void Hyperlink_Setter_sets_File_Name_as_a_hyperlink()
     {
@@ -102,14 +103,14 @@ public class ParagraphPortionTests : SCTest
         var pres = new Presentation(TestAsset("autoshape-case001.pptx"));
         var shape = pres.Slides[0].Shapes.Shape<IShape>("AutoShape 1");
         var portion = shape.TextBox!.Paragraphs[0].Portions[0];
-
+        
         // Act
         portion.Link!.AddFile("some.pptx");
-
+        
         // Assert
         portion.Link.File.Should().Be("some.pptx");
     }
-
+    
     [Test]
     public void Link_AddFile_adds_url_link()
     {
@@ -185,7 +186,6 @@ public class ParagraphPortionTests : SCTest
         portion.TextHighlightColor.ToString().Should().Be("FFFF00");
         ValidatePresentation(pres);
     }
-
     [Test]
     public void TextHighlightColor_Setter_removes_text_highlight_When_NoColor_is_passed()
     {

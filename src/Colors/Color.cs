@@ -47,12 +47,12 @@ public struct Color
         }
 
         var value = hex.StartsWith("#", StringComparison.Ordinal) ? hex[1..] : hex;
-        var (r, g, b, a) = ParseHexValue(value);
+        (int r, int g, int b, float a) = ParseHexValue(value);
 
-        red = r;
-        green = g;
-        blue = b;
-        Alpha = a;
+        this.red = r;
+        this.green = g;
+        this.blue = b;
+        this.Alpha = a;
     }
 
     private Color(int red, int green, int blue)
@@ -65,7 +65,7 @@ public struct Color
         this.red = red;
         this.green = green;
         this.blue = blue;
-        Alpha = alpha;
+        this.Alpha = alpha;
     }
 
     /// <summary>
@@ -79,30 +79,24 @@ public struct Color
     /// <summary>
     ///     Gets hexadecimal code.
     /// </summary>
-    public string Hex => ToString();
+    public string Hex => this.ToString();
 
     /// <summary>
     ///     Gets a value indicating whether the color is transparent.
     /// </summary>
-    public readonly bool IsTransparent => Math.Abs(Alpha) < 0.01;
+    public readonly bool IsTransparent => Math.Abs(this.Alpha) < 0.01;
 
     /// <summary>
     ///     Gets a value indicating whether the color is solid.
     /// </summary>
-    internal readonly bool IsSolid => Math.Abs(Alpha - 255) < 0.01;
+    internal readonly bool IsSolid => Math.Abs(this.Alpha - 255) < 0.01;
 
     /// <summary>
     ///     Creates color hexadecimal code.
     /// </summary>
-    public override string ToString()
-    {
-        return $"{red:X2}{green:X2}{blue:X2}";
-    }
+    public override string ToString() => $"{this.red:X2}{this.green:X2}{this.blue:X2}";
 
-    internal SKColor AsSkColor()
-    {
-        return new SKColor((byte)red, (byte)green, (byte)blue, (byte)Alpha);
-    }
+    internal SKColor AsSkColor() => new((byte)this.red, (byte)this.green, (byte)this.blue, (byte)this.Alpha);
 
     /// <summary>
     ///     Returns a color of RGBA.
@@ -118,10 +112,10 @@ public struct Color
 
         return hex.Length switch
         {
-            3 => ParseThreeDigitHex(hex), // F00
-            4 => ParseFourDigitHex(hex), // FFFF
-            6 => ParseSixDigitHex(hex), // FF0000
-            8 => ParseEightDigitHex(hex), // FFFFFF00
+            3 => ParseThreeDigitHex(hex),               // F00
+            4 => ParseFourDigitHex(hex),                // FFFF
+            6 => ParseSixDigitHex(hex),                 // FF0000
+            8 => ParseEightDigitHex(hex),               // FFFFFF00
             _ => throw new FormatException("Hex value is invalid")
         };
 
@@ -134,9 +128,9 @@ public struct Color
         // Parses 3-digit hex color (F00) -> (r,g,b,a)
         static (int Red, int Green, int Blue, float Alpha) ParseThreeDigitHex(string hex)
         {
-            var r = 17 * HexValue(hex[0]);
-            var g = 17 * HexValue(hex[1]);
-            var b = 17 * HexValue(hex[2]);
+            int r = 17 * HexValue(hex[0]);
+            int g = 17 * HexValue(hex[1]);
+            int b = 17 * HexValue(hex[2]);
             return (r, g, b, 255); // Full opacity
         }
 
@@ -144,16 +138,16 @@ public struct Color
         static (int Red, int Green, int Blue, float Alpha) ParseFourDigitHex(string hex)
         {
             var rgbTuple = ParseThreeDigitHex(hex);
-            var a = 17 * HexValue(hex[3]);
+            int a = 17 * HexValue(hex[3]);
             return (rgbTuple.Red, rgbTuple.Green, rgbTuple.Blue, a);
         }
 
         // Parses 6-digit hex color (FF0000) -> (r,g,b,a)
         static (int Red, int Green, int Blue, float Alpha) ParseSixDigitHex(string hex)
         {
-            var r = (16 * HexValue(hex[0])) + HexValue(hex[1]);
-            var g = (16 * HexValue(hex[2])) + HexValue(hex[3]);
-            var b = (16 * HexValue(hex[4])) + HexValue(hex[5]);
+            int r = (16 * HexValue(hex[0])) + HexValue(hex[1]);
+            int g = (16 * HexValue(hex[2])) + HexValue(hex[3]);
+            int b = (16 * HexValue(hex[4])) + HexValue(hex[5]);
             return (r, g, b, 255); // Full opacity
         }
 
@@ -161,7 +155,7 @@ public struct Color
         static (int Red, int Green, int Blue, float Alpha) ParseEightDigitHex(string hex)
         {
             var rgbTuple = ParseSixDigitHex(hex);
-            var a = (16 * HexValue(hex[6])) + HexValue(hex[7]);
+            int a = (16 * HexValue(hex[6])) + HexValue(hex[7]);
             return (rgbTuple.Red, rgbTuple.Green, rgbTuple.Blue, a);
         }
     }

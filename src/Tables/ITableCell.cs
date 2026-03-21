@@ -51,28 +51,22 @@ internal sealed class TableCell : ITableCell
 {
     internal TableCell(A.TableCell aTableCell, int rowIndex, int columnIndex)
     {
-        ATableCell = aTableCell;
-        RowIndex = rowIndex;
-        ColumnIndex = columnIndex;
-        TextBox = new TableCellTextBox(ATableCell);
+        this.ATableCell = aTableCell;
+        this.RowIndex = rowIndex;
+        this.ColumnIndex = columnIndex;
+        this.TextBox = new TableCellTextBox(this.ATableCell);
         var aTcPr = aTableCell.TableCellProperties!;
-        Fill = new TableCellFill(aTcPr);
-        TopBorder = new TopBorder(aTableCell.TableCellProperties!);
-        BottomBorder = new BottomBorder(aTableCell.TableCellProperties!);
-        LeftBorder = new LeftBorder(aTableCell.TableCellProperties!);
-        RightBorder = new RightBorder(aTableCell.TableCellProperties!);
+        this.Fill = new TableCellFill(aTcPr);
+        this.TopBorder = new TopBorder(aTableCell.TableCellProperties!);
+        this.BottomBorder = new BottomBorder(aTableCell.TableCellProperties!);
+        this.LeftBorder = new LeftBorder(aTableCell.TableCellProperties!);
+        this.RightBorder = new RightBorder(aTableCell.TableCellProperties!);
     }
 
-    internal A.TableCell ATableCell { get; }
-
-    internal int RowIndex { get; }
-
-    internal int ColumnIndex { get; }
-
-    public bool IsMergedCell => ATableCell.GridSpan is not null ||
-                                ATableCell.RowSpan is not null ||
-                                ATableCell.HorizontalMerge is not null ||
-                                ATableCell.VerticalMerge is not null;
+    public bool IsMergedCell => this.ATableCell.GridSpan is not null ||
+                                this.ATableCell.RowSpan is not null ||
+                                this.ATableCell.HorizontalMerge is not null ||
+                                this.ATableCell.VerticalMerge is not null;
 
     public IShapeFill Fill { get; }
 
@@ -85,4 +79,10 @@ internal sealed class TableCell : ITableCell
     public IBorder RightBorder { get; }
 
     public ITextBox TextBox { get; }
+
+    internal A.TableCell ATableCell { get; }
+
+    internal int RowIndex { get; }
+
+    internal int ColumnIndex { get; }
 }

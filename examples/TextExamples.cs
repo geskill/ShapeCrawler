@@ -4,8 +4,7 @@ namespace ShapeCrawler.Examples;
 
 public class TextExamples
 {
-    [Test]
-    [Explicit]
+    [Test, Explicit]
     public void Set_text()
     {
         using var pres = new Presentation("Hello world.pptx");
@@ -14,7 +13,7 @@ public class TextExamples
 
         // Update text
         shape.TextBox!.SetText("A new shape text");
-
+        
         // Update text direction
         shape.TextBox.TextDirection = TextDirection.Rotate90;
 
@@ -35,20 +34,21 @@ public class TextExamples
         pres.Save();
     }
 
-    [Test]
-    [Explicit]
+    [Test, Explicit]
     public void Replace_text()
     {
         using var pres = new Presentation("pres.pptx");
         var textBoxes = pres.Slides[0].GetTexts();
 
-        foreach (var textFrame in textBoxes) textFrame.SetText("some text");
+        foreach (var textFrame in textBoxes)
+        {
+            textFrame.SetText("some text");
+        }
 
         pres.Save();
     }
 
-    [Test]
-    [Explicit]
+    [Test, Explicit]
     public void Get_text_margins()
     {
         using var pres = new Presentation("some.pptx");
@@ -59,42 +59,38 @@ public class TextExamples
         var topMargin = textFrame.TopMargin;
     }
 
-    [Test]
-    [Explicit]
+    [Test, Explicit]
     public void Set_autofit()
     {
         using var pres = new Presentation("some.pptx");
         var textBox = pres.Slide(1).Shapes.Shape("AutoShape 1").TextBox!;
-
+        
         textBox.AutofitType = AutofitType.Resize;
     }
 
-    [Test]
-    [Explicit]
+    [Test, Explicit]
     public void Get_alignment()
     {
         using var pres = new Presentation("text.pptx");
         var shape = pres.Slide(1).Shapes.Shape("TextBox 1");
         var paragraph = shape.TextBox!.Paragraphs[0];
-
+        
         var alignment = paragraph.HorizontalAlignment;
-
+        
         paragraph.HorizontalAlignment = TextHorizontalAlignment.Center;
     }
-
-    [Test]
-    [Explicit]
+    
+    [Test, Explicit]
     public void Set_hyperlink()
     {
         using var pres = new Presentation("text.pptx");
         var shape = pres.Slide(1).Shapes.Shape("TextBox 1");
         var paragraph = shape.TextBox!.Paragraphs[0];
-
+        
         paragraph.Portions[0].Link!.AddFile("https://github.com/ShapeCrawler/ShapeCrawler");
     }
-
-    [Test]
-    [Explicit]
+    
+    [Test, Explicit]
     public void Set_paragraph_bullet()
     {
         using var pres = new Presentation("text.pptx");
@@ -107,8 +103,7 @@ public class TextExamples
         bullet.FontName = "Arial";
     }
 
-    [Test]
-    [Explicit]
+    [Test, Explicit]
     public void Set_text_highlight()
     {
         using var pres = new Presentation("some.pptx");

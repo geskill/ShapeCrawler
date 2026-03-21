@@ -35,6 +35,5 @@ internal class DefaultPackageProperties : IPackageProperties
 
     public string? Version { get; set; } = "1.0";
 
-    public string? ContentType { get; set; } =
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+    public string? ContentType { get; set; } = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
 }

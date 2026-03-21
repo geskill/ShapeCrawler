@@ -1,5 +1,6 @@
 ﻿using Fixture;
 using FluentAssertions;
+using NUnit.Framework;
 using ShapeCrawler.DevTests.Helpers;
 
 namespace ShapeCrawler.DevTests;
@@ -17,7 +18,7 @@ public class TableShapeTests : SCTest
         {
             p.Slide(s =>
             {
-                s.TableShape(shapeName, fixtures.Int(), fixtures.Int(), fixtures.Int(), fixtures.Int());
+                s.TableShape(shapeName,fixtures.Int(), fixtures.Int(), fixtures.Int(), fixtures.Int());
             });
         });
         var tableShape = pres.Slide(1).Shape(shapeName);

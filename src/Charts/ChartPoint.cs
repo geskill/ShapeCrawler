@@ -7,13 +7,13 @@ namespace ShapeCrawler.Charts;
 
 internal sealed class ChartPoint : IChartPoint
 {
-    private readonly string? address;
-    private readonly ChartPart? chartPart;
     private readonly C.NumericValue cNumericValue;
-    private readonly string? worksheetName;
+    private readonly ChartPart? chartPart;
+    private readonly string? worksheetName; 
+    private readonly string? address;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="ChartPoint" /> class for data from worksheet.
+    ///     Initializes a new instance of the <see cref="ChartPoint"/> class for data from worksheet.
     /// </summary>
     internal ChartPoint(ChartPart chartPart, C.NumericValue cNumericValue, string worksheetName, string address)
     {
@@ -24,7 +24,7 @@ internal sealed class ChartPoint : IChartPoint
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="ChartPoint" /> class for inline literal data.
+    ///     Initializes a new instance of the <see cref="ChartPoint"/> class for inline literal data.
     /// </summary>
     internal ChartPoint(C.NumericValue cNumericValue)
     {
@@ -35,22 +35,22 @@ internal sealed class ChartPoint : IChartPoint
     {
         get
         {
-            var cachedValue = double.Parse(cNumericValue.InnerText, CultureInfo.InvariantCulture.NumberFormat);
+            var cachedValue = double.Parse(this.cNumericValue.InnerText, CultureInfo.InvariantCulture.NumberFormat);
 
             return Math.Round(cachedValue, 2);
         }
 
         set
         {
-            cNumericValue.Text = value.ToString(CultureInfo.InvariantCulture);
+            this.cNumericValue.Text = value.ToString(CultureInfo.InvariantCulture);
 
-            if (chartPart?.EmbeddedPackagePart == null || worksheetName == null || address == null)
+            if (this.chartPart?.EmbeddedPackagePart == null || this.worksheetName == null || this.address == null)
             {
                 return;
             }
 
-            new Workbook(chartPart.EmbeddedPackagePart).Sheet(worksheetName)
-                .UpdateCell(address, value.ToString(CultureInfo.InvariantCulture));
+            new Workbook(this.chartPart.EmbeddedPackagePart).Sheet(this.worksheetName)
+                .UpdateCell(this.address, value.ToString(CultureInfo.InvariantCulture));
         }
     }
 }

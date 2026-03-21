@@ -11,20 +11,13 @@ namespace ShapeCrawler.Charts;
 
 internal sealed class Workbook(EmbeddedPackagePart embeddedPackagePart)
 {
-    internal Worksheet Sheet(string sheetName)
-    {
-        return new Worksheet(embeddedPackagePart, sheetName);
-    }
+    internal Worksheet Sheet(string sheetName) => new(embeddedPackagePart, sheetName);
 
     internal List<double> FormulaValues(string formula)
     {
-        var normalizedFormula =
-            formula.Replace("'", string.Empty).Replace("$", string.Empty); // eg: Sheet1!$A$2:$A$5 -> Sheet1!A2:A5
-        var sheetName = Regex.Match(normalizedFormula, @".+(?=\!)", RegexOptions.None, TimeSpan.FromMilliseconds(1000))
-            .Value; // eg: Sheet1!A2:A5 -> Sheet1
-        var cellsRange = Regex
-            .Match(normalizedFormula, @"(?<=\!).+", RegexOptions.None, TimeSpan.FromMilliseconds(1000))
-            .Value; // eg: Sheet1!A2:A5 -> A2:A5
+        var normalizedFormula = formula.Replace("'", string.Empty).Replace("$", string.Empty); // eg: Sheet1!$A$2:$A$5 -> Sheet1!A2:A5
+        var sheetName = Regex.Match(normalizedFormula, @".+(?=\!)", RegexOptions.None, TimeSpan.FromMilliseconds(1000)).Value; // eg: Sheet1!A2:A5 -> Sheet1
+        var cellsRange = Regex.Match(normalizedFormula, @"(?<=\!).+", RegexOptions.None, TimeSpan.FromMilliseconds(1000)).Value; // eg: Sheet1!A2:A5 -> A2:A5
 
         var stream = embeddedPackagePart!.GetStream();
         var sdkSpreadsheetDocument = SpreadsheetDocument.Open(stream, false);
@@ -44,9 +37,7 @@ internal sealed class Workbook(EmbeddedPackagePart embeddedPackagePart)
         var pointValues = new List<double>(rangeXCells.Count);
         foreach (var xCell in rangeXCells)
         {
-            var cellValue = xCell.InnerText.Length == 0
-                ? 0
-                : double.Parse(xCell.InnerText, CultureInfo.InvariantCulture.NumberFormat);
+            var cellValue = xCell.InnerText.Length == 0 ? 0 : double.Parse(xCell.InnerText, CultureInfo.InvariantCulture.NumberFormat);
             pointValues.Add(cellValue);
         }
 

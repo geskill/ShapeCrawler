@@ -32,19 +32,13 @@ public interface ISectionCollection : IReadOnlyCollection<ISection>
 
 internal sealed class SectionCollection(PresentationDocument presDocument) : ISectionCollection
 {
-    public int Count => SectionList().Count;
+    public int Count => this.SectionList().Count;
 
-    public ISection this[int index] => SectionList()[index];
+    public ISection this[int index] => this.SectionList()[index];
 
-    public IEnumerator<ISection> GetEnumerator()
-    {
-        return SectionList().GetEnumerator();
-    }
+    public IEnumerator<ISection> GetEnumerator() => this.SectionList().GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
     public void Remove(ISection removingSection)
     {
@@ -53,7 +47,7 @@ internal sealed class SectionCollection(PresentationDocument presDocument) : ISe
             throw new SCException("Section cannot be removed.");
         }
 
-        var total = Count;
+        var total = this.Count;
         removeable.Remove();
 
         if (total == 1)
@@ -64,10 +58,7 @@ internal sealed class SectionCollection(PresentationDocument presDocument) : ISe
         }
     }
 
-    public ISection GetByName(string sectionName)
-    {
-        return SectionList().First(section => section.Name == sectionName);
-    }
+    public ISection GetByName(string sectionName) => this.SectionList().First(section => section.Name == sectionName);
 
     private List<Section> SectionList()
     {

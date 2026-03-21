@@ -25,10 +25,7 @@ internal sealed class NewShapeProperties(IUserSlideShapeCollection shapes)
     /// <summary>
     ///     Generates name for the next new shape.
     /// </summary>
-    internal string Name()
-    {
-        return $"Shape {Id()}";
-    }
+    internal string Name() => $"Shape {this.Id()}";
 
     /// <summary>
     ///     Generates name for the next new table shape.

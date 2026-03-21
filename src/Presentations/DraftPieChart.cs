@@ -27,7 +27,7 @@ public sealed class DraftPieChart
     /// <param name="name">The name (title or identifier) to assign to the pie chart.</param>
     public DraftPieChart Name(string name)
     {
-        ChartName = name;
+        this.ChartName = name;
         return this;
     }
 
@@ -36,7 +36,7 @@ public sealed class DraftPieChart
     /// </summary>
     public DraftPieChart X(int x)
     {
-        ChartX = x;
+        this.ChartX = x;
         return this;
     }
 
@@ -45,7 +45,7 @@ public sealed class DraftPieChart
     /// </summary>
     public DraftPieChart Y(int y)
     {
-        ChartY = y;
+        this.ChartY = y;
         return this;
     }
 
@@ -54,7 +54,7 @@ public sealed class DraftPieChart
     /// </summary>
     public DraftPieChart Width(int width)
     {
-        ChartWidth = width;
+        this.ChartWidth = width;
         return this;
     }
 
@@ -63,7 +63,7 @@ public sealed class DraftPieChart
     /// </summary>
     public DraftPieChart Height(int height)
     {
-        ChartHeight = height;
+        this.ChartHeight = height;
         return this;
     }
 
@@ -75,7 +75,7 @@ public sealed class DraftPieChart
     /// </param>
     public DraftPieChart Categories(params string[] categories)
     {
-        CategoryNames = categories ?? throw new SCException($"{nameof(categories)} cannot be null.");
+        this.CategoryNames = categories ?? throw new SCException($"{nameof(categories)} cannot be null.");
         return this;
     }
 
@@ -86,8 +86,8 @@ public sealed class DraftPieChart
     /// <param name="values">The numeric values for the series, corresponding to the defined categories.</param>
     public DraftPieChart Series(string seriesName, params double[] values)
     {
-        SeriesName = seriesName;
-        SeriesValues = values;
+        this.SeriesName = seriesName;
+        this.SeriesValues = values;
         return this;
     }
 }

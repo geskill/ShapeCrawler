@@ -2,8 +2,7 @@
 
 public class PresentationExamples
 {
-    [Test]
-    [Explicit]
+    [Test, Explicit]
     public void Get_markdown()
     {
         using var pres = new Presentation("pres.pptx");

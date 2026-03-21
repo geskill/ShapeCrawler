@@ -24,35 +24,35 @@ internal sealed class SlideNumberFont : ISlideNumberFont
     internal SlideNumberFont(A.DefaultRunProperties aDefaultRunProperties)
     {
         this.aDefaultRunProperties = aDefaultRunProperties;
-        masterSlideNumberSize = new MasterSlideNumberSize(aDefaultRunProperties);
+        this.masterSlideNumberSize = new MasterSlideNumberSize(aDefaultRunProperties);
     }
 
     public Color Color
     {
-        get => ParseColor();
-        set => UpdateColor(value);
+        get => this.ParseColor();
+        set => this.UpdateColor(value);
     }
 
     public decimal Size
     {
-        get => masterSlideNumberSize.Size;
-        set => masterSlideNumberSize.Size = value;
+        get => this.masterSlideNumberSize.Size;
+        set => this.masterSlideNumberSize.Size = value;
     }
 
     private void UpdateColor(Color color)
     {
-        var solidFill = aDefaultRunProperties.GetFirstChild<A.SolidFill>();
+        var solidFill = this.aDefaultRunProperties.GetFirstChild<A.SolidFill>();
         solidFill?.Remove();
 
         var rgbColorModelHex = new A.RgbColorModelHex { Val = color.ToString() };
         solidFill = new A.SolidFill(rgbColorModelHex);
 
-        aDefaultRunProperties.Append(solidFill);
+        this.aDefaultRunProperties.Append(solidFill);
     }
 
     private Color ParseColor()
     {
-        var hex = aDefaultRunProperties.GetFirstChild<A.SolidFill>()!.RgbColorModelHex!.Val!.Value!;
+        var hex = this.aDefaultRunProperties.GetFirstChild<A.SolidFill>()!.RgbColorModelHex!.Val!.Value!;
 
         return new Color(hex);
     }

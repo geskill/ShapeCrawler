@@ -18,7 +18,7 @@ public sealed class DraftTableShape
     /// </summary>
     public DraftTableShape X(int x)
     {
-        ShapeX = x;
+        this.ShapeX = x;
         return this;
     }
 
@@ -27,7 +27,7 @@ public sealed class DraftTableShape
     /// </summary>
     public DraftTableShape Y(int y)
     {
-        ShapeY = y;
+        this.ShapeY = y;
         return this;
     }
 
@@ -38,7 +38,7 @@ public sealed class DraftTableShape
     {
         var builder = new DraftTable();
         configure(builder);
-        DraftTableBuilder = builder;
+        this.DraftTableBuilder = builder;
         return this;
     }
 }

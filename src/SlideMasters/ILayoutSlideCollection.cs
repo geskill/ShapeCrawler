@@ -19,22 +19,13 @@ public interface ILayoutSlideCollection : IEnumerable<ILayoutSlide>
 
 internal sealed class LayoutSlideCollection(SlideMasterPart slideMasterPart) : ILayoutSlideCollection
 {
-    public ILayoutSlide this[int index] => Layouts().ElementAt(index);
+    public ILayoutSlide this[int index] => this.Layouts().ElementAt(index);
 
-    public IEnumerator<ILayoutSlide> GetEnumerator()
-    {
-        return Layouts().GetEnumerator();
-    }
+    public IEnumerator<ILayoutSlide> GetEnumerator() => this.Layouts().GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-    internal LayoutSlide Layout(int number)
-    {
-        return Layouts().First(l => l.Number == number);
-    }
+    internal LayoutSlide Layout(int number) => this.Layouts().First(l => l.Number == number);
 
     private IEnumerable<LayoutSlide> Layouts()
     {

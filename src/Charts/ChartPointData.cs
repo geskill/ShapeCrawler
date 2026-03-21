@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using DocumentFormat.OpenXml.Drawing.Charts;
 using DocumentFormat.OpenXml.Packaging;
+using C = DocumentFormat.OpenXml.Drawing.Charts;
 
 namespace ShapeCrawler.Charts;
 
@@ -15,7 +16,7 @@ internal sealed class ChartPointData(ChartPart chartPart)
         {
             var (sheetName, addresses) = ParseFormulaAddresses(numberReference.Formula);
             var numericValues = GetNumericValues(numberReference);
-            return CreateChartPoints(addresses, numericValues, sheetName);
+            return this.CreateChartPoints(addresses, numericValues, sheetName);
         }
 
         return numberLiteral != null ? CreateChartPointsFromLiteral(numberLiteral) : [];
@@ -76,18 +77,17 @@ internal sealed class ChartPointData(ChartPart chartPart)
         return addresses;
     }
 
-    private static List<NumericValue>? GetNumericValues(NumberReference numberReference)
+    private static List<C.NumericValue>? GetNumericValues(NumberReference numberReference)
     {
         if (numberReference.NumberingCache != null)
         {
-            return [.. numberReference.NumberingCache.Descendants<NumericValue>()];
+            return [.. numberReference.NumberingCache.Descendants<C.NumericValue>()];
         }
 
         return null;
     }
 
-    private List<ChartPoint> CreateChartPoints(List<string> addresses, List<NumericValue>? numericValues,
-        string sheetName)
+    private List<ChartPoint> CreateChartPoints(List<string> addresses, List<C.NumericValue>? numericValues, string sheetName)
     {
         var points = new List<ChartPoint>(addresses.Count);
 
@@ -102,7 +102,7 @@ internal sealed class ChartPointData(ChartPart chartPart)
         {
             // Empty cells of range don't have the corresponding C.NumericValue.
             var quPoints = Math.Min(addresses.Count, numericValues?.Count ?? 0);
-            for (var i = 0; i < quPoints; i++)
+            for (int i = 0; i < quPoints; i++)
             {
                 points.Add(new ChartPoint(chartPart, numericValues?[i]!, sheetName, addresses[i]));
             }

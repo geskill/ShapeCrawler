@@ -7,6 +7,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using Fixture;
 using ImageMagick;
+using VerifyTests;
 using A = DocumentFormat.OpenXml.Drawing;
 
 namespace ShapeCrawler.DevTests.Helpers;
@@ -26,7 +27,10 @@ public abstract class SCTest
     {
         lock (VerifySync)
         {
-            if (isVerifyInitialized) return;
+            if (isVerifyInitialized)
+            {
+                return;
+            }
 
             UseProjectRelativeDirectory("snapshots");
 
@@ -74,7 +78,7 @@ public abstract class SCTest
             TextGravity = Gravity.Center
         };
 
-        using var caption = new MagickImage("caption:Shape", settings);
+        using var caption = new MagickImage($"caption:Shape", settings);
         image.Composite(caption, Gravity.Center, CompositeOperator.Over);
 
         return image.ToByteArray(MagickFormat.Png);
@@ -83,7 +87,7 @@ public abstract class SCTest
     protected static string StringOf(string fileName)
     {
         var stream = TestAsset(fileName);
-        return Encoding.UTF8.GetString(stream.ToArray());
+        return System.Text.Encoding.UTF8.GetString(stream.ToArray());
     }
 
     protected static Presentation SaveAndOpenPresentation(IPresentation presentation)
@@ -140,7 +144,10 @@ public abstract class SCTest
         if (customErrors.Any())
         {
             var errorMessages = new StringBuilder();
-            foreach (var error in customErrors) errorMessages.AppendLine(error);
+            foreach (var error in customErrors)
+            {
+                errorMessages.AppendLine(error);
+            }
 
             throw new Exception(errorMessages.ToString());
         }
@@ -154,12 +161,15 @@ public abstract class SCTest
         foreach (var aTableRow in aTableRows)
         {
             var aExtLst = aTableRow.GetFirstChild<A.ExtensionList>();
-            if (aExtLst == null) continue;
+            if (aExtLst == null)
+            {
+                continue;
+            }
 
             var lastTableCellIndex = -1;
             var extListIndex = -1;
 
-            for (var i = 0; i < aTableRow.ChildElements.Count; i++)
+            for (int i = 0; i < aTableRow.ChildElements.Count; i++)
             {
                 var element = aTableRow.ChildElements[i];
                 switch (element)
@@ -176,8 +186,10 @@ public abstract class SCTest
             }
 
             if (extListIndex < lastTableCellIndex)
+            {
                 yield return
                     "Invalid table row structure: ExtensionList element must appear after all TableCell elements in a TableRow";
+            }
         }
     }
 
@@ -189,7 +201,7 @@ public abstract class SCTest
         [
             .. aText,
             .. presDocument.PresentationPart!.SlideMasterParts
-                .SelectMany(slidePart => slidePart.SlideMaster.Descendants<A.Text>())
+                .SelectMany(slidePart => slidePart.SlideMaster.Descendants<A.Text>()),
         ];
 
         foreach (var text in aText)
@@ -197,7 +209,9 @@ public abstract class SCTest
             var runProperties = text.Parent!.GetFirstChild<A.RunProperties>();
             if ((runProperties?.Descendants<A.SolidFill>().Any() ?? false)
                 && runProperties.ChildElements.Take(2).All(x => x is not A.SolidFill))
+            {
                 yield return "Invalid solid fill structure: SolidFill element must be index 0";
+            }
         }
     }
 }

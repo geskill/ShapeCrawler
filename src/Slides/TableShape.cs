@@ -20,7 +20,7 @@ internal sealed class TableShape : DrawingShape
     {
         var aTable = pGraphicFrame.GetFirstChild<A.Graphic>()!.GetFirstChild<A.GraphicData>()!
             .GetFirstChild<A.Table>()!;
-        Table = new Table(
+        this.Table = new Table(
             new TableRowCollection(pGraphicFrame),
             new TableColumnCollection(pGraphicFrame),
             new TableStyleOptions(aTable.TableProperties!),
@@ -36,10 +36,10 @@ internal sealed class TableShape : DrawingShape
         get => base.Width;
         set
         {
-            var percentNewWidth = value / Width;
+            var percentNewWidth = value / this.Width;
             base.Width = value;
 
-            foreach (var tableColumn in Table!.Columns)
+            foreach (var tableColumn in this.Table!.Columns)
             {
                 tableColumn.Width *= percentNewWidth;
             }
@@ -51,10 +51,10 @@ internal sealed class TableShape : DrawingShape
         get => base.Height;
         set
         {
-            var percentNewHeight = value / Height;
+            var percentNewHeight = value / this.Height;
             base.Height = value;
 
-            foreach (var tableRow in Table!.Rows)
+            foreach (var tableRow in this.Table!.Rows)
             {
                 var row = (TableRow)tableRow;
                 row.SetHeight((int)(row.Height * percentNewHeight));
@@ -64,13 +64,13 @@ internal sealed class TableShape : DrawingShape
 
     internal override void Render(SKCanvas canvas)
     {
-        var table = (Table)Table!;
-        var rowTopPoints = Y;
+        var table = (Table)this.Table!;
+        var rowTopPoints = this.Y;
 
         for (var rowIdx = 0; rowIdx < table.Rows.Count; rowIdx++)
         {
-            var colLeftPoints = X;
-            RenderRow(canvas, table, rowIdx, ref colLeftPoints, rowTopPoints);
+            var colLeftPoints = this.X;
+            this.RenderRow(canvas, table, rowIdx, ref colLeftPoints, rowTopPoints);
             rowTopPoints += table.Rows[rowIdx].Height;
         }
     }
@@ -84,11 +84,10 @@ internal sealed class TableShape : DrawingShape
             (float)new Points(y + height).AsPixels());
     }
 
-    private static void RenderCellText(SKCanvas canvas, TableCell cell, decimal x, decimal y, decimal w, decimal h,
-        string? styleFontColorHex)
+    private static void RenderCellText(SKCanvas canvas, TableCell cell, decimal x, decimal y, decimal w, decimal h, string? styleFontColorHex)
     {
         var aTextBody = cell.ATableCell.TextBody!;
-
+        
         if (styleFontColorHex == null)
         {
             RenderTextWithoutStyleColor(canvas, aTextBody, x, y, w, h);
@@ -96,7 +95,7 @@ internal sealed class TableShape : DrawingShape
         }
 
         var modifiedRunProperties = ApplyStyleFontColor(aTextBody, styleFontColorHex);
-
+        
         try
         {
             RenderTextWithoutStyleColor(canvas, aTextBody, x, y, w, h);
@@ -107,16 +106,14 @@ internal sealed class TableShape : DrawingShape
         }
     }
 
-    private static void RenderTextWithoutStyleColor(SKCanvas canvas, A.TextBody aTextBody, decimal x, decimal y,
-        decimal w, decimal h)
+    private static void RenderTextWithoutStyleColor(SKCanvas canvas, A.TextBody aTextBody, decimal x, decimal y, decimal w, decimal h)
     {
         var textBoxMargins = new TextBoxMargins(aTextBody);
         var drawingTextBox = new DrawingTextBox(textBoxMargins, aTextBody);
         drawingTextBox.Render(canvas, x, y, w, h);
     }
 
-    private static List<(A.RunProperties RunProp, A.SolidFill? OriginalFill)> ApplyStyleFontColor(A.TextBody aTextBody,
-        string styleFontColorHex)
+    private static List<(A.RunProperties RunProp, A.SolidFill? OriginalFill)> ApplyStyleFontColor(A.TextBody aTextBody, string styleFontColorHex)
     {
         var modifiedRunProperties = new List<(A.RunProperties RunProp, A.SolidFill? OriginalFill)>();
 
@@ -155,35 +152,33 @@ internal sealed class TableShape : DrawingShape
         aRunPr.InsertAt(newFill, 0);
     }
 
-    private static void RestoreOriginalFontColors(
-        List<(A.RunProperties RunProp, A.SolidFill? OriginalFill)> modifiedRunProperties)
+    private static void RestoreOriginalFontColors(List<(A.RunProperties RunProp, A.SolidFill? OriginalFill)> modifiedRunProperties)
     {
         foreach (var (runProp, originalFill) in modifiedRunProperties)
         {
             var tempFill = runProp.GetFirstChild<A.SolidFill>();
             tempFill?.Remove();
-
+            
             if (originalFill != null)
             {
                 runProp.InsertAt(originalFill, 0);
             }
         }
     }
-
-    private static (decimal Width, decimal Height) CalculateCellDimensions(Table table, TableCell cell, int rowIdx,
-        int colIdx)
+    
+    private static (decimal Width, decimal Height) CalculateCellDimensions(Table table, TableCell cell, int rowIdx, int colIdx)
     {
-        var gridSpan = cell.ATableCell.GridSpan?.Value ?? 1;
-        var rowSpan = cell.ATableCell.RowSpan?.Value ?? 1;
+        int gridSpan = cell.ATableCell.GridSpan?.Value ?? 1;
+        int rowSpan = cell.ATableCell.RowSpan?.Value ?? 1;
 
         decimal cellTotalWidth = 0;
-        for (var k = 0; k < gridSpan; k++)
+        for (int k = 0; k < gridSpan; k++)
         {
             cellTotalWidth += table.Columns[colIdx + k].Width;
         }
 
         decimal cellTotalHeight = 0;
-        for (var k = 0; k < rowSpan; k++)
+        for (int k = 0; k < rowSpan; k++)
         {
             cellTotalHeight += table.Rows[rowIdx + k].Height;
         }
@@ -204,7 +199,7 @@ internal sealed class TableShape : DrawingShape
             if (cell.RowIndex == rowIdx && cell.ColumnIndex == colIdx)
             {
                 var cellDimensions = CalculateCellDimensions(table, cell, rowIdx, colIdx);
-                RenderCell(canvas, cell, colLeftPoints, rowTopPoints, cellDimensions.Width, cellDimensions.Height);
+                this.RenderCell(canvas, cell, colLeftPoints, rowTopPoints, cellDimensions.Width, cellDimensions.Height);
             }
 
             colLeftPoints += columns[colIdx].Width;
@@ -214,8 +209,8 @@ internal sealed class TableShape : DrawingShape
     private void RenderCell(SKCanvas canvas, TableCell cell, decimal x, decimal y, decimal w, decimal h)
     {
         // 1. Resolve Fill
-        var fillColor = GetCellFillColor(cell);
-
+        var fillColor = this.GetCellFillColor(cell);
+        
         // 2. Render Fill
         if (fillColor != null)
         {
@@ -229,7 +224,7 @@ internal sealed class TableShape : DrawingShape
         }
 
         // 3. Render Borders
-        RenderBorders(canvas, x, y, w, h);
+        this.RenderBorders(canvas, x, y, w, h);
 
         // 4. Render Text with style font color
         if (cell.ATableCell.TextBody == null)
@@ -237,7 +232,7 @@ internal sealed class TableShape : DrawingShape
             return;
         }
 
-        var styleFontColorHex = GetStyleFontColorHex(cell);
+        var styleFontColorHex = this.GetStyleFontColorHex(cell);
         RenderCellText(canvas, cell, x, y, w, h, styleFontColorHex);
     }
 
@@ -248,12 +243,12 @@ internal sealed class TableShape : DrawingShape
             return new Color(cell.Fill.Color).AsSkColor();
         }
 
-        return GetStyleFill(cell);
+        return this.GetStyleFill(cell);
     }
 
     private SKColor? GetStyleFill(TableCell cell)
     {
-        var table = (Table)Table!;
+        var table = (Table)this.Table!;
         var style = (TableStyle)table.TableStyle;
 
         // Medium Style 2 - Accent 1
@@ -262,48 +257,48 @@ internal sealed class TableShape : DrawingShape
             // Header Row
             if (table.StyleOptions.HasHeaderRow && cell.RowIndex == 0)
             {
-                var hex = ResolveSchemeColor("accent1");
+                var hex = this.ResolveSchemeColor("accent1");
                 return hex != null ? new Color(hex).AsSkColor() : null;
             }
-
+            
             // Banded Rows
             if (table.StyleOptions.HasBandedRows && cell.RowIndex % 2 != 0)
             {
-                // 20% tint of Accent 1
-                var hex = ResolveSchemeColor("accent1");
-                if (hex != null)
-                {
-                    var color = new Color(hex).AsSkColor();
+                 // 20% tint of Accent 1
+                 var hex = this.ResolveSchemeColor("accent1");
+                 if (hex != null)
+                 {
+                     var color = new Color(hex).AsSkColor();
 
-                    // Approx 20% opacity for simple visual match with the user's expectation
-                    return new SKColor(color.Red, color.Green, color.Blue, 51);
-                }
+                     // Approx 20% opacity for simple visual match with the user's expectation
+                     return new SKColor(color.Red, color.Green, color.Blue, 51); 
+                 }
             }
         }
-
+        
         return null;
     }
 
     private string? GetStyleFontColorHex(TableCell cell)
     {
-        var table = (Table)Table!;
+        var table = (Table)this.Table!;
         var style = (TableStyle)table.TableStyle;
-
+        
         // Medium Style 2 - Accent 1
         if (style.Guid == MediumStyle2Accent1Guid)
         {
             // Header Row uses white text
             return table.StyleOptions.HasHeaderRow && cell.RowIndex == 0 ? "FFFFFF" : null;
         }
-
+        
         return null;
     }
 
     private void RenderBorders(SKCanvas canvas, decimal x, decimal y, decimal w, decimal h)
     {
-        var table = (Table)Table!;
+        var table = (Table)this.Table!;
         var style = (TableStyle)table.TableStyle;
-
+        
         // Style borders (Medium Style 2 - Accent 1 implies white borders)
         if (style.Guid != "{5C22544A-7EE6-4342-B048-85BDC9FD1C3A}")
         {

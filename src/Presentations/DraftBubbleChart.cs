@@ -17,7 +17,7 @@ public sealed class DraftBubbleChart
     /// <param name="name">The name (title or identifier) to assign to the bubble chart.</param>
     public DraftBubbleChart Name(string name)
     {
-        ChartName = name;
+        this.ChartName = name;
         return this;
     }
 
@@ -28,8 +28,8 @@ public sealed class DraftBubbleChart
     /// <param name="points">The points for the series.</param>
     public DraftBubbleChart Series(string seriesName, params (double X, double Y, double Size)[] points)
     {
-        SeriesName = seriesName;
-        SeriesPoints = points ?? throw new SCException($"{nameof(points)} cannot be null.");
+        this.SeriesName = seriesName;
+        this.SeriesPoints = points ?? throw new SCException($"{nameof(points)} cannot be null.");
         return this;
     }
 }

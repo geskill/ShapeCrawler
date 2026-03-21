@@ -44,27 +44,27 @@ internal sealed class LayoutSlide : ILayoutSlide
 
     internal LayoutSlide(SlideLayoutPart slideLayoutPart)
     {
-        SlideLayoutPart = slideLayoutPart;
-        Shapes = new ShapeCollection(slideLayoutPart);
-        background = new LayoutSlideBackground(slideLayoutPart);
+        this.SlideLayoutPart = slideLayoutPart;
+        this.Shapes = new ShapeCollection(slideLayoutPart);
+        this.background = new LayoutSlideBackground(slideLayoutPart);
     }
 
-    internal SlideLayoutPart SlideLayoutPart { get; }
-
-    public string Name => SlideLayoutPart.SlideLayout!.CommonSlideData!.Name!.Value!;
+    public string Name => this.SlideLayoutPart.SlideLayout!.CommonSlideData!.Name!.Value!;
 
     public IShapeCollection Shapes { get; }
 
-    public IMasterSlide MasterSlide => new MasterSlide(SlideLayoutPart.SlideMasterPart!);
+    public IMasterSlide MasterSlide => new MasterSlide(this.SlideLayoutPart.SlideMasterPart!);
 
     public int Number
     {
         get
         {
-            var match = Regex.Match(SlideLayoutPart.Uri.ToString(), @"\d+", RegexOptions.None, TimeSpan.FromSeconds(1));
+            var match = Regex.Match(this.SlideLayoutPart.Uri.ToString(), @"\d+", RegexOptions.None, TimeSpan.FromSeconds(1));
             return int.Parse(match.Value);
         }
     }
 
-    public ILayoutSlideBackground Background => background;
+    public ILayoutSlideBackground Background => this.background;
+
+    internal SlideLayoutPart SlideLayoutPart { get; }
 }

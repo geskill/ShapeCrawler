@@ -7,14 +7,14 @@ using DocumentFormat.OpenXml.Packaging;
 namespace ShapeCrawler.Slides;
 
 /// <summary>
-///     Tracks image parts keyed by content hash to avoid duplication across slides.
+/// Tracks image parts keyed by content hash to avoid duplication across slides.
 /// </summary>
 internal sealed class ImagePartCatalog
 {
     private readonly IDictionary<string, ImagePart> imageParts = new Dictionary<string, ImagePart>();
 
     /// <summary>
-    ///     Adds existing image parts to the catalog to establish baseline deduplication state.
+    /// Adds existing image parts to the catalog to establish baseline deduplication state.
     /// </summary>
     /// <param name="existingParts">Image parts to index by content hash.</param>
     internal void SeedFrom(IEnumerable<ImagePart> existingParts)
@@ -22,15 +22,15 @@ internal sealed class ImagePartCatalog
         foreach (var imagePart in existingParts)
         {
             var hash = ComputeHash(imagePart);
-            if (!imageParts.ContainsKey(hash))
+            if (!this.imageParts.ContainsKey(hash))
             {
-                imageParts.Add(hash, imagePart);
+                this.imageParts.Add(hash, imagePart);
             }
         }
     }
 
     /// <summary>
-    ///     Replaces duplicate image parts in the specified slide part with catalogued instances.
+    /// Replaces duplicate image parts in the specified slide part with catalogued instances.
     /// </summary>
     /// <param name="slidePart">Slide part to inspect for duplicate images.</param>
     internal void Deduplicate(SlidePart slidePart)
@@ -38,7 +38,7 @@ internal sealed class ImagePartCatalog
         foreach (var imagePart in slidePart.ImageParts.ToList())
         {
             var hash = ComputeHash(imagePart);
-            if (imageParts.TryGetValue(hash, out var existingPart) && !ReferenceEquals(existingPart, imagePart))
+            if (this.imageParts.TryGetValue(hash, out var existingPart) && !ReferenceEquals(existingPart, imagePart))
             {
                 var relId = slidePart.GetIdOfPart(imagePart);
                 slidePart.DeletePart(imagePart);
@@ -46,7 +46,7 @@ internal sealed class ImagePartCatalog
                 continue;
             }
 
-            imageParts[hash] = imagePart;
+            this.imageParts[hash] = imagePart;
         }
     }
 

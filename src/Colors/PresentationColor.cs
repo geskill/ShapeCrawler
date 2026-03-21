@@ -33,7 +33,7 @@ internal sealed class PresentationColor(OpenXmlPart openXmlPart)
     {
         var aColorScheme = GetColorScheme(openXmlPart);
 
-        return GetColorValue(aColorScheme, aSchemeColorValue);
+        return this.GetColorValue(aColorScheme, aSchemeColorValue);
     }
 
     private static string GetRgbOrSystemColor(A.Color2Type colorType)
@@ -113,7 +113,7 @@ internal sealed class PresentationColor(OpenXmlPart openXmlPart)
             return GetRgbOrSystemColor(getColorType());
         }
 
-        return GetThemeMappedColor(aSchemeColorValue);
+        return this.GetThemeMappedColor(aSchemeColorValue);
     }
 
     private string GetThemeMappedColor(A.SchemeColorValues themeColor)
@@ -129,20 +129,20 @@ internal sealed class PresentationColor(OpenXmlPart openXmlPart)
         };
         if (themeColor == A.SchemeColorValues.Text1)
         {
-            return GetThemeColorByString(pColorMap.Text1!.ToString()!);
+            return this.GetThemeColorByString(pColorMap.Text1!.ToString()!);
         }
 
         if (themeColor == A.SchemeColorValues.Text2)
         {
-            return GetThemeColorByString(pColorMap.Text2!.ToString()!);
+            return this.GetThemeColorByString(pColorMap.Text2!.ToString()!);
         }
 
         if (themeColor == A.SchemeColorValues.Background1)
         {
-            return GetThemeColorByString(pColorMap.Background1!.ToString()!);
+            return this.GetThemeColorByString(pColorMap.Background1!.ToString()!);
         }
 
-        return GetThemeColorByString(pColorMap.Background2!.ToString()!);
+        return this.GetThemeColorByString(pColorMap.Background2!.ToString()!);
     }
 
     private string GetThemeColorByString(string fontSchemeColor)

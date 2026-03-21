@@ -5,8 +5,7 @@ public class TestSlidePortionQuery(int slideNumber, string shapeName, int paragr
 {
     private readonly int shapeId;
 
-    public TestSlidePortionQuery(int slideNumber, int shapeId, int paragraphNumber, int portionNumber) : this(
-        slideNumber, null, paragraphNumber, portionNumber)
+    public TestSlidePortionQuery(int slideNumber, int shapeId, int paragraphNumber, int portionNumber) : this(slideNumber, null, paragraphNumber, portionNumber)
     {
         this.shapeId = shapeId;
     }
@@ -15,7 +14,7 @@ public class TestSlidePortionQuery(int slideNumber, string shapeName, int paragr
     {
         var shapes = pres.Slides[slideNumber - 1].Shapes;
         var shape = shapeName == null
-            ? shapes.GetById<IShape>(shapeId)
+            ? shapes.GetById<IShape>(this.shapeId)
             : shapes.Shape<IShape>(shapeName);
 
         return shape.TextBox!.Paragraphs[paragraphNumber - 1].Portions[portionNumber - 1];

@@ -19,7 +19,7 @@ internal sealed class ChartShapeCollection(SlidePart slidePart)
         Dictionary<string, double> categoryValues,
         string seriesName)
     {
-        AddPieChart(x, y, width, height, categoryValues, seriesName, "Pie Chart");
+        this.AddPieChart(x, y, width, height, categoryValues, seriesName, "Pie Chart");
     }
 
     internal void AddPieChart(
@@ -34,7 +34,7 @@ internal sealed class ChartShapeCollection(SlidePart slidePart)
         var rId = new SCOpenXmlPart(slidePart).NextRelationshipId();
         var chartPart = slidePart.AddNewPart<ChartPart>(rId);
         new PieChart(chartPart, categoryValues, seriesName).Generate();
-        InsertChartGraphicFrame(chartPart, x, y, width, height, chartName);
+        this.InsertChartGraphicFrame(chartPart, x, y, width, height, chartName);
     }
 
     internal void AddBarChart(
@@ -48,7 +48,7 @@ internal sealed class ChartShapeCollection(SlidePart slidePart)
         var rId = new SCOpenXmlPart(slidePart).NextRelationshipId();
         var chartPart = slidePart.AddNewPart<ChartPart>(rId);
         new BarChart(chartPart, categoryValues, seriesName).Generate();
-        InsertChartGraphicFrame(chartPart, x, y, width, height, "Bar Chart");
+        this.InsertChartGraphicFrame(chartPart, x, y, width, height, "Bar Chart");
     }
 
     internal void AddScatterChart(
@@ -62,7 +62,7 @@ internal sealed class ChartShapeCollection(SlidePart slidePart)
         var rId = new SCOpenXmlPart(slidePart).NextRelationshipId();
         var chartPart = slidePart.AddNewPart<ChartPart>(rId);
         new ScatterChart(chartPart, pointValues, seriesName).Generate();
-        InsertChartGraphicFrame(chartPart, x, y, width, height, "Scatter Chart");
+        this.InsertChartGraphicFrame(chartPart, x, y, width, height, "Scatter Chart");
     }
 
     internal void AddBubbleChart(
@@ -73,7 +73,7 @@ internal sealed class ChartShapeCollection(SlidePart slidePart)
         IReadOnlyList<(double X, double Y, double Size)> pointValues,
         string seriesName)
     {
-        AddBubbleChart(x, y, width, height, pointValues, seriesName, "Bubble Chart");
+        this.AddBubbleChart(x, y, width, height, pointValues, seriesName, "Bubble Chart");
     }
 
     internal void AddBubbleChart(
@@ -88,7 +88,7 @@ internal sealed class ChartShapeCollection(SlidePart slidePart)
         var rId = new SCOpenXmlPart(slidePart).NextRelationshipId();
         var chartPart = slidePart.AddNewPart<ChartPart>(rId);
         new BubbleChart(chartPart, pointValues, seriesName);
-        InsertChartGraphicFrame(chartPart, x, y, width, height, chartName);
+        this.InsertChartGraphicFrame(chartPart, x, y, width, height, chartName);
     }
 
     internal void AddStackedColumnChart(
@@ -102,7 +102,7 @@ internal sealed class ChartShapeCollection(SlidePart slidePart)
         var rId = new SCOpenXmlPart(slidePart).NextRelationshipId();
         var chartPart = slidePart.AddNewPart<ChartPart>(rId);
         new StackedColumnChart(chartPart, categoryValues, seriesNames).Generate();
-        InsertChartGraphicFrame(chartPart, x, y, width, height, "Stacked Column Chart");
+        this.InsertChartGraphicFrame(chartPart, x, y, width, height, "Stacked Column Chart");
     }
 
     internal void AddClusteredBarChart(
@@ -118,16 +118,15 @@ internal sealed class ChartShapeCollection(SlidePart slidePart)
         var chartPart = slidePart.AddNewPart<ChartPart>(rId);
         var seriesTuples = seriesData.Select(s => (s.Name, s.Values)).ToArray();
         new ClusteredBarChart(chartPart, categories, seriesTuples).Generate();
-        InsertChartGraphicFrame(chartPart, x, y, width, height, chartName);
+        this.InsertChartGraphicFrame(chartPart, x, y, width, height, chartName);
     }
 
-    private void InsertChartGraphicFrame(ChartPart chartPart, double x, double y, double width, double height,
-        string chartName)
+    private void InsertChartGraphicFrame(ChartPart chartPart, double x, double y, double width, double height, string chartName)
     {
         var graphicFrame = new GraphicFrame
         {
             NonVisualGraphicFrameProperties = new NonVisualGraphicFrameProperties(
-                new NonVisualDrawingProperties { Id = GetNextShapeId(), Name = chartName },
+                new NonVisualDrawingProperties { Id = this.GetNextShapeId(), Name = chartName },
                 new NonVisualGraphicFrameDrawingProperties(),
                 new ApplicationNonVisualDrawingProperties()
             ),

@@ -10,22 +10,22 @@ namespace ShapeCrawler.Drawing;
 internal class TableCellFill : IShapeFill
 {
     private readonly A.TableCellProperties aTableCellProperties;
-    private A.BlipFill? aBlipFill;
     private FillType fillType;
-    private string? hexSolidColor;
     private bool isDirty;
+    private string? hexSolidColor;
     private ShapeFillImage? pictureImage;
+    private A.SolidFill? sdkASolidFill;
     private A.GradientFill? sdkAGradFill;
     private A.PatternFill? sdkAPattFill;
-    private A.SolidFill? sdkASolidFill;
+    private A.BlipFill? aBlipFill;
 
     internal TableCellFill(A.TableCellProperties aTableCellProperties)
     {
         this.aTableCellProperties = aTableCellProperties;
-        isDirty = true;
+        this.isDirty = true;
     }
 
-    public string? Color => GetHexSolidColor();
+    public string? Color => this.GetHexSolidColor();
 
     public double Alpha { get; }
 
@@ -33,21 +33,21 @@ internal class TableCellFill : IShapeFill
 
     public double LuminanceOffset { get; }
 
-    public IImage? Picture => GetPicture();
+    public IImage? Picture => this.GetPicture();
 
-    public FillType Type => GetFillType();
+    public FillType Type => this.GetFillType();
 
     public void SetPicture(Stream image)
     {
-        var openXmlPart = aTableCellProperties.Ancestors<OpenXmlPartRootElement>().First().OpenXmlPart!;
-        if (isDirty)
+        var openXmlPart = this.aTableCellProperties.Ancestors<OpenXmlPartRootElement>().First().OpenXmlPart!;
+        if (this.isDirty)
         {
-            Initialize();
+            this.Initialize();
         }
 
-        if (Type == FillType.Picture)
+        if (this.Type == FillType.Picture)
         {
-            pictureImage!.Update(image);
+            this.pictureImage!.Update(image);
         }
         else
         {
@@ -55,156 +55,156 @@ internal class TableCellFill : IShapeFill
 
             // This could be refactored to DRY vs SlideShapes.CreatePPicture.
             // In the process, the image could be de-duped also.
-            aBlipFill = new A.BlipFill();
+            this.aBlipFill = new A.BlipFill();
             var aStretch = new A.Stretch();
             aStretch.Append(new A.FillRectangle());
-            aBlipFill.Append(new A.Blip { Embed = rId });
-            aBlipFill.Append(aStretch);
+            this.aBlipFill.Append(new A.Blip { Embed = rId });
+            this.aBlipFill.Append(aStretch);
 
-            aTableCellProperties.Append(aBlipFill);
+            this.aTableCellProperties.Append(this.aBlipFill);
 
-            sdkASolidFill?.Remove();
-            aBlipFill = null;
-            sdkAGradFill?.Remove();
-            sdkAGradFill = null;
-            sdkAPattFill?.Remove();
-            sdkAPattFill = null;
+            this.sdkASolidFill?.Remove();
+            this.aBlipFill = null;
+            this.sdkAGradFill?.Remove();
+            this.sdkAGradFill = null;
+            this.sdkAPattFill?.Remove();
+            this.sdkAPattFill = null;
         }
 
-        isDirty = true;
+        this.isDirty = true;
     }
 
     public void SetColor(string hex)
     {
-        if (isDirty)
+        if (this.isDirty)
         {
-            Initialize();
+            this.Initialize();
         }
 
-        aTableCellProperties.AddSolidFill(hex);
+        this.aTableCellProperties.AddSolidFill(hex);
 
-        isDirty = true;
+        this.isDirty = true;
     }
 
 
     public void SetNoFill()
     {
-        if (isDirty)
+        if (this.isDirty)
         {
-            Initialize();
+            this.Initialize();
         }
 
-        aTableCellProperties.AddNoFill();
+        this.aTableCellProperties.AddNoFill();
 
-        isDirty = true;
+        this.isDirty = true;
     }
 
     private void InitSlideBackgroundFillOr()
     {
-        fillType = FillType.NoFill;
+        this.fillType = FillType.NoFill;
     }
 
     private FillType GetFillType()
     {
-        if (isDirty)
+        if (this.isDirty)
         {
-            Initialize();
+            this.Initialize();
         }
 
-        return fillType;
+        return this.fillType;
     }
 
     private void Initialize()
     {
-        InitSolidFillOr();
-        isDirty = false;
+        this.InitSolidFillOr();
+        this.isDirty = false;
     }
 
     private void InitSolidFillOr()
     {
-        sdkASolidFill = aTableCellProperties.GetFirstChild<A.SolidFill>();
-        if (sdkASolidFill != null)
+        this.sdkASolidFill = this.aTableCellProperties.GetFirstChild<A.SolidFill>();
+        if (this.sdkASolidFill != null)
         {
-            var aRgbColorModelHex = sdkASolidFill.RgbColorModelHex;
+            var aRgbColorModelHex = this.sdkASolidFill.RgbColorModelHex;
             if (aRgbColorModelHex != null)
             {
                 var hexColor = aRgbColorModelHex.Val!.ToString();
-                hexSolidColor = hexColor;
+                this.hexSolidColor = hexColor;
             }
 
-            fillType = FillType.Solid;
+            this.fillType = FillType.Solid;
         }
         else
         {
-            InitGradientFillOr();
+            this.InitGradientFillOr();
         }
     }
 
     private void InitGradientFillOr()
     {
-        sdkAGradFill = aTableCellProperties!.GetFirstChild<A.GradientFill>();
-        if (sdkAGradFill != null)
+        this.sdkAGradFill = this.aTableCellProperties!.GetFirstChild<A.GradientFill>();
+        if (this.sdkAGradFill != null)
         {
-            fillType = FillType.Gradient;
+            this.fillType = FillType.Gradient;
         }
         else
         {
-            InitPictureFillOr();
+            this.InitPictureFillOr();
         }
     }
 
     private void InitPictureFillOr()
     {
-        var openXmlPart = aTableCellProperties.Ancestors<OpenXmlPartRootElement>().First().OpenXmlPart!;
-        aBlipFill = aTableCellProperties.GetFirstChild<A.BlipFill>();
+        var openXmlPart = this.aTableCellProperties.Ancestors<OpenXmlPartRootElement>().First().OpenXmlPart!;
+        this.aBlipFill = this.aTableCellProperties.GetFirstChild<A.BlipFill>();
 
-        if (aBlipFill is not null)
+        if (this.aBlipFill is not null)
         {
-            var blipEmbedValue = aBlipFill.Blip?.Embed?.Value;
+            var blipEmbedValue = this.aBlipFill.Blip?.Embed?.Value;
             if (blipEmbedValue != null)
             {
                 var imagePart = (ImagePart)openXmlPart.GetPartById(blipEmbedValue);
-                var image = new ShapeFillImage(aBlipFill.Blip!, imagePart);
-                pictureImage = image;
-                fillType = FillType.Picture;
+                var image = new ShapeFillImage(this.aBlipFill.Blip!, imagePart);
+                this.pictureImage = image;
+                this.fillType = FillType.Picture;
             }
         }
         else
         {
-            InitPatternFillOr();
+            this.InitPatternFillOr();
         }
     }
 
     private void InitPatternFillOr()
     {
-        sdkAPattFill = aTableCellProperties.GetFirstChild<A.PatternFill>();
-        if (sdkAPattFill != null)
+        this.sdkAPattFill = this.aTableCellProperties.GetFirstChild<A.PatternFill>();
+        if (this.sdkAPattFill != null)
         {
-            fillType = FillType.Pattern;
+            this.fillType = FillType.Pattern;
         }
         else
         {
-            InitSlideBackgroundFillOr();
+            this.InitSlideBackgroundFillOr();
         }
     }
 
     private string? GetHexSolidColor()
     {
-        if (isDirty)
+        if (this.isDirty)
         {
-            Initialize();
+            this.Initialize();
         }
 
-        return hexSolidColor;
+        return this.hexSolidColor;
     }
 
     private ShapeFillImage? GetPicture()
     {
-        if (isDirty)
+        if (this.isDirty)
         {
-            Initialize();
+            this.Initialize();
         }
 
-        return pictureImage;
+        return this.pictureImage;
     }
 }

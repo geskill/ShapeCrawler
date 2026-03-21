@@ -22,8 +22,7 @@ internal sealed class SheetCategory(
         set
         {
             cachedValue.Text = value;
-            new Workbook(chartPart.EmbeddedPackagePart!).Sheet(sheetName).Cell(cellAddress)
-                .UpdateValue(value, CellValues.String);
+            new Workbook(chartPart.EmbeddedPackagePart!).Sheet(sheetName).Cell(cellAddress).UpdateValue(value, CellValues.String);
         }
     }
 }

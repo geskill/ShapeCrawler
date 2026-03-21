@@ -13,10 +13,10 @@ public interface IShapeOutline
     decimal Weight { get; set; }
 
     /// <summary>
-    ///     Gets color in hexadecimal format. Returns <see langword="null" /> if outline is not filled.
+    ///     Gets color in hexadecimal format. Returns <see langword="null"/> if outline is not filled.
     /// </summary>
     /// <returns>
-    ///     Hexadecimal color, for example, "FF0000".
+    /// Hexadecimal color, for example, "FF0000".
     /// </returns>
     string? HexColor { get; }
 
@@ -24,7 +24,7 @@ public interface IShapeOutline
     ///     Sets color in hexadecimal format.
     /// </summary>
     /// <example>
-    ///     <code>
+    ///    <code>
     ///     shape.Outline.SetHexColor("FF0000");
     ///    </code>
     /// </example>

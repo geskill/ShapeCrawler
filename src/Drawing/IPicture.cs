@@ -19,13 +19,12 @@ namespace ShapeCrawler;
 public interface IPicture
 {
     /// <summary>
-    ///     Gets image. Returns <see langword="null" /> if the content of the picture element is not a binary image (e.g.,
-    ///     SVG).
+    ///     Gets image. Returns <see langword="null"/> if the content of the picture element is not a binary image (e.g., SVG). 
     /// </summary>
     IImage? Image { get; }
 
     /// <summary>
-    ///     Gets SVG content. Returns <see langword="null" /> if the content of the picture element is not an SVG graphic.
+    ///     Gets SVG content. Returns <see langword="null"/> if the content of the picture element is not an SVG graphic.
     /// </summary>
     string? SvgContent { get; }
 
@@ -47,14 +46,15 @@ public interface IPicture
 
 internal sealed class Picture(P.Picture pPicture, A.Blip aBlip) : IPicture
 {
+    public IImage Image => new SlidePictureImage(aBlip);
+
+    public string? SvgContent => this.GetSvgContent();
+
     public bool HasOutline => true;
 
     public bool HasFill => true;
 
     public bool HasText => false;
-    public IImage Image => new SlidePictureImage(aBlip);
-
-    public string? SvgContent => GetSvgContent();
 
     public CroppingFrame Crop
     {
@@ -76,7 +76,7 @@ internal sealed class Picture(P.Picture pPicture, A.Blip aBlip) : IPicture
                             ?? throw new SCException("Malformed image has no blip fill");
 
             var aSrcRect = aBlipFill.GetFirstChild<A.SourceRectangle>()
-                           ?? aBlipFill.InsertAfter<A.SourceRectangle>(new A.SourceRectangle(), aBlip)
+                           ?? aBlipFill.InsertAfter<A.SourceRectangle>(new(), aBlip)
                            ?? throw new SCException("Failed to add source rectangle");
 
             ApplyCropToSourceRectangle(value, aSrcRect);
@@ -96,7 +96,7 @@ internal sealed class Picture(P.Picture pPicture, A.Blip aBlip) : IPicture
         set
         {
             var aAlphaModFix = aBlip.GetFirstChild<A.AlphaModulationFixed>()
-                               ?? aBlip.InsertAt<A.AlphaModulationFixed>(new A.AlphaModulationFixed(), 0)
+                               ?? aBlip.InsertAt<A.AlphaModulationFixed>(new(), 0)
                                ?? throw new SCException("Failed to add AlphaModFix");
 
             aAlphaModFix.Amount = Convert.ToInt32((100m - value) * 1000m);
@@ -114,7 +114,7 @@ internal sealed class Picture(P.Picture pPicture, A.Blip aBlip) : IPicture
     public void SetImage(string imagePath)
     {
         using var imageStream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
-        Image.Update(imageStream);
+        this.Image.Update(imageStream);
     }
 
     internal void CopyTo(P.ShapeTree pShapeTree)
@@ -139,7 +139,7 @@ internal sealed class Picture(P.Picture pPicture, A.Blip aBlip) : IPicture
         sourceImageStream.Position = 0;
 
         // Determine target part relationship ID
-        var targetImagePartRId = new SCOpenXmlPart(targetOpenXmlPart).NextRelationshipId();
+        string targetImagePartRId = new SCOpenXmlPart(targetOpenXmlPart).NextRelationshipId();
 
         // Create a new image part in the target slide
         var targetImagePart = targetOpenXmlPart.AddNewPart<ImagePart>(sourceImagePart.ContentType, targetImagePartRId);
@@ -187,20 +187,16 @@ internal sealed class Picture(P.Picture pPicture, A.Blip aBlip) : IPicture
     /// </summary>
     /// <param name="int32">Per cent mille value.</param>
     /// <returns>Percent value.</returns>
-    private static decimal FromThousandths(Int32Value? int32)
-    {
-        return int32 is not null ? int32 / 1000m : 0;
-    }
+    private static decimal FromThousandths(Int32Value? int32) =>
+        int32 is not null ? int32 / 1000m : 0;
 
     /// <summary>
     ///     Convert a value from 'percent mille' (thousandths of a percent).
     /// </summary>
     /// <param name="input">Percent value.</param>
     /// <returns>Per cent mille value.</returns>
-    private static Int32Value? ToThousandths(decimal input)
-    {
-        return input == 0 ? null : Convert.ToInt32(input * 1000m);
-    }
+    private static Int32Value? ToThousandths(decimal input) =>
+        input == 0 ? null : Convert.ToInt32(input * 1000m);
 
     private string? GetSvgContent()
     {

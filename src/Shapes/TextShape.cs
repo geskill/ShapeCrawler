@@ -16,7 +16,7 @@ internal class TextShape(P.Shape pShape, DrawingTextBox textBox)
     {
         get
         {
-            if (PShapeTreeElement is P.Shape shape &&
+            if (this.PShapeTreeElement is P.Shape shape &&
                 shape.NonVisualShapeProperties?.NonVisualShapeDrawingProperties?.TextBox?.Value == true)
             {
                 return ShapeContentType.Text;
@@ -26,14 +26,11 @@ internal class TextShape(P.Shape pShape, DrawingTextBox textBox)
         }
     }
 
-    public override void SetText(string text)
-    {
-        textBox.SetText(text);
-    }
+    public override void SetText(string text) => textBox.SetText(text);
 
     public override void SetFontName(string fontName)
     {
-        foreach (var paragraph in TextBox.Paragraphs)
+        foreach (var paragraph in this.TextBox.Paragraphs)
         {
             paragraph.SetFontName(fontName);
         }
@@ -41,7 +38,7 @@ internal class TextShape(P.Shape pShape, DrawingTextBox textBox)
 
     public override void SetFontSize(decimal fontSize)
     {
-        foreach (var paragraph in TextBox.Paragraphs)
+        foreach (var paragraph in this.TextBox.Paragraphs)
         {
             paragraph.SetFontSize((int)fontSize);
         }
@@ -49,7 +46,7 @@ internal class TextShape(P.Shape pShape, DrawingTextBox textBox)
 
     public override void SetFontColor(string colorHex)
     {
-        foreach (var paragraph in TextBox.Paragraphs)
+        foreach (var paragraph in this.TextBox.Paragraphs)
         {
             paragraph.SetFontColor(colorHex);
         }
@@ -61,19 +58,19 @@ internal class TextShape(P.Shape pShape, DrawingTextBox textBox)
 
         canvas.Save();
         ApplyRotation(canvas);
-        textBox.Render(canvas, X, Y, Width, Height);
+        textBox.Render(canvas, this.X, this.Y, this.Width, this.Height);
         canvas.Restore();
     }
 
     private void ApplyRotation(SKCanvas canvas)
     {
         const double epsilon = 1e-6;
-        if (Math.Abs(Rotation) > epsilon)
+        if (Math.Abs(this.Rotation) > epsilon)
         {
-            var centerX = X + (Width / 2);
-            var centerY = Y + (Height / 2);
+            var centerX = this.X + (this.Width / 2);
+            var centerY = this.Y + (this.Height / 2);
             canvas.RotateDegrees(
-                (float)Rotation,
+                (float)this.Rotation,
                 (float)new Points(centerX).AsPixels(),
                 (float)new Points(centerY).AsPixels()
             );

@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using NUnit.Framework.Internal.Builders;
+using ShapeCrawler.Presentations;
 
 namespace ShapeCrawler.DevTests.Helpers;
 

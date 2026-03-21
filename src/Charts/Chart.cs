@@ -11,13 +11,13 @@ namespace ShapeCrawler.Charts;
 internal sealed class Chart : IBarChart, IColumnChart, ILineChart, IPieChart, IScatterChart, IBubbleChart,
     IAreaChart
 {
-    private readonly Categories? categories;
-    private readonly ChartPart chartPart;
-    private readonly Lazy<ChartTitle> chartTitle;
-    private readonly ShapeFill fill;
-    private readonly SlideShapeOutline outline;
     private readonly SeriesCollection seriesCollection;
+    private readonly SlideShapeOutline outline;
+    private readonly ShapeFill fill;
+    private readonly ChartPart chartPart;
+    private readonly Categories? categories;
     private readonly XAxis? xAxis;
+    private readonly Lazy<ChartTitle> chartTitle;
 
     internal Chart(
         SeriesCollection seriesCollection,
@@ -33,8 +33,7 @@ internal sealed class Chart : IBarChart, IColumnChart, ILineChart, IPieChart, IS
         this.chartPart = chartPart;
         this.categories = categories;
         this.xAxis = xAxis;
-        chartTitle = new Lazy<ChartTitle>(() =>
-            new ChartTitle(chartPart, Type, SeriesCollection, new ChartTitleAlignment(chartPart)));
+        this.chartTitle = new Lazy<ChartTitle>(() => new ChartTitle(chartPart, this.Type, this.SeriesCollection, new ChartTitleAlignment(chartPart)));
     }
 
     internal Chart(
@@ -49,8 +48,7 @@ internal sealed class Chart : IBarChart, IColumnChart, ILineChart, IPieChart, IS
         this.fill = fill;
         this.chartPart = chartPart;
         this.xAxis = xAxis;
-        chartTitle = new Lazy<ChartTitle>(() =>
-            new ChartTitle(chartPart, Type, SeriesCollection, new ChartTitleAlignment(chartPart)));
+        this.chartTitle = new Lazy<ChartTitle>(() => new ChartTitle(chartPart, this.Type, this.SeriesCollection, new ChartTitleAlignment(chartPart)));
     }
 
     internal Chart(
@@ -65,25 +63,14 @@ internal sealed class Chart : IBarChart, IColumnChart, ILineChart, IPieChart, IS
         this.fill = fill;
         this.chartPart = chartPart;
         this.categories = categories;
-        chartTitle = new Lazy<ChartTitle>(() =>
-            new ChartTitle(chartPart, Type, SeriesCollection, new ChartTitleAlignment(chartPart)));
-    }
-
-    public IShapeOutline Outline => outline;
-
-    public IShapeFill Fill => fill;
-
-    public Geometry GeometryType
-    {
-        get => Geometry.Rectangle;
-        set => throw new SCException("It is not possible to set the geometry type for the chart shape.");
+        this.chartTitle = new Lazy<ChartTitle>(() => new ChartTitle(chartPart, this.Type, this.SeriesCollection, new ChartTitleAlignment(chartPart)));
     }
 
     public ChartType Type
     {
         get
         {
-            var plotArea = chartPart.ChartSpace!.GetFirstChild<C.Chart>()!.PlotArea!;
+            var plotArea = this.chartPart.ChartSpace!.GetFirstChild<C.Chart>()!.PlotArea!;
             var cXCharts = plotArea.Where(e => e.LocalName.EndsWith("Chart", StringComparison.Ordinal));
             if (cXCharts.Count() > 1)
             {
@@ -97,16 +84,23 @@ internal sealed class Chart : IBarChart, IColumnChart, ILineChart, IPieChart, IS
         }
     }
 
-    public IChartTitle? Title => chartTitle.Value;
+    public IShapeOutline Outline => this.outline;
 
-    public IReadOnlyList<ICategory>? Categories => categories;
+    public IShapeFill Fill => this.fill;
 
-    public IXAxis? XAxis => xAxis;
+    public IChartTitle? Title => this.chartTitle.Value;
 
-    public ISeriesCollection SeriesCollection => seriesCollection;
+    public IReadOnlyList<ICategory>? Categories => this.categories;
 
-    public byte[] GetWorksheetByteArray()
+    public IXAxis? XAxis => this.xAxis;
+
+    public ISeriesCollection SeriesCollection => this.seriesCollection;
+
+    public Geometry GeometryType
     {
-        return new Workbook(chartPart.EmbeddedPackagePart!).AsByteArray();
+        get => Geometry.Rectangle;
+        set => throw new SCException("It is not possible to set the geometry type for the chart shape.");
     }
+
+    public byte[] GetWorksheetByteArray() => new Workbook(this.chartPart.EmbeddedPackagePart!).AsByteArray();
 }

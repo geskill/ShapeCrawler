@@ -20,49 +20,35 @@ namespace ShapeCrawler.Shapes;
 
 internal sealed class ShapeCollection(OpenXmlPart openXmlPart) : IShapeCollection
 {
-    public int Count => GetInternalShapes().Count();
+    public int Count => this.GetInternalShapes().Count();
 
-    public IShape this[int index] => GetInternalShapes().ElementAt(index);
+    public IShape this[int index] => this.GetInternalShapes().ElementAt(index);
 
-    public IShape GetById(int id)
-    {
-        return GetById<IShape>(id);
-    }
+    public IShape GetById(int id) => this.GetById<IShape>(id);
 
     public T GetById<T>(int id)
-        where T : IShape
-    {
-        return (T)GetShapes().First(shape => shape.Id == id);
-    }
+        where T : IShape => (T)this.GetShapes().First(shape => shape.Id == id);
 
     public T Shape<T>(string name)
         where T : IShape
     {
-        var shape = GetShapes().FirstOrDefault(shape => shape.Name == name) ??
+        var shape = this.GetShapes().FirstOrDefault(shape => shape.Name == name) ??
                     throw new SCException("Shape not found");
         return (T)shape;
     }
 
-    public IShape Shape(string name)
-    {
-        return GetShapes().FirstOrDefault(shape => shape.Name == name)
-               ?? throw new SCException("Shape not found");
-    }
+    public IShape Shape(string name) =>
+        this.GetShapes().FirstOrDefault(shape => shape.Name == name)
+        ?? throw new SCException("Shape not found");
 
     public T Last<T>()
-        where T : IShape
-    {
-        return (T)GetShapes().Last(shape => shape is T);
-    }
+        where T : IShape => (T)this.GetShapes().Last(shape => shape is T);
 
-    public IEnumerator<IShape> GetEnumerator()
-    {
-        return GetInternalShapes().GetEnumerator();
-    }
+    public IEnumerator<IShape> GetEnumerator() => this.GetInternalShapes().GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-        return GetEnumerator();
+        return this.GetEnumerator();
     }
 
     internal IEnumerable<DrawingShape> GetInternalShapes()
@@ -77,7 +63,7 @@ internal sealed class ShapeCollection(OpenXmlPart openXmlPart) : IShapeCollectio
 
         foreach (var element in pShapeTree.OfType<OpenXmlCompositeElement>())
         {
-            foreach (var shape in CreateShapesFromElement(element))
+            foreach (var shape in this.CreateShapesFromElement(element))
             {
                 yield return shape;
             }
@@ -162,12 +148,10 @@ internal sealed class ShapeCollection(OpenXmlPart openXmlPart) : IShapeCollectio
         }
     }
 
-    private static bool IsOleObject(A.GraphicData aGraphicData)
-    {
-        return aGraphicData.Uri?.Value?.Equals(
+    private static bool IsOleObject(A.GraphicData aGraphicData) =>
+        aGraphicData.Uri?.Value?.Equals(
             "http://schemas.openxmlformats.org/presentationml/2006/ole",
             StringComparison.Ordinal) ?? false;
-    }
 
     private static IEnumerable<DrawingShape> CreatePictureShapes(P.Picture pPicture)
     {
@@ -195,10 +179,7 @@ internal sealed class ShapeCollection(OpenXmlPart openXmlPart) : IShapeCollectio
         }
     }
 
-    private IEnumerable<IShape> GetShapes()
-    {
-        return GetInternalShapes();
-    }
+    private IEnumerable<IShape> GetShapes() => GetInternalShapes();
 
     private IEnumerable<DrawingShape> CreateShapesFromElement(OpenXmlCompositeElement element)
     {
@@ -207,7 +188,7 @@ internal sealed class ShapeCollection(OpenXmlPart openXmlPart) : IShapeCollectio
             P.GroupShape pGroupShape => CreateGroupShapes(pGroupShape),
             P.ConnectionShape pConnectionShape => CreateLineShapes(pConnectionShape),
             P.Shape pShape => CreateShapes(pShape),
-            P.GraphicFrame pGraphicFrame => CreateGraphicFrameShapes(pGraphicFrame),
+            P.GraphicFrame pGraphicFrame => this.CreateGraphicFrameShapes(pGraphicFrame),
             P.Picture pPicture => CreatePictureShapes(pPicture),
             _ => []
         };
@@ -247,7 +228,7 @@ internal sealed class ShapeCollection(OpenXmlPart openXmlPart) : IShapeCollectio
 
         if (IsChartPGraphicFrame(pGraphicFrame))
         {
-            yield return CreateChart(pGraphicFrame);
+            yield return this.CreateChart(pGraphicFrame);
             yield break;
         }
 
@@ -376,4 +357,5 @@ internal sealed class ShapeCollection(OpenXmlPart openXmlPart) : IShapeCollectio
             pGraphicFrame
         );
     }
+
 }

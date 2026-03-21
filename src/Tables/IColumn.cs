@@ -25,25 +25,25 @@ public interface IColumn
 
 internal sealed class Column(A.GridColumn aGridColumn, int index) : IColumn
 {
-    internal A.GridColumn AGridColumn => aGridColumn;
-
     public decimal Width
     {
-        get => new Emus(AGridColumn.Width!.Value).AsPoints();
-        set => AGridColumn.Width!.Value = new Points(value).AsEmus();
+        get => new Emus(this.AGridColumn.Width!.Value).AsPoints();
+        set => this.AGridColumn.Width!.Value = new Points(value).AsEmus();
     }
+
+    internal A.GridColumn AGridColumn => aGridColumn;
 
     public void Duplicate()
     {
-        var tableGrid = AGridColumn.Parent as A.TableGrid;
+        var tableGrid = this.AGridColumn.Parent as A.TableGrid;
 
-        var newGridColumn = CreateNewColumn(tableGrid!, AGridColumn.Width!.Value);
+        var newGridColumn = CreateNewColumn(tableGrid!, this.AGridColumn.Width!.Value);
 
         tableGrid!.Append(newGridColumn);
 
         var table = tableGrid.Parent as A.Table;
 
-        foreach (var tr in table!.Elements<A.TableRow>())
+        foreach (A.TableRow tr in table!.Elements<A.TableRow>())
         {
             var cells = tr.Elements<A.TableCell>().ToList();
             var cloneCell = cells[index].Clone();

@@ -3,6 +3,7 @@
 #pragma warning disable IDE0130
 namespace ShapeCrawler;
 #pragma warning restore IDE0130
+
 using A = DocumentFormat.OpenXml.Drawing;
 
 /// <summary>
@@ -23,8 +24,8 @@ public interface ITheme
 
 internal sealed class Theme : ITheme
 {
-    private readonly A.Theme aTheme;
     private readonly OpenXmlPart sdkTypedOpenXmlPart;
+    private readonly A.Theme aTheme;
 
     internal Theme(OpenXmlPart sdkTypedOpenXmlPart, A.Theme aTheme)
     {
@@ -32,12 +33,12 @@ internal sealed class Theme : ITheme
         this.aTheme = aTheme;
     }
 
-    public IThemeFontScheme FontScheme => new ThemeFontScheme(sdkTypedOpenXmlPart);
+    public IThemeFontScheme FontScheme => new ThemeFontScheme(this.sdkTypedOpenXmlPart);
 
-    public IThemeColorScheme ColorScheme => GetColorScheme();
+    public IThemeColorScheme ColorScheme => this.GetColorScheme();
 
     private IThemeColorScheme GetColorScheme()
     {
-        return new ThemeColorScheme(aTheme.ThemeElements!.ColorScheme!);
+        return new ThemeColorScheme(this.aTheme.ThemeElements!.ColorScheme!);
     }
 }

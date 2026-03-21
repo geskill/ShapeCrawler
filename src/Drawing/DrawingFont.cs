@@ -15,8 +15,8 @@ internal sealed class DrawingFont(ITextPortionFont? font)
 
     internal SKFont AsSkFont()
     {
-        var fontStyle = GetFontStyle();
-        var family = GetFontFamily();
+        var fontStyle = this.GetFontStyle();
+        var family = this.GetFontFamily();
         var typeface = SKTypeface.FromFamilyName(family, fontStyle) ?? SKTypeface.CreateDefault();
         var size = new Points(font?.Size ?? DefaultFontSize).AsPixels();
 
@@ -25,7 +25,7 @@ internal sealed class DrawingFont(ITextPortionFont? font)
 
     internal SKPaint CreatePaint()
     {
-        return new SKPaint { IsAntialias = true, Style = SKPaintStyle.Fill, Color = GetPaintColor() };
+        return new SKPaint { IsAntialias = true, Style = SKPaintStyle.Fill, Color = this.GetPaintColor() };
     }
 
     private string GetFontFamily()

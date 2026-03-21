@@ -8,41 +8,37 @@ namespace ShapeCrawler.Drawing;
 
 internal sealed class SlidePictureImage : IImage
 {
-    private readonly A.Blip aBlip;
     private readonly OpenXmlPart openXmlPart;
+    private readonly A.Blip aBlip;
     private ImagePart imagePart;
 
     internal SlidePictureImage(A.Blip aBlip)
     {
         this.aBlip = aBlip;
-        openXmlPart = aBlip.Ancestors<OpenXmlPartRootElement>().First().OpenXmlPart!;
-        imagePart = (ImagePart)openXmlPart.GetPartById(aBlip.Embed!.Value!);
+        this.openXmlPart = aBlip.Ancestors<OpenXmlPartRootElement>().First().OpenXmlPart!;
+        this.imagePart = (ImagePart)this.openXmlPart.GetPartById(aBlip.Embed!.Value!);
     }
 
-    public string Mime => imagePart.ContentType;
+    public string Mime => this.imagePart.ContentType;
 
-    public string Name => Path.GetFileName(imagePart.Uri.ToString());
+    public string Name => Path.GetFileName(this.imagePart.Uri.ToString());
 
     public void Update(Stream stream)
     {
-        var presDocument = (PresentationDocument)openXmlPart.OpenXmlPackage;
+        var presDocument = (PresentationDocument)this.openXmlPart.OpenXmlPackage;
         var slideParts = presDocument.PresentationPart!.SlideParts;
-        var allABlips =
-            slideParts.SelectMany(slidePart => slidePart.Slide!.CommonSlideData!.ShapeTree!.Descendants<A.Blip>());
-        var isSharedImagePart = allABlips.Count(blip => blip.Embed!.Value == aBlip.Embed!.Value) > 1;
+        var allABlips = slideParts.SelectMany(slidePart => slidePart.Slide!.CommonSlideData!.ShapeTree!.Descendants<A.Blip>());
+        var isSharedImagePart = allABlips.Count(blip => blip.Embed!.Value == this.aBlip.Embed!.Value) > 1;
         if (isSharedImagePart)
         {
             var rId = RelationshipId.New();
-            imagePart = openXmlPart.AddNewPart<ImagePart>("image/png", rId);
-            aBlip.Embed!.Value = rId;
+            this.imagePart = this.openXmlPart.AddNewPart<ImagePart>("image/png", rId);
+            this.aBlip.Embed!.Value = rId;
         }
 
         stream.Position = 0;
-        imagePart.FeedData(stream);
+        this.imagePart.FeedData(stream);
     }
 
-    public byte[] AsByteArray()
-    {
-        return new SCImagePart(imagePart).AsBytes();
-    }
+    public byte[] AsByteArray() => new SCImagePart(this.imagePart).AsBytes();
 }

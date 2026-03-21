@@ -22,7 +22,7 @@ public sealed class DraftBubbleChartShape
     /// </summary>
     public DraftBubbleChartShape X(int x)
     {
-        ShapeX = x;
+        this.ShapeX = x;
         return this;
     }
 
@@ -31,7 +31,7 @@ public sealed class DraftBubbleChartShape
     /// </summary>
     public DraftBubbleChartShape Y(int y)
     {
-        ShapeY = y;
+        this.ShapeY = y;
         return this;
     }
 
@@ -40,7 +40,7 @@ public sealed class DraftBubbleChartShape
     /// </summary>
     public DraftBubbleChartShape Width(int width)
     {
-        ShapeWidth = width;
+        this.ShapeWidth = width;
         return this;
     }
 
@@ -49,7 +49,7 @@ public sealed class DraftBubbleChartShape
     /// </summary>
     public DraftBubbleChartShape Height(int height)
     {
-        ShapeHeight = height;
+        this.ShapeHeight = height;
         return this;
     }
 
@@ -61,7 +61,7 @@ public sealed class DraftBubbleChartShape
     {
         var builder = new DraftBubbleChart();
         configure(builder);
-        DraftBubbleChartBuilder = builder;
+        this.DraftBubbleChartBuilder = builder;
         return this;
     }
 }

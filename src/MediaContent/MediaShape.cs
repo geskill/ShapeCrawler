@@ -19,8 +19,7 @@ internal sealed class MediaShape : DrawingShape
         : base(position, shapeSize, shapeId, pPicture)
     {
         this.pPicture = pPicture;
-        Media = new Media(new SlideShapeOutline(pPicture.ShapeProperties!), new ShapeFill(pPicture.ShapeProperties!),
-            pPicture);
+        this.Media = new Media(new SlideShapeOutline(pPicture.ShapeProperties!), new ShapeFill(pPicture.ShapeProperties!), pPicture);
     }
 
     public override IMedia? Media { get; }
@@ -29,7 +28,7 @@ internal sealed class MediaShape : DrawingShape
     {
         get
         {
-            var appProps = pPicture.NonVisualPictureProperties?.ApplicationNonVisualDrawingProperties;
+            var appProps = this.pPicture.NonVisualPictureProperties?.ApplicationNonVisualDrawingProperties;
             if (appProps is null)
             {
                 return ShapeContentType.Shape;
@@ -63,10 +62,10 @@ internal sealed class MediaShape : DrawingShape
         }
 
         // Locate the Open XML part that contains this picture
-        var openXmlPart = pPicture.Ancestors<OpenXmlPartRootElement>().First().OpenXmlPart!;
+        var openXmlPart = this.pPicture.Ancestors<OpenXmlPartRootElement>().First().OpenXmlPart!;
 
         // The <p14:media> element stores a relationship ID pointing to the media data part
-        var p14Media = pPicture.NonVisualPictureProperties!
+        var p14Media = this.pPicture.NonVisualPictureProperties!
             .ApplicationNonVisualDrawingProperties!
             .Descendants<DocumentFormat.OpenXml.Office2010.PowerPoint.Media>()
             .Single();

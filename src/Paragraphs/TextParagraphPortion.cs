@@ -10,52 +10,49 @@ namespace ShapeCrawler.Paragraphs;
 
 internal sealed class TextParagraphPortion : IParagraphPortion
 {
-    private readonly A.Run aRun;
     private readonly Lazy<TextPortionFont> font;
     private readonly Lazy<Hyperlink> hyperlink;
+    private readonly A.Run aRun;
 
     internal TextParagraphPortion(A.Run aRun)
     {
-        AText = aRun.Text!;
+        this.AText = aRun.Text!;
         this.aRun = aRun;
-        var openXmlPart = AText.Ancestors<OpenXmlPartRootElement>().First().OpenXmlPart!;
-        font = new Lazy<TextPortionFont>(() =>
+        var openXmlPart = this.AText.Ancestors<OpenXmlPartRootElement>().First().OpenXmlPart!;
+        this.font = new Lazy<TextPortionFont>(() =>
             new TextPortionFont(
-                new PortionFontSize(AText),
-                new Lazy<FontColor>(() => new FontColor(AText)),
+                new PortionFontSize(this.AText),
+                new Lazy<FontColor>(() => new FontColor(this.AText)),
                 new ThemeFontScheme(openXmlPart),
-                AText
+                this.AText
             )
         );
-        hyperlink = new Lazy<Hyperlink>(() => new Hyperlink(this.aRun.RunProperties!));
+        this.hyperlink = new Lazy<Hyperlink>(() => new Hyperlink(this.aRun.RunProperties!));
+    }
+
+    public string Text
+    {
+        get => this.AText.Text;
+        set => this.AText.Text = value;
+    }
+
+    public ITextPortionFont Font => this.font.Value;
+
+    public IHyperlink Link => this.hyperlink.Value;
+
+    public Color TextHighlightColor
+    {
+        get => this.GetTextHighlight();
+        set => this.SetTextHighlight(value);
     }
 
     internal A.Text AText { get; }
 
-    public string Text
-    {
-        get => AText.Text;
-        set => AText.Text = value;
-    }
-
-    public ITextPortionFont Font => font.Value;
-
-    public IHyperlink Link => hyperlink.Value;
-
-    public Color TextHighlightColor
-    {
-        get => GetTextHighlight();
-        set => SetTextHighlight(value);
-    }
-
-    public void Remove()
-    {
-        aRun.Remove();
-    }
+    public void Remove() => this.aRun.Remove();
 
     private Color GetTextHighlight()
     {
-        var arPr = AText.PreviousSibling<A.RunProperties>();
+        var arPr = this.AText.PreviousSibling<A.RunProperties>();
 
         // Ensure RgbColorModelHex exists and his value is not null.
         if (arPr?.GetFirstChild<A.Highlight>()?.RgbColorModelHex is not A.RgbColorModelHex aSrgbClr
@@ -76,7 +73,7 @@ internal sealed class TextParagraphPortion : IParagraphPortion
 
     private void SetTextHighlight(Color color)
     {
-        var arPr = AText.PreviousSibling<A.RunProperties>() ?? AText.Parent!.AddRunProperties();
+        var arPr = this.AText.PreviousSibling<A.RunProperties>() ?? this.AText.Parent!.AddRunProperties();
         arPr.AddAHighlight(color);
     }
 }

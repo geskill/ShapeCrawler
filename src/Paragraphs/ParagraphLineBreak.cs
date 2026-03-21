@@ -8,7 +8,10 @@ internal sealed class ParagraphLineBreak(A.Break aBreak) : IParagraphPortion
     public string Text
     {
         get => Environment.NewLine;
-        set => throw new SCException("New Line portion does not support this setter.");
+        set
+        {
+            throw new SCException("New Line portion does not support this setter.");
+        }
     }
 
     public ITextPortionFont Font => throw new SCException("New Line portion does not support this property.");
@@ -21,8 +24,5 @@ internal sealed class ParagraphLineBreak(A.Break aBreak) : IParagraphPortion
         set => throw new SCException("New Line portion does not support this property");
     }
 
-    public void Remove()
-    {
-        aBreak.Remove();
-    }
+    public void Remove() => aBreak.Remove();
 }

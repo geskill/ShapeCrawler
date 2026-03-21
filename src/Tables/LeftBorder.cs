@@ -1,10 +1,11 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Drawing;
 using ShapeCrawler.Units;
+using A = DocumentFormat.OpenXml.Drawing;
 
 namespace ShapeCrawler.Tables;
 
-internal class LeftBorder(TableCellProperties aTableCellProperties) : IBorder
+internal class LeftBorder(A.TableCellProperties aTableCellProperties) : IBorder
 {
     public decimal Width
     {
@@ -24,12 +25,12 @@ internal class LeftBorder(TableCellProperties aTableCellProperties) : IBorder
         {
             if (aTableCellProperties.LeftBorderLineProperties is null)
             {
-                var solidFill = new SolidFill
+                var solidFill = new A.SolidFill
                 {
-                    RgbColorModelHex = new RgbColorModelHex { Val = "000000" } // black by default 
+                    RgbColorModelHex = new A.RgbColorModelHex { Val = "000000" } // black by default 
                 };
 
-                aTableCellProperties.LeftBorderLineProperties = new LeftBorderLineProperties();
+                aTableCellProperties.LeftBorderLineProperties = new A.LeftBorderLineProperties();
                 aTableCellProperties.LeftBorderLineProperties.AppendChild(solidFill);
             }
 
@@ -43,20 +44,20 @@ internal class LeftBorder(TableCellProperties aTableCellProperties) : IBorder
         get => aTableCellProperties.LeftBorderLineProperties?.GetFirstChild<SolidFill>()?.RgbColorModelHex?.Val;
         set
         {
-            aTableCellProperties.LeftBorderLineProperties ??= new LeftBorderLineProperties
+            aTableCellProperties.LeftBorderLineProperties ??= new A.LeftBorderLineProperties
             {
                 Width = (Int32Value)new Points(1).AsEmus()
             };
 
-            var solidFill = aTableCellProperties.LeftBorderLineProperties.GetFirstChild<SolidFill>();
+            var solidFill = aTableCellProperties.LeftBorderLineProperties.GetFirstChild<A.SolidFill>();
 
             if (solidFill is null)
             {
-                solidFill = new SolidFill();
+                solidFill = new A.SolidFill();
                 aTableCellProperties.LeftBorderLineProperties.AppendChild(solidFill);
             }
 
-            solidFill.RgbColorModelHex ??= new RgbColorModelHex();
+            solidFill.RgbColorModelHex ??= new A.RgbColorModelHex();
 
             solidFill.RgbColorModelHex.Val = new HexBinaryValue(value);
         }

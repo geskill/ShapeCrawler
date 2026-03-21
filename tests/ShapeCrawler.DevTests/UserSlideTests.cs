@@ -1,7 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
+using ImageMagick;
+using NUnit.Framework;
 using ShapeCrawler.DevTests.Helpers;
-using SkiaSharp;
 
 // ReSharper disable SuggestVarOrType_BuiltInTypes
 // ReSharper disable TooManyChainedReferences
@@ -408,7 +409,7 @@ public class UserSlideTests : SCTest
 
         // Assert
         stream.Position = 0;
-        using var image = SKBitmap.Decode(stream);
+        using var image = SkiaSharp.SKBitmap.Decode(stream);
         var centerPixel = image.GetPixel(image.Width / 2, image.Height / 2);
         centerPixel.Red.Should().Be(255, "Red component");
         centerPixel.Green.Should().Be(0, "Green component");
@@ -432,7 +433,7 @@ public class UserSlideTests : SCTest
 
         // Assert
         stream.Position = 0;
-        using var bitmap = SKBitmap.Decode(stream);
+        using var bitmap = SkiaSharp.SKBitmap.Decode(stream);
         var cornerPixel = bitmap.GetPixel(10, 10); // corner to avoid "Shape" text in center
 
         // The test image background is peach #F5C8A8 (RGB: 245, 200, 168)
@@ -468,7 +469,7 @@ public class UserSlideTests : SCTest
 
         // ASSERT - verify the text box's background rectangle is rendered at position (50, 50) with accent1 color (4472C4)
         stream.Position = 0;
-        using var bitmap = SKBitmap.Decode(stream);
+        using var bitmap = SkiaSharp.SKBitmap.Decode(stream);
 
         var left = ToPixels(50);
         var top = ToPixels(50);
@@ -484,7 +485,7 @@ public class UserSlideTests : SCTest
         AssertAccent1(bitmap.GetPixel(right - inset, bottom - inset));
         return;
 
-        void AssertAccent1(SKColor pixel)
+        void AssertAccent1(SkiaSharp.SKColor pixel)
         {
             // Accent1 theme color is #4472C4 (R=68, G=114, B=196)
             pixel.Red.Should().BeInRange(60, 76);
@@ -492,10 +493,7 @@ public class UserSlideTests : SCTest
             pixel.Blue.Should().BeInRange(188, 204);
         }
 
-        static int ToPixels(int points)
-        {
-            return (int)Math.Round(points * 96d / 72d, MidpointRounding.AwayFromZero);
-        }
+        static int ToPixels(int points) => (int)Math.Round(points * 96d / 72d, MidpointRounding.AwayFromZero);
     }
 
     [Test]
@@ -635,9 +633,8 @@ public class UserSlideTests : SCTest
         // Assert
         return Verify(stream.ToArray(), "png");
     }
-
-    [Test]
-    [Explicit("Used for developer debugging")]
+    
+    [Test, Explicit("Used for developer debugging")]
     public void Debug()
     {
         var pres = new Presentation(@"c:\Repo\ShapeCrawler\.context\input.pptx");
@@ -657,14 +654,14 @@ public class UserSlideTests : SCTest
         slide.SaveImageTo(stream);
 
         // Assert
-        var centerPixel = new SKColor();
-        using (var skImage = SKImage.FromEncodedData(stream))
+        var centerPixel = new SkiaSharp.SKColor();
+        using (var skImage = SkiaSharp.SKImage.FromEncodedData(stream))
         {
-            using (var skBitmap = new SKBitmap(new SKImageInfo(skImage.Width, skImage.Height,
-                       SKColorType.Rgba8888, SKAlphaType.Premul)))
+            using (var skBitmap = new SkiaSharp.SKBitmap(new SkiaSharp.SKImageInfo(skImage.Width, skImage.Height,
+                       SkiaSharp.SKColorType.Rgba8888, SkiaSharp.SKAlphaType.Premul)))
             {
                 skImage.ReadPixels(skBitmap.Info, skBitmap.GetPixels(), skBitmap.RowBytes);
-                centerPixel = skBitmap.GetPixel(skBitmap.Width / 2, skBitmap.Height / 2);
+                centerPixel = skBitmap.GetPixel((skBitmap.Width / 2), (skBitmap.Height / 2));
             }
         }
 

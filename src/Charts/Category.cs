@@ -12,9 +12,8 @@ internal sealed class Category(
 {
     public bool HasMainCategory => false;
 
-    public ICategory MainCategory => throw new SCException(
-        $"The main category is not available since the chart doesn't have a multi-category. " +
-        $"Use {nameof(ICategory.HasMainCategory)} property to check if the main category is available.");
+    public ICategory MainCategory => throw new SCException($"The main category is not available since the chart doesn't have a multi-category. " +
+                                                           $"Use {nameof(ICategory.HasMainCategory)} property to check if the main category is available.");
 
     public string Name
     {
@@ -26,8 +25,7 @@ internal sealed class Category(
                 cellAddress != null &&
                 chartPart.EmbeddedPackagePart != null)
             {
-                new Workbook(chartPart.EmbeddedPackagePart).Sheet(sheetName)
-                    .UpdateCell(cellAddress, value, CellValues.String);
+                new Workbook(chartPart.EmbeddedPackagePart).Sheet(sheetName).UpdateCell(cellAddress, value, CellValues.String);
             }
         }
     }

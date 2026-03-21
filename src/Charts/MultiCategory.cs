@@ -25,8 +25,7 @@ internal sealed class MultiCategory(
                 address != null &&
                 chartPart.EmbeddedPackagePart != null)
             {
-                new Workbook(chartPart.EmbeddedPackagePart).Sheet(sheetName)
-                    .UpdateCell(address, value, CellValues.String);
+                new Workbook(chartPart.EmbeddedPackagePart).Sheet(sheetName).UpdateCell(address, value, CellValues.String);
             }
         }
     }

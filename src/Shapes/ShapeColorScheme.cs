@@ -12,7 +12,7 @@ internal sealed class ShapeColorScheme
     private readonly OpenXmlElement pShapeTreeElement;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="ShapeColorScheme" /> class.
+    ///     Initializes a new instance of the <see cref="ShapeColorScheme"/> class.
     /// </summary>
     /// <param name="pShapeTreeElement">The shape tree element.</param>
     internal ShapeColorScheme(OpenXmlElement pShapeTreeElement)
@@ -26,7 +26,7 @@ internal sealed class ShapeColorScheme
     /// <returns>The color scheme.</returns>
     internal A.ColorScheme? GetColorScheme()
     {
-        var parentPart = new SCOpenXmlElement(pShapeTreeElement).ParentOpenXmlPart;
+        var parentPart = new SCOpenXmlElement(this.pShapeTreeElement).ParentOpenXmlPart;
 
         return parentPart switch
         {

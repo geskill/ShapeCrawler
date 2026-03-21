@@ -1,4 +1,5 @@
 using FluentAssertions;
+using NUnit.Framework;
 using ShapeCrawler.DevTests.Helpers;
 
 // ReSharper disable TooManyDeclarations
@@ -139,7 +140,7 @@ public class ShapeFillTests : SCTest
     public void SetColor_sets_green_color()
     {
         // Arrange
-        var pres = new Presentation(p => p.Slide());
+        var pres = new Presentation(p=>p.Slide());
         var slide = pres.Slides[0];
         slide.Shapes.AddShape(0, 0, 100, 100);
         var shape = slide.Shapes.Last();
@@ -169,7 +170,7 @@ public class ShapeFillTests : SCTest
         shapeFill.Color.Should().Be("32a852");
         ValidatePresentation(pres);
     }
-
+    
     [Test]
     public void SetPicture_should_not_break_presentation()
     {
@@ -237,10 +238,10 @@ public class ShapeFillTests : SCTest
     }
 
     [Theory]
-    [SlideShape("008.pptx", 1, "AutoShape 1")]
-    [SlideShape("autoshape-case009.pptx", 1, "AutoShape 1")]
-    [LayoutShape("autoshape-case003.pptx", 1, "AutoShape 1")]
-    [MasterShape("autoshape-case003.pptx", "AutoShape 1")]
+    [SlideShape("008.pptx", slideNumber: 1, shapeName: "AutoShape 1")]
+    [SlideShape("autoshape-case009.pptx", slideNumber: 1, shapeName: "AutoShape 1")]
+    [LayoutShape("autoshape-case003.pptx", slideLayoutNumber: 1, shapeName: "AutoShape 1")]
+    [MasterShape("autoshape-case003.pptx", shapeName: "AutoShape 1")]
     public void SetPicture_updates_fill_with_specified_picture_image_When_shape_is_Not_filled(IShape shape)
     {
         // Arrange

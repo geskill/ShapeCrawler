@@ -1,6 +1,4 @@
-using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Presentation;
 
 namespace ShapeCrawler.SlideMasters;
 
@@ -11,10 +9,10 @@ internal sealed class BackgroundSolidFill(SlideLayoutPart slideLayoutPart) : ISo
         get
         {
             var pCommonSlideData = slideLayoutPart.SlideLayout!.CommonSlideData;
-            var pBackground = pCommonSlideData?.GetFirstChild<Background>();
-            var pBackgroundProperties = pBackground?.GetFirstChild<BackgroundProperties>();
+            var pBackground = pCommonSlideData?.GetFirstChild<DocumentFormat.OpenXml.Presentation.Background>();
+            var pBackgroundProperties = pBackground?.GetFirstChild<DocumentFormat.OpenXml.Presentation.BackgroundProperties>();
 
-            var aSolidFill = pBackgroundProperties?.GetFirstChild<SolidFill>();
+            var aSolidFill = pBackgroundProperties?.GetFirstChild<DocumentFormat.OpenXml.Drawing.SolidFill>();
 
             var aRgbColorModelHex = aSolidFill?.RgbColorModelHex;
 

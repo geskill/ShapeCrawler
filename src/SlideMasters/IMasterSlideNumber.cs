@@ -31,20 +31,20 @@ internal sealed class MasterSlideNumber : IMasterSlideNumber
         this.position = position;
         var aDefaultRunProperties =
             pShape.TextBody!.ListStyle!.Level1ParagraphProperties?.GetFirstChild<A.DefaultRunProperties>()!;
-        Font = new SlideNumberFont(aDefaultRunProperties);
+        this.Font = new SlideNumberFont(aDefaultRunProperties);
     }
 
     public ISlideNumberFont Font { get; }
 
     public decimal X
     {
-        get => position.X;
-        set => position.X = value;
+        get => this.position.X;
+        set => this.position.X = value;
     }
 
     public decimal Y
     {
-        get => position.Y;
-        set => position.Y = value;
+        get => this.position.Y;
+        set => this.position.Y = value;
     }
 }

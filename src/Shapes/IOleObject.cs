@@ -1,5 +1,4 @@
 ﻿// ReSharper disable InconsistentNaming
-
 namespace ShapeCrawler.Shapes;
 
 /// <summary>

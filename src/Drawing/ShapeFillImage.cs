@@ -17,28 +17,24 @@ internal sealed class ShapeFillImage : IImage
         this.imagePart = imagePart;
     }
 
-    public string Mime => imagePart.ContentType;
+    public string Mime => this.imagePart.ContentType;
 
-    public string Name => Path.GetFileName(imagePart.Uri.ToString());
+    public string Name => Path.GetFileName(this.imagePart.Uri.ToString());
 
     public void Update(Stream stream)
     {
-        var openXmlPart = aBlip.Ancestors<OpenXmlPartRootElement>().First().OpenXmlPart!;
-        var isSharedImagePart =
-            openXmlPart.GetPartsOfType<ImagePart>().Count(imagePart => imagePart == this.imagePart) > 1;
+        var openXmlPart = this.aBlip.Ancestors<OpenXmlPartRootElement>().First().OpenXmlPart!;
+        var isSharedImagePart = openXmlPart.GetPartsOfType<ImagePart>().Count(imagePart => imagePart == this.imagePart) > 1;
         if (isSharedImagePart)
         {
             var rId = RelationshipId.New();
-            imagePart = openXmlPart.AddNewPart<ImagePart>("image/png", rId);
-            aBlip.Embed!.Value = rId;
+            this.imagePart = openXmlPart.AddNewPart<ImagePart>("image/png", rId);
+            this.aBlip.Embed!.Value = rId;
         }
 
         stream.Position = 0;
         this.imagePart.FeedData(stream);
     }
 
-    public byte[] AsByteArray()
-    {
-        return new SCImagePart(imagePart).AsBytes();
-    }
+    public byte[] AsByteArray() => new SCImagePart(this.imagePart).AsBytes();
 }

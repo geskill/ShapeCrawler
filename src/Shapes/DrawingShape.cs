@@ -14,7 +14,6 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
     : Shape(position, shapeSize, shapeId, pShapeTreeElement)
 {
     private const double Epsilon = 1e-6;
-
     private static readonly Dictionary<string, Func<A.ColorScheme, A.Color2Type?>> SchemeColorSelectors =
         new(StringComparer.Ordinal)
         {
@@ -31,25 +30,25 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
             { "hlink", scheme => scheme.Hyperlink },
             { "folHlink", scheme => scheme.FollowedHyperlinkColor }
         };
-
+    
     /// <summary>
     ///     Renders the current shape onto the provided canvas.
     /// </summary>
     /// <param name="canvas">Target canvas.</param>
     internal virtual void Render(SKCanvas canvas)
     {
-        switch (GeometryType)
+        switch (this.GeometryType)
         {
             case Geometry.Line:
             case Geometry.LineInverse:
-                RenderLine(canvas);
+                this.RenderLine(canvas);
                 break;
             case Geometry.Rectangle:
             case Geometry.RoundedRectangle:
-                RenderRectangle(canvas);
+                this.RenderRectangle(canvas);
                 break;
             case Geometry.Ellipse:
-                RenderEllipse(canvas);
+                this.RenderEllipse(canvas);
                 break;
             default:
                 throw new SCException("Unsupported shape geometry type.");
@@ -58,7 +57,7 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
 
     protected string? ResolveSchemeColor(string schemeColorName)
     {
-        var shapeColorScheme = new ShapeColorScheme(PShapeTreeElement);
+        var shapeColorScheme = new ShapeColorScheme(this.PShapeTreeElement);
         var colorScheme = shapeColorScheme.GetColorScheme();
         if (colorScheme is null)
         {
@@ -97,9 +96,8 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
             (byte)(color.Blue * shadeFactor),
             color.Alpha);
     }
-
-    private static void RenderArrowHead(SKCanvas canvas, SKPoint tail, SKPoint tip, A.LineEndValues type,
-        SKPaint linePaint)
+    
+    private static void RenderArrowHead(SKCanvas canvas, SKPoint tail, SKPoint tip, A.LineEndValues type, SKPaint linePaint)
     {
         var angle = Math.Atan2(tip.Y - tail.Y, tip.X - tail.X);
         var arrowSize = linePaint.StrokeWidth * 3;
@@ -142,7 +140,7 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
         canvas.DrawPath(path, paint);
         canvas.Restore();
     }
-
+    
     private static SKColor ApplyShadeIfNeeded(A.SchemeColor schemeColor, string hexColor)
     {
         var baseColor = new Color(hexColor).AsSkColor();
@@ -152,9 +150,8 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
             ? baseColor
             : ApplyShade(baseColor, shadeValue.Value);
     }
-
-    private static void RenderArrowEnd(SKCanvas canvas, SKPoint tail, SKPoint tip, EnumValue<A.LineEndValues>? type,
-        SKPaint paint)
+    
+    private static void RenderArrowEnd(SKCanvas canvas, SKPoint tail, SKPoint tip, EnumValue<A.LineEndValues>? type, SKPaint paint)
     {
         if (type?.Value is not null && type.Value != A.LineEndValues.None)
         {
@@ -164,7 +161,7 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
 
     private decimal GetShapeOutlineWidth()
     {
-        var shapeOutline = Outline;
+        var shapeOutline = this.Outline;
 
         if (shapeOutline.Weight > 0)
         {
@@ -177,7 +174,7 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
 
     private decimal GetStyleOutlineWidth()
     {
-        var lineRef = PShapeTreeElement switch
+        var lineRef = this.PShapeTreeElement switch
         {
             P.Shape pShape => pShape.ShapeStyle?.LineReference,
             P.ConnectionShape pConnectionShape => pConnectionShape.ShapeStyle?.LineReference,
@@ -201,12 +198,12 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
 
     private void ApplyRotation(SKCanvas canvas)
     {
-        if (Math.Abs(Rotation) > Epsilon)
+        if (Math.Abs(this.Rotation) > Epsilon)
         {
-            var centerX = X + (Width / 2);
-            var centerY = Y + (Height / 2);
+            var centerX = this.X + (this.Width / 2);
+            var centerY = this.Y + (this.Height / 2);
             canvas.RotateDegrees(
-                (float)Rotation,
+                (float)this.Rotation,
                 (float)new Points(centerX).AsPixels(),
                 (float)new Points(centerY).AsPixels()
             );
@@ -215,50 +212,50 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
 
     private void RenderRectangle(SKCanvas canvas)
     {
-        var x = new Points(X).AsPixels();
-        var y = new Points(Y).AsPixels();
-        var width = new Points(Width).AsPixels();
-        var height = new Points(Height).AsPixels();
+        var x = new Points(this.X).AsPixels();
+        var y = new Points(this.Y).AsPixels();
+        var width = new Points(this.Width).AsPixels();
+        var height = new Points(this.Height).AsPixels();
         var rect = new SKRect((float)x, (float)y, (float)(x + width), (float)(y + height));
 
         var cornerRadius = 0m;
-        if (GeometryType == Geometry.RoundedRectangle)
+        if (this.GeometryType == Geometry.RoundedRectangle)
         {
             var shortestSide = Math.Min(width, height);
-            cornerRadius = CornerSize / 100m * (shortestSide / 2m);
+            cornerRadius = this.CornerSize / 100m * (shortestSide / 2m);
         }
 
         canvas.Save();
         ApplyRotation(canvas);
 
-        RenderFill(canvas, rect, cornerRadius);
-        RenderOutline(canvas, rect, cornerRadius);
+        this.RenderFill(canvas, rect, cornerRadius);
+        this.RenderOutline(canvas, rect, cornerRadius);
 
         canvas.Restore();
     }
 
     private void RenderEllipse(SKCanvas canvas)
     {
-        var x = new Points(X).AsPixels();
-        var y = new Points(Y).AsPixels();
-        var width = new Points(Width).AsPixels();
-        var height = new Points(Height).AsPixels();
+        var x = new Points(this.X).AsPixels();
+        var y = new Points(this.Y).AsPixels();
+        var width = new Points(this.Width).AsPixels();
+        var height = new Points(this.Height).AsPixels();
         var rect = new SKRect((float)x, (float)y, (float)(x + width), (float)(y + height));
 
         canvas.Save();
         ApplyRotation(canvas);
 
-        RenderEllipseFill(canvas, rect);
-        RenderEllipseOutline(canvas, rect);
+        this.RenderEllipseFill(canvas, rect);
+        this.RenderEllipseOutline(canvas, rect);
 
         canvas.Restore();
     }
 
     private void RenderLine(SKCanvas canvas)
     {
-        var outlineColor = GetShapeOutlineColor();
-        var strokeWidth = GetShapeOutlineWidth();
-        var line = Line;
+        var outlineColor = this.GetShapeOutlineColor();
+        var strokeWidth = this.GetShapeOutlineWidth();
+        var line = this.Line;
         if (outlineColor is null || strokeWidth <= 0 || line is null)
         {
             return;
@@ -280,17 +277,17 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
         };
 
         canvas.Save();
-        ApplyRotation(canvas);
+        this.ApplyRotation(canvas);
         canvas.DrawLine(startPoint, endPoint, outlinePaint);
 
-        RenderArrows(canvas, startPoint, endPoint, outlinePaint);
+        this.RenderArrows(canvas, startPoint, endPoint, outlinePaint);
 
         canvas.Restore();
     }
 
     private void RenderArrows(SKCanvas canvas, SKPoint startPoint, SKPoint endPoint, SKPaint outlinePaint)
     {
-        var pShapeProperties = PShapeTreeElement.Descendants<P.ShapeProperties>().FirstOrDefault();
+        var pShapeProperties = this.PShapeTreeElement.Descendants<P.ShapeProperties>().FirstOrDefault();
         var aOutline = pShapeProperties?.GetFirstChild<A.Outline>();
         if (aOutline == null)
         {
@@ -306,25 +303,25 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
 
     private void RenderFill(SKCanvas canvas, SKRect rect, decimal cornerRadius)
     {
-        var fillColor = GetShapeFillColor();
+        var fillColor = this.GetShapeFillColor();
         if (fillColor is null)
         {
             return;
         }
 
         using var fillPaint = new SKPaint();
-
+        
         // Adjust alpha for transparency only if Fill is possible and alpha < 100% (fully opaque/solid)
-        if (Fill is { Alpha: < 100.0 })
+        if (this.Fill is { Alpha: < 100.0 })
         {
             // Alpha in PowerPoint: 20% transparency means Alpha value is 80
-            var alpha = (byte)(255 * (Fill.Alpha / 100.0));
+            var alpha = (byte)(255 * (this.Fill.Alpha / 100.0));
             fillPaint.Color = new SKColor(fillColor.Value.Red, fillColor.Value.Green, fillColor.Value.Blue, alpha);
         }
         else
         {
             fillPaint.Color = fillColor.Value;
-        }
+        }    
 
         fillPaint.Style = SKPaintStyle.Fill;
         fillPaint.IsAntialias = true;
@@ -341,7 +338,7 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
 
     private void RenderOutline(SKCanvas canvas, SKRect rect, decimal cornerRadius)
     {
-        var outlineColor = GetShapeOutlineColor();
+        var outlineColor = this.GetShapeOutlineColor();
         var strokeWidth = GetShapeOutlineWidth();
 
         if (outlineColor is null || strokeWidth <= 0)
@@ -367,7 +364,7 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
 
     private void RenderEllipseFill(SKCanvas canvas, SKRect rect)
     {
-        var fillColor = GetShapeFillColor();
+        var fillColor = this.GetShapeFillColor();
         if (fillColor is null)
         {
             return;
@@ -383,7 +380,7 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
 
     private void RenderEllipseOutline(SKCanvas canvas, SKRect rect)
     {
-        var outlineColor = GetShapeOutlineColor();
+        var outlineColor = this.GetShapeOutlineColor();
         var strokeWidth = GetShapeOutlineWidth();
 
         if (outlineColor is null || strokeWidth <= 0)
@@ -402,7 +399,7 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
 
     private SKColor? GetShapeFillColor()
     {
-        var shapeFill = Fill;
+        var shapeFill = this.Fill;
 
         if (shapeFill is { Type: FillType.Solid, Color: not null })
         {
@@ -414,20 +411,20 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
             return null;
         }
 
-        var styleColor = GetStyleFillColor();
+        var styleColor = this.GetStyleFillColor();
         return styleColor;
     }
 
     private SKColor? GetShapeOutlineColor()
     {
-        var shapeOutline = Outline;
+        var shapeOutline = this.Outline;
 
         if (shapeOutline?.HexColor is not null)
         {
             return new Color(shapeOutline.HexColor).AsSkColor();
         }
 
-        var styleColor = GetStyleOutlineColor();
+        var styleColor = this.GetStyleOutlineColor();
         if (styleColor is not null)
         {
             return styleColor;
@@ -438,7 +435,7 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
 
     private SKColor? GetStyleOutlineColor()
     {
-        var lineRef = GetLineReference();
+        var lineRef = this.GetLineReference();
         if (lineRef is null)
         {
             return null;
@@ -450,7 +447,7 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
             return null;
         }
 
-        var hexColor = ResolveSchemeColor(schemeColorValue);
+        var hexColor = this.ResolveSchemeColor(schemeColorValue);
         if (hexColor is null)
         {
             return null;
@@ -461,7 +458,7 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
 
     private A.LineReference? GetLineReference()
     {
-        return PShapeTreeElement switch
+        return this.PShapeTreeElement switch
         {
             P.Shape pShape => pShape.ShapeStyle?.LineReference,
             P.ConnectionShape pConnectionShape => pConnectionShape.ShapeStyle?.LineReference,
@@ -471,7 +468,7 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
 
     private SKColor? GetStyleFillColor()
     {
-        if (PShapeTreeElement is not P.Shape pShape)
+        if (this.PShapeTreeElement is not P.Shape pShape)
         {
             return null;
         }
@@ -488,7 +485,7 @@ internal class DrawingShape(Position position, ShapeSize shapeSize, ShapeId shap
             return null;
         }
 
-        var hexColor = ResolveSchemeColor(schemeColorValue);
+        var hexColor = this.ResolveSchemeColor(schemeColorValue);
 
         return hexColor is not null ? new Color(hexColor).AsSkColor() : null;
     }

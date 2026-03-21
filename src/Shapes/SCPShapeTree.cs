@@ -61,8 +61,7 @@ internal readonly ref struct SCPShapeTree(P.ShapeTree pShapeTree)
     private static IEnumerable<P.Shape> GetShapesWithPlaceholder(P.ShapeTree shapeTree)
     {
         return shapeTree.Elements<P.Shape>().Where(x =>
-            x.NonVisualShapeProperties?.ApplicationNonVisualDrawingProperties?.GetFirstChild<P.PlaceholderShape>() !=
-            null);
+            x.NonVisualShapeProperties?.ApplicationNonVisualDrawingProperties?.GetFirstChild<P.PlaceholderShape>() != null);
     }
 
     private static P.Shape? FindShapeByTypeAndIndex(IEnumerable<P.Shape> shapes, P.PlaceholderShape targetPlaceholder)

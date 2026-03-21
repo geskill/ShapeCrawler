@@ -42,7 +42,7 @@ internal class XAxis(ChartPart chartPart) : IXAxis
     {
         get
         {
-            var cXValues = FirstSeries().GetFirstChild<C.XValues>();
+            var cXValues = this.FirstSeries().GetFirstChild<C.XValues>();
             if (cXValues == null)
             {
                 return [];
@@ -131,7 +131,7 @@ internal class XAxis(ChartPart chartPart) : IXAxis
     {
         get
         {
-            var axis = GetXAxisElement();
+            var axis = this.GetXAxisElement();
             if (axis == null)
             {
                 return null;
@@ -143,7 +143,7 @@ internal class XAxis(ChartPart chartPart) : IXAxis
 
         set
         {
-            var axis = GetXAxisElement();
+            var axis = this.GetXAxisElement();
             if (axis == null)
             {
                 return;
@@ -188,10 +188,8 @@ internal class XAxis(ChartPart chartPart) : IXAxis
         return title;
     }
 
-    private static C.ChartText GetOrCreateChartText(C.Title title)
-    {
-        return title.GetFirstChild<C.ChartText>() ?? title.AppendChild(new C.ChartText());
-    }
+    private static C.ChartText GetOrCreateChartText(C.Title title) =>
+        title.GetFirstChild<C.ChartText>() ?? title.AppendChild(new C.ChartText());
 
     private static C.RichText GetOrCreateRichText(C.ChartText chartText)
     {
@@ -221,9 +219,8 @@ internal class XAxis(ChartPart chartPart) : IXAxis
         overlay.Val = false;
     }
 
-    private static bool IsTitleInsertionBoundary(OpenXmlElement element)
-    {
-        return element switch
+    private static bool IsTitleInsertionBoundary(OpenXmlElement element) =>
+        element switch
         {
             C.NumberingFormat => true,
             C.MajorTickMark => true,
@@ -236,9 +233,8 @@ internal class XAxis(ChartPart chartPart) : IXAxis
             C.Layout => true,
             C.ShapeProperties => true,
             C.TextProperties => true,
-            _ => false
+            _ => false,
         };
-    }
 
     private OpenXmlElement FirstSeries()
     {

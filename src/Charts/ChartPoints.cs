@@ -14,22 +14,16 @@ internal sealed class ChartPoints : IReadOnlyList<IChartPoint>
     {
         var numberReference = GetNumberReference(cSerXmlElement);
         var numberLiteral = GetNumberLiteral(cSerXmlElement);
-        chartPoints = new ChartPointData(chartPart).Create(numberReference, numberLiteral);
+        this.chartPoints = new ChartPointData(chartPart).Create(numberReference, numberLiteral);
     }
 
-    public int Count => chartPoints.Count;
+    public int Count => this.chartPoints.Count;
 
-    public IChartPoint this[int index] => chartPoints[index];
+    public IChartPoint this[int index] => this.chartPoints[index];
 
-    public IEnumerator<IChartPoint> GetEnumerator()
-    {
-        return chartPoints.GetEnumerator();
-    }
+    public IEnumerator<IChartPoint> GetEnumerator() => this.chartPoints.GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
     private static NumberReference? GetNumberReference(OpenXmlElement cSerXmlElement)
     {

@@ -38,15 +38,14 @@ public class ShapeTests : SCTest
     }
 
 #if DEBUG
-    [Test]
-    [Explicit("Should be implemented with https://github.com/ShapeCrawler/ShapeCrawler/issues/581")]
+    [Test, Explicit("Should be implemented with https://github.com/ShapeCrawler/ShapeCrawler/issues/581")]
     public void StartMode_Setter_sets_audio_start_mode_Automatically()
     {
         // Arrange
         var pres = new Presentation();
         var mp3 = TestAsset("064 mp3.mp3");
         var shapes = pres.Slide(1).Shapes;
-        shapes.AddAudio(300, 100, mp3, AudioType.MP3);
+        shapes.AddAudio(x: 300, y: 100, mp3, AudioType.MP3);
         var addedAudio = pres.Slide(1).First<IMedia>();
 
         // Act
@@ -98,14 +97,14 @@ public class ShapeTests : SCTest
         var pres = new Presentation(TestAsset("009_table.pptx"));
         var picture5 = pres.Slide(4).Shape(5).Picture;
         var picture6 = pres.Slide(4).Shape(6).Picture;
-        var pic6LengthBefore = picture6.Image.AsByteArray().Length;
+        int pic6LengthBefore = picture6.Image.AsByteArray().Length;
         MemoryStream modifiedPresentation = new();
 
         // Act
         picture5.Image.Update(image);
 
         // Assert
-        var pic6LengthAfter = picture6.Image.AsByteArray().Length;
+        int pic6LengthAfter = picture6.Image.AsByteArray().Length;
         pic6LengthAfter.Should().Be(pic6LengthBefore);
 
         pres.Save(modifiedPresentation);
@@ -149,9 +148,7 @@ public class ShapeTests : SCTest
 
     [TestCase(2, Geometry.Rectangle)]
     [TestCase(3, Geometry.Ellipse)]
-    public void
-        GeometryType_returns_shape_geometry_type_2(int shapeId,
-            Geometry expectedGeometryType) // TODO: I cannot run this test in Rider
+    public void GeometryType_returns_shape_geometry_type_2(int shapeId, Geometry expectedGeometryType) // TODO: I cannot run this test in Rider
     {
         // Arrange
         var presentation = new Presentation(TestAsset("021.pptx"));
@@ -162,7 +159,7 @@ public class ShapeTests : SCTest
         // Assert
         shape.GeometryType.Should().Be(expectedGeometryType);
     }
-
+    
     [Test]
     public void CustomData_ReturnsNull_WhenShapeHasNotCustomData()
     {
@@ -199,10 +196,10 @@ public class ShapeTests : SCTest
     public void Name_ReturnsShapeNameString()
     {
         // Arrange
-        var shape = new Presentation(TestAsset("009_table.pptx")).Slides[1].Shapes.First(sp => sp.Id == 8);
+        IShape shape = new Presentation(TestAsset("009_table.pptx")).Slides[1].Shapes.First(sp => sp.Id == 8);
 
         // Act
-        var shapeName = shape.Name;
+        string shapeName = shape.Name;
 
         // Assert
         shapeName.Should().BeEquivalentTo("Object 2");
@@ -226,8 +223,8 @@ public class ShapeTests : SCTest
     [TestCase("autoshape-case018_rotation.pptx", 2, "NoRotationGroup", 0)]
     [TestCase("autoshape-case018_rotation.pptx", 2, "RotationGroup", 55.60)]
     public void Rotation_returns_shape_rotation_in_degrees(
-        string presName,
-        int slideNumber,
+        string presName, 
+        int slideNumber, 
         string shapeName,
         double expectedAngle)
     {
@@ -320,7 +317,7 @@ public class ShapeTests : SCTest
     }
 
     [Test]
-    [SlideShape("021.pptx", 4, 2, PlaceholderType.Footer)]
+    [SlideShape("021.pptx", slideNumber: 4, shapeId: 2, expectedResult: PlaceholderType.Footer)]
     [SlideShape("008.pptx", 1, 3, PlaceholderType.DateAndTime)]
     [SlideShape("019.pptx", 1, 2, PlaceholderType.SlideNumber)]
     [SlideShape("013.pptx", 1, 281, PlaceholderType.Content)]
@@ -373,7 +370,7 @@ public class ShapeTests : SCTest
         // Assert
         shapeId.Should().Be(expectedShapeId);
     }
-
+    
     [Test]
     [SlideShape("021.pptx", 4, 2, 287.68)]
     [SlideShape("008.pptx", 1, 3, 49.5)]
@@ -384,7 +381,7 @@ public class ShapeTests : SCTest
     public void X_Getter_returns_x_coordinate(IShape shape, double expectedX)
     {
         // Act
-        var x = shape.X;
+        decimal x = shape.X;
         var expectedXPoints = (decimal)expectedX;
 
         // Assert
@@ -484,7 +481,7 @@ public class ShapeTests : SCTest
     public void CornerSize_Getter_corner_size()
     {
         // Arrange
-        var pres = new Presentation(p => p.Slide());
+        var pres = new Presentation(p=>p.Slide());
         var shapes = pres.Slides[0].Shapes;
         shapes.AddShape(10, 20, 100, 200, Geometry.RoundedRectangle);
         var shape = shapes[0];
@@ -529,7 +526,7 @@ public class ShapeTests : SCTest
     public void CornerSize_Setter_sets_corner_size()
     {
         // Arrange
-        var pres = new Presentation(p => p.Slide());
+        var pres = new Presentation(p=>p.Slide());
         var shapes = pres.Slides[0].Shapes;
         shapes.AddShape(10, 20, 100, 200, Geometry.RoundedRectangle);
         var shape = shapes[0];
@@ -558,7 +555,7 @@ public class ShapeTests : SCTest
     {
         // Arrange
         var expected = (Geometry)Enum.Parse(typeof(Geometry), expectedStr);
-        var pres = new Presentation(p => p.Slide());
+        var pres = new Presentation(p=>p.Slide());
         var shapes = pres.Slides[0].Shapes;
         shapes.AddShape(50, 60, 100, 70);
         var shape = shapes.Last();
@@ -575,7 +572,7 @@ public class ShapeTests : SCTest
     public void Geometry_setter_wont_set_custom()
     {
         // Arrange
-        var pres = new Presentation(p => p.Slide());
+        var pres = new Presentation(p=>p.Slide());
         var shapes = pres.Slides[0].Shapes;
         shapes.AddShape(50, 60, 100, 70);
         var shape = shapes.Last();
@@ -591,7 +588,7 @@ public class ShapeTests : SCTest
     public void Geometry_setter_resets_old_adjustments()
     {
         // Arrange
-        var pres = new Presentation(p => p.Slide());
+        var pres = new Presentation(p=>p.Slide());
         var shapes = pres.Slides[0].Shapes;
         shapes.AddShape(50, 60, 100, 70);
         var shape = shapes.Last();
@@ -623,7 +620,7 @@ public class ShapeTests : SCTest
         shape.Name.Should().Be("New Name");
         ValidatePresentation(pres);
     }
-
+    
     [TestCase("Triangle", "[200]")]
     [TestCase("Parallelogram", "[0]")]
     [TestCase("Trapezoid", "[0]")]
@@ -733,7 +730,7 @@ public class ShapeTests : SCTest
     {
         // Arrange
         var geometry = (Geometry)Enum.Parse(typeof(Geometry), geometryStr);
-        var pres = new Presentation(p => p.Slide());
+        var pres = new Presentation(p=>p.Slide());
         var shapes = pres.Slides[0].Shapes;
         shapes.AddShape(50, 60, 100, 70, geometry);
         var shape = shapes.Last();
@@ -772,7 +769,7 @@ public class ShapeTests : SCTest
     public void Adjustments_setter_setting_only_one_value_when_multiple_allowed_on_new_shape()
     {
         // Arrange
-        var pres = new Presentation(p => p.Slide());
+        var pres = new Presentation(p=>p.Slide());
         var shapes = pres.Slides[0].Shapes;
         shapes.AddShape(50, 60, 100, 70, Geometry.Snip2SameRectangle);
         var shape = shapes.Last();
@@ -794,7 +791,7 @@ public class ShapeTests : SCTest
     public void Duplicate_duplicates_AutoShape()
     {
         // Arrange
-        var pres = new Presentation(p => p.Slide());
+        var pres = new Presentation(p=>p.Slide());
         var shapes = pres.Slides[0].Shapes;
         shapes.AddShape(10, 20, 30, 40);
         var addedShape = shapes.Single();
@@ -814,7 +811,7 @@ public class ShapeTests : SCTest
         // Arrange
         var pres = new Presentation(TestAsset("078 textbox.pptx"));
         var shape = pres.Slide(1).Shape("TextBox 1");
-
+        
         // Act
         shape.SetText("Test");
 
@@ -827,7 +824,13 @@ public class ShapeTests : SCTest
     {
         // Arrange
         var video = TestAsset("081 mp4 video.mp4");
-        var pres = new Presentation(p => { p.Slide(s => { s.Video("Video 1", 100, 100, 200, 150, video); }); });
+        var pres = new Presentation(p =>
+        {
+            p.Slide(s =>
+            {
+                s.Video("Video 1", x: 100, y: 100, elementWidth: 200, elementHeight: 150, content: video);
+            });
+        });
         var videoShape = pres.Slide(1).Shape("Video 1");
         var newVideo = TestAsset("083 mp4 video.mp4");
 
@@ -862,12 +865,12 @@ public class ShapeTests : SCTest
                 });
             });
         });
-
+        
         // Assert
         pres.Slide(1).Shapes.First().Width.Should().BeApproximately(241, 1, "text content should fit text box");
         ValidatePresentation(pres);
     }
-
+    
     [Test]
     [SlideShape("006_1 slides.pptx", 1, "Shape 1", ShapeContentType.Shape)]
     [SlideShape("059_crop-images.pptx", 1, "None", ShapeContentType.Picture)]

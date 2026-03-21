@@ -15,7 +15,7 @@ internal class SmartArtNodeCollection : ISmartArtNodeCollection
     /// <summary>
     ///     Gets the number of nodes in the collection.
     /// </summary>
-    public int Count => nodes.Count;
+    public int Count => this.nodes.Count;
 
     /// <summary>
     ///     Adds a new node to the SmartArt graphic with the specified text.
@@ -24,25 +24,19 @@ internal class SmartArtNodeCollection : ISmartArtNodeCollection
     /// <returns>The newly added SmartArt node.</returns>
     public ISmartArtNode AddNode(string text)
     {
-        var nodeId = $"p{nextNodeId++}";
+        var nodeId = $"p{this.nextNodeId++}";
         var node = new SmartArtNode(nodeId, text, this);
-        nodes.Add(node);
+        this.nodes.Add(node);
         return node;
     }
 
-    public IEnumerator<ISmartArtNode> GetEnumerator()
-    {
-        return nodes.Cast<ISmartArtNode>().GetEnumerator();
-    }
+    public IEnumerator<ISmartArtNode> GetEnumerator() => this.nodes.Cast<ISmartArtNode>().GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
     internal void UpdateNodeText(string nodeId, string text)
     {
-        var node = nodes.FirstOrDefault(n => n.ModelId == nodeId);
+        var node = this.nodes.FirstOrDefault(n => n.ModelId == nodeId);
         node?.UpdateText(text);
     }
 }

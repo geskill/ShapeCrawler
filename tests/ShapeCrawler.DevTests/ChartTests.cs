@@ -1,6 +1,8 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using ClosedXML.Excel;
 using FluentAssertions;
+using NUnit.Framework;
 using ShapeCrawler.DevTests.Helpers;
 
 // ReSharper disable TooManyDeclarations
@@ -232,8 +234,7 @@ public class ChartTests : SCTest
         pieChart.Categories[0].Name.Should().Be("Category 1_new");
     }
 
-    [Test]
-    [Ignore("ClosedXML dependency must be removed")]
+    [Test, Ignore("ClosedXML dependency must be removed")]
     public void Category_Name_Setter_updates_value_of_Excel_cell()
     {
         // Arrange
@@ -312,8 +313,7 @@ public class ChartTests : SCTest
         IChart chartCase1 = GetChart(new Presentation(TestAsset("021.pptx")).Slides[1].Shapes.First(sp => sp.Id == 3));
         IChart chartCase2 = GetChart(new Presentation(TestAsset("021.pptx")).Slides[2].Shapes.First(sp => sp.Id == 4));
         IChart chartCase3 = GetChart(pres13.Slides[0].Shapes.First(sp => sp.Id == 5));
-        IChart chartCase4 =
-            GetChart(new Presentation(TestAsset("009_table.pptx")).Slides[2].Shapes.First(sp => sp.Id == 7));
+        IChart chartCase4 = GetChart(new Presentation(TestAsset("009_table.pptx")).Slides[2].Shapes.First(sp => sp.Id == 7));
 
         // Act
         ChartType chartTypeCase1 = chartCase1.Type;
@@ -399,8 +399,8 @@ public class ChartTests : SCTest
     }
 
     [Test]
-    [SlideShape("013.pptx", 1, 5, 3)]
-    [SlideShape("009_table.pptx", 3, 7, 1)]
+    [SlideShape("013.pptx", slideNumber: 1, shapeId: 5, expectedResult: 3)]
+    [SlideShape("009_table.pptx", slideNumber: 3, shapeId: 7, expectedResult: 1)]
     public void SeriesCollection_Count_returns_number_of_series(IShape shape, int expectedSeriesCount)
     {
         // Act
@@ -456,9 +456,15 @@ public class ChartTests : SCTest
     public void Title_Alignment_CustomAngle_Setter_updates_the_chart_title_custom_angle_in_degree()
     {
         // Arrange
-        var pres = new Presentation(p => { p.Slide(s => { s.PieChartShape("Pie Chart"); }); });
+        var pres = new Presentation(p =>
+        {
+            p.Slide(s =>
+            {
+                s.PieChartShape("Pie Chart");
+            });
+        });
         var title = pres.Slide(1).Shape("Pie Chart").PieChart!.Title!;
-
+        
         // Act
         title.Alignment.CustomAngle = 5;
 
@@ -471,9 +477,15 @@ public class ChartTests : SCTest
     public void Title_Alignment_X_Setter_updates_the_chart_title_horizontal_position()
     {
         // Arrange
-        var pres = new Presentation(p => { p.Slide(s => { s.PieChartShape("Pie Chart"); }); });
+        var pres = new Presentation(p =>
+        {
+            p.Slide(s =>
+            {
+                s.PieChartShape("Pie Chart");
+            });
+        });
         var title = pres.Slide(1).Shape("Pie Chart").PieChart!.Title!;
-
+        
         // Act
         title.Alignment.X = 0.2m;
 
@@ -486,9 +498,15 @@ public class ChartTests : SCTest
     public void Title_Alignment_Y_Setter_updates_the_chart_title_vertical_position()
     {
         // Arrange
-        var pres = new Presentation(p => { p.Slide(s => { s.PieChartShape("Pie Chart"); }); });
+        var pres = new Presentation(p =>
+        {
+            p.Slide(s =>
+            {
+                s.PieChartShape("Pie Chart");
+            });
+        });
         var title = pres.Slide(1).Shape("Pie Chart").PieChart!.Title!;
-
+        
         // Act
         title.Alignment.Y = 0.1m;
 
@@ -501,7 +519,13 @@ public class ChartTests : SCTest
     public void Title_Alignment_X_and_Y_Getter_returns_null_when_using_automatic_positioning()
     {
         // Arrange
-        var pres = new Presentation(p => { p.Slide(s => { s.PieChartShape("Pie Chart"); }); });
+        var pres = new Presentation(p =>
+        {
+            p.Slide(s =>
+            {
+                s.PieChartShape("Pie Chart");
+            });
+        });
         var title = pres.Slide(1).Shape("Pie Chart").PieChart!.Title!;
 
         // Act & Assert
@@ -513,9 +537,15 @@ public class ChartTests : SCTest
     public void Title_Alignment_X_and_Y_Setter_can_set_both_positions_simultaneously()
     {
         // Arrange
-        var pres = new Presentation(p => { p.Slide(s => { s.PieChartShape("Pie Chart"); }); });
+        var pres = new Presentation(p =>
+        {
+            p.Slide(s =>
+            {
+                s.PieChartShape("Pie Chart");
+            });
+        });
         var title = pres.Slide(1).Shape("Pie Chart").PieChart!.Title!;
-
+        
         // Act
         title.Alignment.X = 0.3m;
         title.Alignment.Y = 0.15m;
@@ -530,10 +560,16 @@ public class ChartTests : SCTest
     public void Title_Alignment_X_Setter_resets_to_automatic_positioning_when_set_to_null()
     {
         // Arrange
-        var pres = new Presentation(p => { p.Slide(s => { s.PieChartShape("Pie Chart"); }); });
+        var pres = new Presentation(p =>
+        {
+            p.Slide(s =>
+            {
+                s.PieChartShape("Pie Chart");
+            });
+        });
         var title = pres.Slide(1).Shape("Pie Chart").PieChart!.Title!;
         title.Alignment.X = 0.3m;
-
+        
         // Act
         title.Alignment.X = null;
 
@@ -559,10 +595,10 @@ public class ChartTests : SCTest
             });
         });
         var chart = GetChart(pres.Slide(1).Shapes.First());
-
+        
         // Act
         chart.XAxis!.Title = "Series values";
-
+        
         // Assert
         chart.XAxis.Title.Should().Be("Series values");
         ValidatePresentation(pres);
