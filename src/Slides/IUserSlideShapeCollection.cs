@@ -92,12 +92,14 @@ public interface IUserSlideShapeCollection : IShapeCollection
     /// <summary>
     ///     Adds Pie Chart.
     /// </summary>
-    void AddPieChart(double x, double y, double width, double height, Dictionary<string, double> categoryValues, string seriesName);
+    void AddPieChart(double x, double y, double width, double height, Dictionary<string, double> categoryValues,
+        string seriesName);
 
     /// <summary>
     ///     Adds Pie Chart with the specified name.
     /// </summary>
-    void AddPieChart(double x, double y, double width, double height, Dictionary<string, double> categoryValues, string seriesName, string chartName);
+    void AddPieChart(double x, double y, double width, double height, Dictionary<string, double> categoryValues,
+        string seriesName, string chartName);
 
     /// <summary>
     ///     Adds Bar Chart with specified parameters.
@@ -113,7 +115,8 @@ public interface IUserSlideShapeCollection : IShapeCollection
     /// <param name="height">Height in points.</param>
     /// <param name="pointValues">Dictionary of x and y coordinate values for each point.</param>
     /// <param name="seriesName">Name of the data series.</param>
-    void AddScatterChart(int x, int y, int width, int height, Dictionary<double, double> pointValues, string seriesName);
+    void AddScatterChart(int x, int y, int width, int height, Dictionary<double, double> pointValues,
+        string seriesName);
 
     /// <summary>
     ///     Adds Bubble Chart.
@@ -184,7 +187,8 @@ public interface IUserSlideShapeCollection : IShapeCollection
     /// <param name="height">Height in points.</param>
     /// <param name="categoryValues">Dictionary mapping categories to a list of values for each series.</param>
     /// <param name="seriesNames">List of series names in the same order as the values in categoryValues.</param>
-    void AddStackedColumnChart(int x, int y, int width, int height, IDictionary<string, IList<double>> categoryValues, IList<string> seriesNames);
+    void AddStackedColumnChart(int x, int y, int width, int height, IDictionary<string, IList<double>> categoryValues,
+        IList<string> seriesNames);
 
     /// <summary>
     ///     Adds shape with SmartArt graphic content.
@@ -201,7 +205,7 @@ public interface IUserSlideShapeCollection : IShapeCollection
     /// </summary>
     /// <returns>Added "Date and time" placeholder.</returns>
     /// <exception cref="SCException">
-    /// Thrown when the slide already contains "Date and time" placeholder.
+    ///     Thrown when the slide already contains "Date and time" placeholder.
     /// </exception>
     IShape AddDateAndTime();
 
@@ -210,7 +214,7 @@ public interface IUserSlideShapeCollection : IShapeCollection
     /// </summary>
     /// <returns>Added footer placeholder.</returns>
     /// <exception cref="SCException">
-    /// Thrown when the slide already contains footer placeholder.
+    ///     Thrown when the slide already contains footer placeholder.
     /// </exception>
     IShape AddFooter();
 
@@ -219,7 +223,7 @@ public interface IUserSlideShapeCollection : IShapeCollection
     /// </summary>
     /// <returns>Added slide number placeholder.</returns>
     /// <exception cref="SCException">
-    /// Thrown when the slide already contains slide number placeholder.
+    ///     Thrown when the slide already contains slide number placeholder.
     /// </exception>
     IShape AddSlideNumber();
 }

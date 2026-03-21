@@ -41,7 +41,7 @@ public class ChartPointTests : SCTest
         // Assert
         Assert.That(scatterChartPointValue, Is.EqualTo(44));
     }
-    
+
     [Test]
     public void Value_Getter_returns_chart_point()
     {
@@ -65,7 +65,8 @@ public class ChartPointTests : SCTest
         seriesPointValue5.Should().Be(3.2);
     }
 
-    [Test, Ignore("ClosedXML dependency must be removed")]
+    [Test]
+    [Ignore("ClosedXML dependency must be removed")]
     public void Value_Setter_updates_chart_point_in_Embedded_excel_workbook()
     {
         // Arrange

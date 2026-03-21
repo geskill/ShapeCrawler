@@ -9,7 +9,7 @@ namespace ShapeCrawler.Presentations;
 public sealed class DraftTextBox
 {
     /// <summary>
-    ///    Gets or sets a value indicating whether this is a text box.
+    ///     Gets or sets a value indicating whether this is a text box.
     /// </summary>
     internal bool IsTextBox { get; set; }
 
@@ -32,7 +32,7 @@ public sealed class DraftTextBox
     internal List<DraftParagraph> Paragraphs { get; } = [];
 
     /// <summary>
-    ///    Gets draft font.
+    ///     Gets draft font.
     /// </summary>
     internal DraftFont? FontDraft { get; private set; }
 
@@ -41,7 +41,7 @@ public sealed class DraftTextBox
     /// </summary>
     public DraftTextBox Geometry(Geometry geometry)
     {
-        this.ShapeGeometry = geometry;
+        ShapeGeometry = geometry;
         return this;
     }
 
@@ -50,8 +50,8 @@ public sealed class DraftTextBox
     /// </summary>
     public DraftTextBox Font(Action<DraftFont> configure)
     {
-        this.FontDraft = new DraftFont();
-        configure(this.FontDraft);
+        FontDraft = new DraftFont();
+        configure(FontDraft);
         return this;
     }
 
@@ -60,7 +60,7 @@ public sealed class DraftTextBox
     /// </summary>
     public DraftTextBox TextBox(string text)
     {
-        this.Content = text;
+        Content = text;
         return this;
     }
 
@@ -72,9 +72,9 @@ public sealed class DraftTextBox
         var draftShapeText = new DraftShapeText();
         configure(draftShapeText);
 
-        this.Content = null;
-        this.Paragraphs.Clear();
-        this.Paragraphs.AddRange(draftShapeText.Paragraphs);
+        Content = null;
+        Paragraphs.Clear();
+        Paragraphs.AddRange(draftShapeText.Paragraphs);
         return this;
     }
 
@@ -83,21 +83,24 @@ public sealed class DraftTextBox
     /// </summary>
     public DraftTextBox TextHighlightColor(Color color)
     {
-        this.HighlightColor = color;
+        HighlightColor = color;
         return this;
     }
 
     /// <summary>
     ///     Sets name.
     /// </summary>
-    public DraftTextBox Name(string name) => this.NameMethod(name);
+    public DraftTextBox Name(string name)
+    {
+        return NameMethod(name);
+    }
 
     /// <summary>
     ///     Sets X-position.
     /// </summary>
     public DraftTextBox X(int x)
     {
-        this.PosX = x;
+        PosX = x;
         return this;
     }
 
@@ -106,7 +109,7 @@ public sealed class DraftTextBox
     /// </summary>
     public DraftTextBox Y(int y)
     {
-        this.PosY = y;
+        PosY = y;
         return this;
     }
 
@@ -115,7 +118,7 @@ public sealed class DraftTextBox
     /// </summary>
     public DraftTextBox Width(int width)
     {
-        this.BoxWidth = width;
+        BoxWidth = width;
         return this;
     }
 
@@ -124,7 +127,7 @@ public sealed class DraftTextBox
     /// </summary>
     public DraftTextBox Height(int height)
     {
-        this.BoxHeight = height;
+        BoxHeight = height;
         return this;
     }
 
@@ -133,7 +136,7 @@ public sealed class DraftTextBox
     /// </summary>
     public DraftTextBox Paragraph(string content)
     {
-        this.Content = AppendParagraph(this.Content, content);
+        Content = AppendParagraph(Content, content);
         return this;
     }
 
@@ -144,7 +147,7 @@ public sealed class DraftTextBox
     {
         var draftParagraph = new DraftParagraph();
         configure(draftParagraph);
-        this.Paragraphs.Add(draftParagraph);
+        Paragraphs.Add(draftParagraph);
         return this;
     }
 
@@ -160,7 +163,7 @@ public sealed class DraftTextBox
 
     private DraftTextBox NameMethod(string name)
     {
-        this.TextBoxName = name;
+        TextBoxName = name;
         return this;
     }
 }

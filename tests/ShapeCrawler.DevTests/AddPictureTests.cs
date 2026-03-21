@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using FluentAssertions;
 using ImageMagick;
-using NUnit.Framework;
 using ShapeCrawler.DevTests.Helpers;
 
 namespace ShapeCrawler.DevTests;
@@ -14,7 +13,7 @@ public class AddPictureTests : SCTest
     public void AddPicture_adds_svg_picture()
     {
         // Arrange
-        var pres = new Presentation(p=>p.Slide());
+        var pres = new Presentation(p => p.Slide());
         var shapes = pres.Slides[0].Shapes;
         var image = TestAsset("063 vector image.svg");
         image.Position = 0;
@@ -30,13 +29,14 @@ public class AddPictureTests : SCTest
         addedPictureShape.Width.Should().Be(75);
         ValidatePresentation(pres);
     }
-    
+
     [Test]
     [Category("issue-883")]
-    public void AddPicture_should_not_duplicate_the_image_source_When_the_same_svg_image_is_added_on_two_different_slides()
+    public void
+        AddPicture_should_not_duplicate_the_image_source_When_the_same_svg_image_is_added_on_two_different_slides()
     {
         // Arrange
-        var pres = new Presentation(p=>p.Slide());
+        var pres = new Presentation(p => p.Slide());
         var layout = pres.SlideMaster(1).SlideLayout("Blank");
         pres.Slides.Add(layout.Number);
         var shapesSlide1 = pres.Slides[0].Shapes;
@@ -50,7 +50,8 @@ public class AddPictureTests : SCTest
 
         // Assert
         var sdkPres = SaveAndOpenPresentationAsSdk(pres);
-        var imageParts = sdkPres.PresentationPart!.SlideParts.SelectMany(slidePart => slidePart.ImageParts).Select(imagePart => imagePart.Uri)
+        var imageParts = sdkPres.PresentationPart!.SlideParts.SelectMany(slidePart => slidePart.ImageParts)
+            .Select(imagePart => imagePart.Uri)
             .ToHashSet();
         imageParts.Count.Should().Be(2,
             "SVG image adds two parts: One for the vector and one for the auto-generated raster");
@@ -60,7 +61,7 @@ public class AddPictureTests : SCTest
     public void AddPicture_should_not_duplicate_the_image_source_When_the_same_image_is_added_on_two_different_slides()
     {
         // Arrange
-        var pres = new Presentation(p=>p.Slide());
+        var pres = new Presentation(p => p.Slide());
         var layout = pres.MasterSlides[0].LayoutSlides.First(l => l.Name == "Blank");
         pres.Slides.Add(layout.Number);
         var shapesSlide1 = pres.Slides[0].Shapes;
@@ -74,16 +75,17 @@ public class AddPictureTests : SCTest
 
         // Assert
         var sdkPres = SaveAndOpenPresentationAsSdk(pres);
-        var imageParts = sdkPres.PresentationPart!.SlideParts.SelectMany(slidePart => slidePart.ImageParts).Select(imagePart => imagePart.Uri)
+        var imageParts = sdkPres.PresentationPart!.SlideParts.SelectMany(slidePart => slidePart.ImageParts)
+            .Select(imagePart => imagePart.Uri)
             .ToHashSet();
         imageParts.Count.Should().Be(1);
     }
-    
+
     [Test]
     public void AddPicture_doesnt_duplicate_image_part()
     {
         // Arrange
-        var pres = new Presentation(p=>p.Slide());
+        var pres = new Presentation(p => p.Slide());
         var layout = pres.SlideMaster(1).LayoutSlides.First(l => l.Name == "Blank");
         pres.Slides.Add(layout.Number);
         var slide1 = pres.Slide(1);
@@ -96,7 +98,8 @@ public class AddPictureTests : SCTest
 
         // Assert
         var sdkPres = SaveAndOpenPresentationAsSdk(pres);
-        var imageParts = sdkPres.PresentationPart!.SlideParts.SelectMany(slidePart => slidePart.ImageParts).Select(imagePart => imagePart.Uri)
+        var imageParts = sdkPres.PresentationPart!.SlideParts.SelectMany(slidePart => slidePart.ImageParts)
+            .Select(imagePart => imagePart.Uri)
             .ToHashSet();
         imageParts.Count.Should().Be(1);
     }
@@ -105,7 +108,7 @@ public class AddPictureTests : SCTest
     public void AddPicture_sets_valid_svg_content()
     {
         // Arrange
-        var pres = new Presentation(p=>p.Slide());
+        var pres = new Presentation(p => p.Slide());
         var shapes = pres.Slides[0].Shapes;
         var image = TestAsset("063 vector image.svg");
         image.Position = 0;
@@ -114,28 +117,28 @@ public class AddPictureTests : SCTest
 
         // Act
         var svgContent = picture.SvgContent;
-        
+
         // Assert
         svgContent.Should().Contain("<svg");
     }
-    
+
     [Test]
     public void AddPicture_preserves_original_1600_width()
     {
         // Arrange
-        var pres = new Presentation(p=>p.Slide());
+        var pres = new Presentation(p => p.Slide());
         var imageStream = TestAsset("11 image 1600x690.jpg");
         var shapes = pres.Slide(1).Shapes;
-        
+
         // Act
         shapes.AddPicture(imageStream);
-        
+
         // Assert
         var addedPicture = shapes.Last().Picture;
         var image = new MagickImage(addedPicture.Image!.AsByteArray());
         image.Width.Should().Be(1600);
     }
-    
+
     [Test]
     public void AddPicture_svg_with_text_matches_reference()
     {
@@ -157,7 +160,7 @@ public class AddPictureTests : SCTest
         xml.LoadXml(picture.SvgContent);
         var textTagRandomChild = xml.GetElementsByTagName("text").OfType<XmlElement>().First().ChildNodes.Item(0);
         textTagRandomChild.Should().NotBeOfType<XmlSignificantWhitespace>("Text tags must not contain whitespace");
-        
+
         // The above assertion does guard against the root cause of the bug 
         // which led to this test. However, the true test comes from loading
         // these up in PowerPoint and ensure the added image looks like the
@@ -169,7 +172,7 @@ public class AddPictureTests : SCTest
     public void AddPicture_too_large_adds_picture()
     {
         // Arrange
-        var pres = new Presentation(p=>p.Slide());
+        var pres = new Presentation(p => p.Slide());
         var shapes = pres.Slides[0].Shapes;
         var image = TestAsset("png image-large.png");
         image.Position = 0;
@@ -195,7 +198,7 @@ public class AddPictureTests : SCTest
     public void AddPicture_adds_svg_picture_no_width_height_tags()
     {
         // Arrange
-        var pres = new Presentation(p=>p.Slide());
+        var pres = new Presentation(p => p.Slide());
         var shapes = pres.Slides[0].Shapes;
         var image = TestAsset("070 vector image-wide.svg");
         image.Position = 0;
@@ -211,12 +214,12 @@ public class AddPictureTests : SCTest
         pictureShape.Width.Should().Be(210);
         ValidatePresentation(pres);
     }
-    
+
     [Test]
     public void AddPicture_adds_picture_with_transparent_background()
     {
         // Arrange
-        var pres = new Presentation(p=>p.Slide());
+        var pres = new Presentation(p => p.Slide());
         var shapes = pres.Slides[0].Shapes;
         var image = TestAsset("067 vector image-blank.svg");
 
@@ -227,10 +230,7 @@ public class AddPictureTests : SCTest
         var pictureShape = shapes.Last();
         var imageMagickImage = new MagickImage(pictureShape.Picture.Image.AsByteArray());
         var pixels = imageMagickImage.GetPixels();
-        pixels.Should().NotBeEmpty().And.AllSatisfy(x =>
-        {
-            x.ToColor().Should().Be(MagickColors.Transparent);
-        });
+        pixels.Should().NotBeEmpty().And.AllSatisfy(x => { x.ToColor().Should().Be(MagickColors.Transparent); });
     }
 
     [TestCase("09 png image.png", "image/png")]
@@ -240,7 +240,7 @@ public class AddPictureTests : SCTest
     public void AddPicture_adds_should_set_valid_mime(string image, string expectedMime)
     {
         // Arrange
-        var pres = new Presentation(p=>p.Slide());
+        var pres = new Presentation(p => p.Slide());
         var shapes = pres.Slides[0].Shapes;
         var imageStream = TestAsset(image);
 
@@ -252,12 +252,12 @@ public class AddPictureTests : SCTest
         shapes.Last().Picture.Image.Mime.Should().Be(expectedMime);
         ValidatePresentation(pres);
     }
-    
+
     [Test]
     public void AddPicture_throws_exception_when_the_specified_stream_is_non_image()
     {
         // Arrange
-        var pres = new Presentation(p=>p.Slide());
+        var pres = new Presentation(p => p.Slide());
         var shapes = pres.Slide(1).Shapes;
         var stream = TestAsset("autoshape-case011_save-as-png.pptx");
 
@@ -267,12 +267,12 @@ public class AddPictureTests : SCTest
         // Assert
         addingPicture.Should().Throw<SCException>();
     }
-    
+
     [Test]
     public void AddPicture_adds_picture_with_correct_Height()
     {
         // Arrange
-        var pres = new Presentation(p=>p.Slide());
+        var pres = new Presentation(p => p.Slide());
         var shapes = pres.Slides[0].Shapes;
         var image = TestAsset("09 png image.png");
 
@@ -288,7 +288,7 @@ public class AddPictureTests : SCTest
     public void AddPicture_adds_picture_with_correct_mime()
     {
         // Arrange
-        var pres = new Presentation(p=>p.Slide());
+        var pres = new Presentation(p => p.Slide());
         var shapes = pres.Slides[0].Shapes;
         var image = TestAsset("06 jpeg image.jpg");
 
@@ -299,7 +299,7 @@ public class AddPictureTests : SCTest
         var addedPictureImage = shapes.Last().Picture.Image;
         addedPictureImage.Mime.Should().Be("image/jpeg");
     }
-    
+
     [TestCase("08 jpeg image-500w.jpg")]
     [TestCase("09 png image.png")]
     [TestCase("03 gif image.gif")]
@@ -307,7 +307,7 @@ public class AddPictureTests : SCTest
     public void AddPicture_should_not_change_the_underlying_file_size(string image)
     {
         // Arrange
-        var pres = new Presentation(p=>p.Slide());
+        var pres = new Presentation(p => p.Slide());
         var shapes = pres.Slides[0].Shapes;
         var imageStream = TestAsset(image);
         const int fileSizeTolerance = 2000;
@@ -319,29 +319,29 @@ public class AddPictureTests : SCTest
         var addedPictureImage = shapes.Last().Picture.Image!;
         addedPictureImage.AsByteArray().Length.Should().BeLessOrEqualTo((int)imageStream.Length + fileSizeTolerance);
     }
-    
+
     [Test]
     public void AddPicture_adds_picture_from_another_presentation()
     {
         // Arrange
-        var sourcePres = new Presentation(p=>p.Slide());
+        var sourcePres = new Presentation(p => p.Slide());
         var image = TestAsset("09 png image.png");
         sourcePres.Slide(1).Shapes.AddPicture(image);
         var pictureShape = sourcePres.Slide(1).Shapes.First(shape => shape.Picture is not null);
-        var destPres = new Presentation(p=>p.Slide());
-        
+        var destPres = new Presentation(p => p.Slide());
+
         // Act
         destPres.Slide(1).Shapes.Add(pictureShape);
-        
+
         // Assert
         ValidatePresentation(destPres);
     }
-    
+
     [Test]
     public void AddPicture_should_not_duplicate_the_image_source_When_the_same_image_is_added_to_a_loaded_presentation()
     {
         // Arrange
-        var pres = new Presentation(p=>p.Slide());
+        var pres = new Presentation(p => p.Slide());
         var layout = pres.MasterSlides[0].LayoutSlides.First(l => l.Name == "Blank");
         pres.Slides.Add(layout.Number);
         var shapes = pres.Slides[0].Shapes;
@@ -355,11 +355,12 @@ public class AddPictureTests : SCTest
 
         // Assert
         var sdkPres = SaveAndOpenPresentationAsSdk(presLoaded);
-        var imageParts = sdkPres.PresentationPart!.SlideParts.SelectMany(slidePart => slidePart.ImageParts).Select(imagePart => imagePart.Uri)
+        var imageParts = sdkPres.PresentationPart!.SlideParts.SelectMany(slidePart => slidePart.ImageParts)
+            .Select(imagePart => imagePart.Uri)
             .ToHashSet();
         imageParts.Count.Should().Be(1);
     }
-    
+
     [Test]
     public void AddPicture_should_not_duplicate_the_image_source_When_the_same_png_image_is_added_twice()
     {
@@ -377,18 +378,18 @@ public class AddPictureTests : SCTest
         var imageParts = checkXml.PresentationPart!.SlideParts.SelectMany(slidePart => slidePart.ImageParts).ToArray();
         imageParts.Length.Should().Be(1);
     }
-    
+
     [Test]
     public void AddPicture_sets_384_ppi_resolution_for_svg_picture()
     {
         // Arrange
-        var pres = new Presentation(p=>p.Slide());
+        var pres = new Presentation(p => p.Slide());
         var shapes = pres.Slides[0].Shapes;
         var svg = TestAsset("063 vector image.svg");
-        
+
         // Act
         shapes.AddPicture(svg);
-        
+
         // Assert
         var addedPicture = shapes.Last().Picture;
         var addedPictureInfo = new MagickImageInfo(addedPicture.Image!.AsByteArray());

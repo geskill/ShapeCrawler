@@ -2,7 +2,8 @@
 
 public class ChartExamples
 {
-    [Test, Explicit]
+    [Test]
+    [Explicit]
     public void Update_series()
     {
         using var pres = new Presentation("hello world.pptx");
@@ -10,31 +11,30 @@ public class ChartExamples
         var point = chart.SeriesCollection[0].Points[0];
         point.Value = 10;
     }
-    
-    [Test, Explicit]
+
+    [Test]
+    [Explicit]
     public static void Update_chart_category()
     {
         using var pres = new Presentation("pres.pptx");
         var slide = pres.Slide(1);
         var chart = slide.First<IChart>();
 
-        if (chart.Type == ChartType.BarChart)
-        {
-            Console.WriteLine("Chart type is BarChart");
-        }
-        
+        if (chart.Type == ChartType.BarChart) Console.WriteLine("Chart type is BarChart");
+
         chart.Categories![0].Name = "Price";
     }
-    
-    [Test, Explicit]
+
+    [Test]
+    [Explicit]
     public void Add_Scatter_chart()
     {
         var pres = new Presentation(p => p.Slide());
         var shapes = pres.Slide(1).Shapes;
-        int x = 100;
-        int y = 100;
-        int width = 500;
-        int height = 300;
+        var x = 100;
+        var y = 100;
+        var width = 500;
+        var height = 300;
         var pointValues = new Dictionary<double, double>
         {
             { 1.0, 5.2 },
@@ -43,20 +43,21 @@ public class ChartExamples
             { 4.0, 9.5 },
             { 5.0, 12.3 }
         };
-        string seriesName = "Data Series";
-        
+        var seriesName = "Data Series";
+
         shapes.AddScatterChart(x, y, width, height, pointValues, seriesName);
     }
 
-    [Test, Explicit]
+    [Test]
+    [Explicit]
     public void Add_Stacked_Column_chart()
     {
         var pres = new Presentation(p => p.Slide());
         var shapes = pres.Slide(1).Shapes;
-        int x = 100;
-        int y = 100;
-        int width = 500;
-        int height = 300;
+        var x = 100;
+        var y = 100;
+        var width = 500;
+        var height = 300;
         var categoryValues = new Dictionary<string, IList<double>>
         {
             { "Category 1", new List<double> { 10, 20 } },

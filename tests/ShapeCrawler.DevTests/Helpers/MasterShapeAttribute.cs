@@ -20,7 +20,7 @@ public class MasterShapeAttribute(string pptxName, string shapeName, object expe
         var parameters = expectedResult != null
             ? new TestCaseParameters([shape, expectedResult])
             : new TestCaseParameters([shape]);
-        
+
         yield return new NUnitTestCaseBuilder().BuildTestMethod(method, suite, parameters);
     }
 }

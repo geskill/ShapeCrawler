@@ -10,13 +10,19 @@ namespace ShapeCrawler.Sections;
 
 internal sealed class SectionSlideCollection(P14.Section p14Section) : IReadOnlyList<IUserSlide>
 {
-    public int Count => this.GetSlides().Count;
+    public int Count => GetSlides().Count;
 
-    public IUserSlide this[int index] => this.GetSlides()[index];
+    public IUserSlide this[int index] => GetSlides()[index];
 
-    public IEnumerator<IUserSlide> GetEnumerator() => this.GetSlides().GetEnumerator();
+    public IEnumerator<IUserSlide> GetEnumerator()
+    {
+        return GetSlides().GetEnumerator();
+    }
 
-    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 
     private UserSlideCollection GetSlides()
     {

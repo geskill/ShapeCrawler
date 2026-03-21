@@ -15,7 +15,8 @@ internal sealed class DrawingTextBox : TextBox
     {
     }
 
-    internal void Render(SKCanvas canvas, decimal parentShapeX, decimal parentShapeY, decimal parentShapeWidth, decimal parentShapeHeight)
+    internal void Render(SKCanvas canvas, decimal parentShapeX, decimal parentShapeY, decimal parentShapeWidth,
+        decimal parentShapeHeight)
     {
         if (string.IsNullOrWhiteSpace(Text))
         {
@@ -27,8 +28,9 @@ internal sealed class DrawingTextBox : TextBox
         var availableWidth = GetAvailableWidth(parentShapeWidth);
         var availableHeight = GetAvailableHeight(parentShapeHeight);
 
-        var wrap = this.TextWrapped && availableWidth > 0;
-        new TextLayout(this.Paragraphs, availableWidth, wrap).Render(canvas, originX, originY, availableHeight, VerticalAlignment);
+        var wrap = TextWrapped && availableWidth > 0;
+        new TextLayout(Paragraphs, availableWidth, wrap).Render(canvas, originX, originY, availableHeight,
+            VerticalAlignment);
     }
 
     private static decimal ClampToZero(decimal value)
@@ -38,13 +40,13 @@ internal sealed class DrawingTextBox : TextBox
 
     private float GetAvailableWidth(decimal parentShapeWidth)
     {
-        var width = ClampToZero(parentShapeWidth - this.LeftMargin - this.RightMargin);
+        var width = ClampToZero(parentShapeWidth - LeftMargin - RightMargin);
         return (float)new Points(width).AsPixels();
     }
 
     private float GetAvailableHeight(decimal parentShapeHeight)
     {
-        var height = ClampToZero(parentShapeHeight - this.TopMargin - this.BottomMargin);
+        var height = ClampToZero(parentShapeHeight - TopMargin - BottomMargin);
         return (float)new Points(height).AsPixels();
     }
 }

@@ -20,5 +20,5 @@ public enum TextVerticalAlignment
     /// <summary>
     ///     Bottom alignment.
     /// </summary>
-    Bottom = 2,
+    Bottom = 2
 }

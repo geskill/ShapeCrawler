@@ -1,7 +1,6 @@
+using DocumentFormat.OpenXml.Drawing;
 using FluentAssertions;
-using NUnit.Framework;
 using ShapeCrawler.DevTests.Helpers;
-using ShapeCrawler.Texts;
 
 // ReSharper disable SuggestVarOrType_SimpleTypes
 
@@ -18,12 +17,12 @@ public class FontTests : SCTest
             pres.Slide(slide =>
             {
                 slide.TextShape(
-                    name: "TextBox",
-                    x: 100,
-                    y: 100,
-                    width: 200,
-                    height: 50,
-                    content: "Test");
+                    "TextBox",
+                    100,
+                    100,
+                    200,
+                    50,
+                    "Test");
             });
         });
         var font = pres.Slide(1).Shapes.Last().TextBox!.Paragraphs[0].Portions[0].Font!;
@@ -38,7 +37,8 @@ public class FontTests : SCTest
 
     [Test]
     [TestCase("001.pptx", 1, "TextBox 3")]
-    public void EastAsianName_Setter_sets_font_for_the_east_asian_characters_2(string file, int slideNumber, string shapeName)
+    public void EastAsianName_Setter_sets_font_for_the_east_asian_characters_2(string file, int slideNumber,
+        string shapeName)
     {
         // Arrange
         var pres = new Presentation(TestAsset(file));
@@ -52,7 +52,7 @@ public class FontTests : SCTest
         font.EastAsianName.Should().Be("SimSun");
         ValidatePresentation(pres);
     }
-    
+
     [Test]
     [SlideShape("autoshape-grouping.pptx", 1, "TextBox 7", "SimSun")]
     public void EastAsianName_Getter_returns_font_for_East_Asian_characters(IShape shape, string expectedFontName)
@@ -63,7 +63,7 @@ public class FontTests : SCTest
         // Act & Assert
         font.EastAsianName.Should().Be(expectedFontName);
     }
-    
+
     [Test]
     public void Size_Getter_returns_font_size_of_non_first_portion()
     {
@@ -76,7 +76,7 @@ public class FontTests : SCTest
         // Act
         var fontSize1 = font1.Size;
         var fontSize2 = font2.Size;
-        
+
         // Assert
         fontSize1.Should().Be(18);
         fontSize2.Should().Be(20);
@@ -93,7 +93,7 @@ public class FontTests : SCTest
         // Act-Assert
         portion.Font!.Size.Should().Be(18);
     }
-    
+
     [Test]
     [MasterShape("001.pptx", "Freeform: Shape 7", 18)]
     [SlideShape("020.pptx", 1, 3, 18)]
@@ -112,14 +112,14 @@ public class FontTests : SCTest
     [SlideShape("autoshape-case016.pptx", 1, "Text Placeholder 1", 28)]
     [SlideShape("001.pptx", 1, "TextBox 8", 11)]
     public void Size_Getter_returns_font_size(IShape shape, double expectedSize)
-    { 
+    {
         // Arrange
         var font = shape.TextBox!.Paragraphs[0].Portions[0].Font!;
-        
+
         // Act & Assert
         font.Size.Should().Be((decimal)expectedSize);
     }
-    
+
     [Test]
     [SlideShape("028.pptx", 1, 4098, 32)]
     [SlideShape("029.pptx", 1, "Content Placeholder 2", 25)]
@@ -179,7 +179,7 @@ public class FontTests : SCTest
         var pres = new Presentation(TestAsset("020.pptx"));
         var placeholder = pres.Slide(3).Shapes.First(sp => sp.Id == 7);
         var font = placeholder.TextBox!.Paragraphs[0].Portions[0].Font!;
-        
+
         // Act & Assert
         font.IsBold.Should().BeFalse();
     }
@@ -279,17 +279,17 @@ public class FontTests : SCTest
         var font = placeholder.TextBox!.Paragraphs[0].Portions[0].Font!;
 
         // Act
-        font.Underline = DocumentFormat.OpenXml.Drawing.TextUnderlineValues.Single;
+        font.Underline = TextUnderlineValues.Single;
 
         // Assert
-        font.Underline.Should().Be(DocumentFormat.OpenXml.Drawing.TextUnderlineValues.Single);
+        font.Underline.Should().Be(TextUnderlineValues.Single);
         pres.Save(mStream);
         pres = new Presentation(mStream);
         placeholder = pres.Slide(3).Shapes.GetById(7);
         font = placeholder.TextBox!.Paragraphs[0].Portions[0].Font!;
-        font.Underline.Should().Be(DocumentFormat.OpenXml.Drawing.TextUnderlineValues.Single);
+        font.Underline.Should().Be(TextUnderlineValues.Single);
     }
-    
+
     [Test]
     [SlideShape("002.pptx", 2, 3, "Palatino Linotype")]
     [SlideShape("001.pptx", 1, 4, "Broadway")]
@@ -304,7 +304,7 @@ public class FontTests : SCTest
         // Act & Assert
         font.LatinName.Should().Be(expectedFontName);
     }
-    
+
     [Test]
     [SlideShape("001.pptx", 1, "TextBox 3")]
     [SlideShape("001.pptx", 3, "Text Placeholder 3")]
@@ -319,31 +319,25 @@ public class FontTests : SCTest
         // Assert
         font.LatinName.Should().Be("Time New Roman");
     }
-    
+
     [Test]
     public void LatinName_Setter_sets_font_for_the_latin_characters_of_table_cell()
     {
         // Arrange
-        var pres = new Presentation(pres =>
-        {
-            pres.Slide(slide =>
-            {
-                slide.TableShape("Table 1", x: 40, y: 40, columnsCount: 6, rowsCount: 5);
-            });
-        });
+        var pres = new Presentation(pres => { pres.Slide(slide => { slide.TableShape("Table 1", 40, 40, 6, 5); }); });
         var slide = pres.Slide(1);
-        var table = (ITable)slide.Shapes.Last().Table;
+        var table = slide.Shapes.Last().Table;
         var cell = table[1, 2];
         cell.TextBox.SetText("Test");
         var font = cell.TextBox.Paragraphs.First().Portions.First().Font!;
 
         // Act
         font.LatinName = "Arial";
-        
+
         // Assert
         font.LatinName.Should().Be("Arial");
     }
-    
+
     [Test]
     public void LatinName_Setter_sets_font_for_the_latin_characters()
     {
@@ -352,8 +346,8 @@ public class FontTests : SCTest
         {
             pres.Slide(slide =>
             {
-                slide.TextShape("TextBox 1", x: 10, y: 20, width: 30, height: 40, content: "Shape 1");
-                slide.TextShape("TextBox 2", x: 100, y: 20, width: 30, height: 40, content: "Test");
+                slide.TextShape("TextBox 1", 10, 20, 30, 40, "Shape 1");
+                slide.TextShape("TextBox 2", 100, 20, 30, 40, "Test");
             });
         });
         var shape1 = pres.Slide(1).Shape("TextBox 1");
@@ -367,7 +361,7 @@ public class FontTests : SCTest
         // Assert
         shape1.TextBox!.Paragraphs[0].Portions[0].Font.LatinName.Should().Be("Segoe UI Semibold");
     }
-    
+
     [Test]
     [TestCase("001.pptx", 1, "TextBox 3")]
     [TestCase("026.pptx", 1, "AutoShape 1")]
@@ -391,7 +385,7 @@ public class FontTests : SCTest
         font = pres.Slide(slideNumber).Shape(shapeName).TextBox!.Paragraphs[0].Portions[0].Font!;
         font.Size.Should().Be(newSize);
     }
-    
+
     [Test]
     [TestCase("020.pptx", 3, 7)]
     [TestCase("026.pptx", 1, 128)]
@@ -418,7 +412,8 @@ public class FontTests : SCTest
     [Test]
     [TestCase("autoshape-case010.pptx", 1, "Title 1", 50)]
     [TestCase("autoshape-case010.pptx", 2, "Title 1", -32)]
-    public void OffsetEffect_Getter_returns_offset_of_Text(string presentation, int slideNumber, string shapeName, int expectedOffset)
+    public void OffsetEffect_Getter_returns_offset_of_Text(string presentation, int slideNumber, string shapeName,
+        int expectedOffset)
     {
         // Arrange
         var pres = new Presentation(TestAsset(presentation));
@@ -432,7 +427,8 @@ public class FontTests : SCTest
     [Test]
     [TestCase("autoshape-case010.pptx", 3, "Title 1", 12)]
     [TestCase("autoshape-case010.pptx", 2, "Title 1", -27)]
-    public void OffsetEffect_Setter_changes_Offset_of_paragraph_portion(string presentation, int slideNumber, string shapeName, int expectedOffsetEffect)
+    public void OffsetEffect_Setter_changes_Offset_of_paragraph_portion(string presentation, int slideNumber,
+        string shapeName, int expectedOffsetEffect)
     {
         // Arrange
         var pres = new Presentation(TestAsset(presentation));
@@ -450,26 +446,23 @@ public class FontTests : SCTest
         font.OffsetEffect.Should().NotBe(oldOffsetSize);
         font.OffsetEffect.Should().Be(expectedOffsetEffect);
     }
-    
+
     [Test]
     public void LatinName_Setter()
     {
         // Arrange
         var pres = new Presentation(pres =>
         {
-            pres.Slide(slide =>
-            {
-                slide.TextShape("TextBox 1", 0, 0, 100, 100, "Test");
-            });
+            pres.Slide(slide => { slide.TextShape("TextBox 1", 0, 0, 100, 100, "Test"); });
         });
         var slide = pres.Slide(1);
         var addedShape = slide.Shapes.Last();
         var font = addedShape.TextBox!.Paragraphs[0].Portions[0].Font!;
         var stream = new MemoryStream();
-        
+
         // Act
         font.LatinName = "Times New Roman";
-        
+
         // Assert
         pres.Save(stream);
         font = new Presentation(stream).Slide(1).Shapes.Last().TextBox!.Paragraphs[0].Portions[0].Font!;

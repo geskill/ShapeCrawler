@@ -9,7 +9,7 @@ internal sealed class ShapeSize(OpenXmlElement pShapeTreeElement)
 {
     internal decimal Width
     {
-        get => new Emus(this.GetAExtents().Cx!).AsPoints();
+        get => new Emus(GetAExtents().Cx!).AsPoints();
         set
         {
             var emus = new Points(value).AsEmus();
@@ -18,13 +18,13 @@ internal sealed class ShapeSize(OpenXmlElement pShapeTreeElement)
                 emus = int.MaxValue;
             }
 
-            this.GetAExtents().Cx = emus;
+            GetAExtents().Cx = emus;
         }
     }
 
     internal decimal Height
     {
-        get => new Emus(this.GetAExtents().Cy!).AsPoints();
+        get => new Emus(GetAExtents().Cy!).AsPoints();
         set
         {
             var emus = new Points(value).AsEmus();
@@ -33,7 +33,7 @@ internal sealed class ShapeSize(OpenXmlElement pShapeTreeElement)
                 emus = int.MaxValue;
             }
 
-            this.GetAExtents().Cy = emus;
+            GetAExtents().Cy = emus;
         }
     }
 

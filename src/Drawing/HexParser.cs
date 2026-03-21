@@ -58,7 +58,8 @@ internal static class HexParser
     private static string? GetThemeMappedColor(string fontSchemeColor, P.SlideMaster pSlideMaster)
     {
         var slideMasterPColorMap = pSlideMaster.ColorMap;
-        var targetSchemeColor = slideMasterPColorMap?.GetAttributes().FirstOrDefault(a => a.LocalName == fontSchemeColor);
+        var targetSchemeColor =
+            slideMasterPColorMap?.GetAttributes().FirstOrDefault(a => a.LocalName == fontSchemeColor);
         return GetThemeColorByString(targetSchemeColor?.Value!, pSlideMaster);
     }
 

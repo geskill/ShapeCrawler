@@ -2,12 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using DocumentFormat.OpenXml.Presentation;
 using A = DocumentFormat.OpenXml.Drawing;
 
 namespace ShapeCrawler.Tables;
 
 /// <summary>
-///    Represents a table column collection.
+///     Represents a table column collection.
 /// </summary>
 public interface ITableColumnCollection : IEnumerable<IColumn>
 {
@@ -45,16 +46,16 @@ public interface ITableColumnCollection : IEnumerable<IColumn>
 
 internal sealed class TableColumnCollection : ITableColumnCollection
 {
-    private readonly DocumentFormat.OpenXml.Drawing.Table aTable;
+    private readonly A.Table aTable;
 
-    internal TableColumnCollection(DocumentFormat.OpenXml.Presentation.GraphicFrame pGraphicFrame)
+    internal TableColumnCollection(GraphicFrame pGraphicFrame)
     {
-        this.aTable = pGraphicFrame.GetFirstChild<DocumentFormat.OpenXml.Drawing.Graphic>()!.GraphicData!.GetFirstChild<DocumentFormat.OpenXml.Drawing.Table>()!;
+        aTable = pGraphicFrame.GetFirstChild<A.Graphic>()!.GraphicData!.GetFirstChild<A.Table>()!;
     }
 
-    public int Count => this.Columns().Count;
+    public int Count => Columns().Count;
 
-    public IColumn this[int index] => this.Columns()[index];
+    public IColumn this[int index] => Columns()[index];
 
     public void Remove(IColumn removing)
     {
@@ -64,37 +65,52 @@ internal sealed class TableColumnCollection : ITableColumnCollection
 
     public void RemoveAt(int index)
     {
-        var cols = this.Columns();
+        var cols = Columns();
         if (index < 0 || index >= cols.Count)
         {
             throw new ArgumentOutOfRangeException(nameof(index));
         }
 
         var internalCol = cols[index];
-        this.Remove(internalCol);
+        Remove(internalCol);
     }
 
-    public void Add() => this.InsertAfter(this.Columns().Count);
+    public void Add()
+    {
+        InsertAfter(Columns().Count);
+    }
 
     public void InsertAfter(int columnNumber)
     {
         var columnIndex = columnNumber - 1;
-        var tableGrid = this.aTable.TableGrid!;
-        var existingColumns = this.Columns().Select(x => x.AGridColumn).ToList();
+        var tableGrid = aTable.TableGrid!;
+        var existingColumns = Columns().Select(x => x.AGridColumn).ToList();
 
         var gridColumn = Column.CreateNewColumn(tableGrid, existingColumns[columnIndex].Width!.Value);
         var targetColumn = existingColumns[columnIndex];
         tableGrid.InsertAfter(gridColumn, targetColumn);
 
-        foreach (var aTableRow in this.aTable.Elements<A.TableRow>())
+        foreach (var aTableRow in aTable.Elements<A.TableRow>())
         {
             new SCATableRow(aTableRow).InsertNewCellAfter(columnNumber);
         }
     }
 
-    IEnumerator<IColumn> IEnumerable<IColumn>.GetEnumerator() => this.Columns().GetEnumerator();
+    IEnumerator<IColumn> IEnumerable<IColumn>.GetEnumerator()
+    {
+        return Columns().GetEnumerator();
+    }
 
-    IEnumerator IEnumerable.GetEnumerator() => this.Columns().GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return Columns().GetEnumerator();
+    }
 
-    private List<Column> Columns() => [.. this.aTable.TableGrid!.Elements<A.GridColumn>().Select((aGridColumn, index) => new Column(aGridColumn, index))];
+    private List<Column> Columns()
+    {
+        return
+        [
+            .. aTable.TableGrid!.Elements<A.GridColumn>().Select((aGridColumn, index) => new Column(aGridColumn, index))
+        ];
+    }
 }

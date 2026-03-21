@@ -6,6 +6,6 @@ public sealed class ImageOptions
 
     public void Format(string format)
     {
-        this.FormatName = format;
+        FormatName = format;
     }
 }

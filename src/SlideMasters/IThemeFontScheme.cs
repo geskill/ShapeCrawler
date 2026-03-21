@@ -38,7 +38,7 @@ internal sealed class ThemeFontScheme : IThemeFontScheme
 
     internal ThemeFontScheme(OpenXmlPart openXmlPart)
     {
-        this.aFontScheme = openXmlPart switch
+        aFontScheme = openXmlPart switch
         {
             SlidePart slidePart => slidePart.SlideLayoutPart!.SlideMasterPart!.ThemePart!.Theme!.ThemeElements!
                 .FontScheme!,
@@ -51,38 +51,52 @@ internal sealed class ThemeFontScheme : IThemeFontScheme
 
     public string HeadLatinFont
     {
-        get => this.GetHeadLatinFont();
-        set => this.SetHeadLatinFont(value);
+        get => GetHeadLatinFont();
+        set => SetHeadLatinFont(value);
     }
 
     public string BodyLatinFont
     {
-        get => this.GetBodyLatinFont();
-        set => this.SetBodyLatinFont(value);
+        get => GetBodyLatinFont();
+        set => SetBodyLatinFont(value);
     }
 
     public string BodyEastAsianFont
     {
-        get => this.GetBodyEastAsianFont();
-        set => this.SetBodyEastAsianFont(value);
+        get => GetBodyEastAsianFont();
+        set => SetBodyEastAsianFont(value);
     }
 
     public string HeadEastAsianFont
     {
-        get => this.GetHeadEastAsianFont();
-        set => this.SetHeadEastAsianFont(value);
+        get => GetHeadEastAsianFont();
+        set => SetHeadEastAsianFont(value);
     }
 
-    internal string MajorLatinFont() => this.aFontScheme.MajorFont!.LatinFont!.Typeface!;
+    internal string MajorLatinFont()
+    {
+        return aFontScheme.MajorFont!.LatinFont!.Typeface!;
+    }
 
-    internal string MajorEastAsianFont() => this.aFontScheme.MajorFont!.EastAsianFont!.Typeface!;
+    internal string MajorEastAsianFont()
+    {
+        return aFontScheme.MajorFont!.EastAsianFont!.Typeface!;
+    }
 
-    internal string MinorEastAsianFont() => this.aFontScheme.MinorFont!.EastAsianFont!.Typeface!;
+    internal string MinorEastAsianFont()
+    {
+        return aFontScheme.MinorFont!.EastAsianFont!.Typeface!;
+    }
 
-    internal A.LatinFont MinorLatinFont() => this.aFontScheme.MinorFont!.LatinFont!;
+    internal A.LatinFont MinorLatinFont()
+    {
+        return aFontScheme.MinorFont!.LatinFont!;
+    }
 
-    internal void UpdateMinorEastAsianFont(string eastAsianFont) =>
-        this.aFontScheme.MinorFont!.EastAsianFont!.Typeface = eastAsianFont;
+    internal void UpdateMinorEastAsianFont(string eastAsianFont)
+    {
+        aFontScheme.MinorFont!.EastAsianFont!.Typeface = eastAsianFont;
+    }
 
     private static A.FontScheme GetFontSchemeFromNotesSlidePart(NotesSlidePart notesSlidePart)
     {
@@ -105,21 +119,43 @@ internal sealed class ThemeFontScheme : IThemeFontScheme
         throw new SCException("Could not find font scheme for notes slide part");
     }
 
-    private string GetHeadLatinFont() => this.aFontScheme.MajorFont!.LatinFont!.Typeface!.Value!;
+    private string GetHeadLatinFont()
+    {
+        return aFontScheme.MajorFont!.LatinFont!.Typeface!.Value!;
+    }
 
-    private string GetHeadEastAsianFont() => this.aFontScheme.MajorFont!.EastAsianFont!.Typeface!.Value!;
+    private string GetHeadEastAsianFont()
+    {
+        return aFontScheme.MajorFont!.EastAsianFont!.Typeface!.Value!;
+    }
 
-    private void SetHeadLatinFont(string fontName) => this.aFontScheme.MajorFont!.LatinFont!.Typeface!.Value = fontName;
+    private void SetHeadLatinFont(string fontName)
+    {
+        aFontScheme.MajorFont!.LatinFont!.Typeface!.Value = fontName;
+    }
 
-    private void SetHeadEastAsianFont(string fontName) =>
-        this.aFontScheme.MajorFont!.EastAsianFont!.Typeface!.Value = fontName;
+    private void SetHeadEastAsianFont(string fontName)
+    {
+        aFontScheme.MajorFont!.EastAsianFont!.Typeface!.Value = fontName;
+    }
 
-    private string GetBodyLatinFont() => this.aFontScheme.MinorFont!.LatinFont!.Typeface!.Value!;
+    private string GetBodyLatinFont()
+    {
+        return aFontScheme.MinorFont!.LatinFont!.Typeface!.Value!;
+    }
 
-    private string GetBodyEastAsianFont() => this.aFontScheme.MinorFont!.EastAsianFont!.Typeface!.Value!;
+    private string GetBodyEastAsianFont()
+    {
+        return aFontScheme.MinorFont!.EastAsianFont!.Typeface!.Value!;
+    }
 
-    private void SetBodyLatinFont(string fontName) => this.aFontScheme.MinorFont!.LatinFont!.Typeface!.Value = fontName;
+    private void SetBodyLatinFont(string fontName)
+    {
+        aFontScheme.MinorFont!.LatinFont!.Typeface!.Value = fontName;
+    }
 
-    private void SetBodyEastAsianFont(string fontName) =>
-        this.aFontScheme.MinorFont!.EastAsianFont!.Typeface!.Value = fontName;
+    private void SetBodyEastAsianFont(string fontName)
+    {
+        aFontScheme.MinorFont!.EastAsianFont!.Typeface!.Value = fontName;
+    }
 }

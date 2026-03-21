@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using NUnit.Framework;
 using ShapeCrawler.DevTests.Helpers;
 
 namespace ShapeCrawler.DevTests;
@@ -17,7 +16,7 @@ public class BulletTests : SCTest
         // Act-Assert
         bullet.Type.Should().Be(BulletType.None);
     }
-    
+
     [Test]
     public void Type_Getter_returns_bullet_type()
     {
@@ -40,7 +39,7 @@ public class BulletTests : SCTest
         shape5Pr2BulletType.Should().Be(BulletType.Picture);
         shape4Pr2BulletType.Should().Be(BulletType.Character);
     }
-    
+
     [Test]
     public void Type_Setter_updates_bullet_type()
     {
@@ -65,7 +64,7 @@ public class BulletTests : SCTest
         bullet.Type.Should().Be(BulletType.Character);
         bullet.Character.Should().Be("*");
     }
-    
+
     [Test]
     public void Type_Setter_sets_Numbered_bullet_type()
     {
@@ -95,7 +94,7 @@ public class BulletTests : SCTest
         addedParagraph.Bullet.Size.Should().Be(100);
         addedParagraph.Bullet.FontName.Should().Be("Tahoma");
     }
-    
+
     [Test]
     public void Character_Getter_returns_list_paragraph_bullet_character()
     {
@@ -104,9 +103,10 @@ public class BulletTests : SCTest
         {
             pres.Slide(slide =>
             {
-                slide.Shape(textBox => 
+                slide.Shape(textBox =>
                 {
-                    textBox.Paragraph(para => {
+                    textBox.Paragraph(para =>
+                    {
                         para.Text("Hello, World!");
                         para.BulletedList();
                     });
@@ -118,7 +118,7 @@ public class BulletTests : SCTest
         // Act-Assert
         paragraph.Bullet.Character.Should().Be("•");
     }
-    
+
     [Test]
     public void Character_Setter_updates_bullet_character()
     {
@@ -151,7 +151,7 @@ public class BulletTests : SCTest
         addedParagraph.Bullet.Size.Should().Be(100);
         addedParagraph.Bullet.FontName.Should().Be("Tahoma");
     }
-    
+
     [Test]
     public void FontName_Getter_returns_font_name()
     {
@@ -169,7 +169,7 @@ public class BulletTests : SCTest
         shape3BulletFontName.Should().BeNull();
         shape4BulletFontName.Should().Be("Calibri");
     }
-    
+
     [Test]
     public void ColorHex_Getter_returns_bullet_properties()
     {

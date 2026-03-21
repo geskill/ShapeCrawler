@@ -1,9 +1,9 @@
-﻿#pragma warning disable IDE0130
+﻿using System.Linq;
+using ShapeCrawler.Drawing;
+
+#pragma warning disable IDE0130
 namespace ShapeCrawler;
 #pragma warning disable IDE0130
-
-using System.Linq;
-using ShapeCrawler.Drawing;
 using A = DocumentFormat.OpenXml.Drawing;
 
 /// <summary>
@@ -83,74 +83,74 @@ internal sealed class ThemeColorScheme : IThemeColorScheme
 
     public string Dark1
     {
-        get => GetColor(this.aColorScheme.Dark1Color!);
-        set => this.SetColor("dk1", value);
+        get => GetColor(aColorScheme.Dark1Color!);
+        set => SetColor("dk1", value);
     }
 
     public string Light1
     {
-        get => GetColor(this.aColorScheme.Light1Color!);
-        set => this.SetColor("lt1", value);
+        get => GetColor(aColorScheme.Light1Color!);
+        set => SetColor("lt1", value);
     }
 
     public string Dark2
     {
-        get => GetColor(this.aColorScheme.Dark2Color!);
-        set => this.SetColor("dk2", value);
+        get => GetColor(aColorScheme.Dark2Color!);
+        set => SetColor("dk2", value);
     }
 
     public string Light2
     {
-        get => GetColor(this.aColorScheme.Light2Color!);
-        set => this.SetColor("lt2", value);
+        get => GetColor(aColorScheme.Light2Color!);
+        set => SetColor("lt2", value);
     }
 
     public string Accent1
     {
-        get => GetColor(this.aColorScheme.Accent1Color!);
-        set => this.SetColor("accent1", value);
+        get => GetColor(aColorScheme.Accent1Color!);
+        set => SetColor("accent1", value);
     }
 
     public string Accent2
     {
-        get => GetColor(this.aColorScheme.Accent2Color!);
-        set => this.SetColor("accent2", value);
+        get => GetColor(aColorScheme.Accent2Color!);
+        set => SetColor("accent2", value);
     }
 
     public string Accent3
     {
-        get => GetColor(this.aColorScheme.Accent3Color!);
-        set => this.SetColor("accent3", value);
+        get => GetColor(aColorScheme.Accent3Color!);
+        set => SetColor("accent3", value);
     }
 
     public string Accent4
     {
-        get => GetColor(this.aColorScheme.Accent4Color!);
-        set => this.SetColor("accent4", value);
+        get => GetColor(aColorScheme.Accent4Color!);
+        set => SetColor("accent4", value);
     }
 
     public string Accent5
     {
-        get => GetColor(this.aColorScheme.Accent5Color!);
-        set => this.SetColor("accent5", value);
+        get => GetColor(aColorScheme.Accent5Color!);
+        set => SetColor("accent5", value);
     }
 
     public string Accent6
     {
-        get => GetColor(this.aColorScheme.Accent6Color!);
-        set => this.SetColor("accent6", value);
+        get => GetColor(aColorScheme.Accent6Color!);
+        set => SetColor("accent6", value);
     }
 
     public string Hyperlink
     {
-        get => GetColor(this.aColorScheme.Hyperlink!);
-        set => this.SetColor("hlink", value);
+        get => GetColor(aColorScheme.Hyperlink!);
+        set => SetColor("hlink", value);
     }
 
     public string FollowedHyperlink
     {
-        get => GetColor(this.aColorScheme.FollowedHyperlinkColor!);
-        set => this.SetColor("folHlink", value);
+        get => GetColor(aColorScheme.FollowedHyperlinkColor!);
+        set => SetColor("folHlink", value);
     }
 
     private static string GetColor(A.Color2Type aColor2Type)
@@ -161,7 +161,7 @@ internal sealed class ThemeColorScheme : IThemeColorScheme
 
     private void SetColor(string name, string hex)
     {
-        var color = this.aColorScheme.Elements().First(x => x.LocalName == name);
+        var color = aColorScheme.Elements().First(x => x.LocalName == name);
         foreach (var child in color)
         {
             child.Remove();

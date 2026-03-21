@@ -27,10 +27,10 @@ internal sealed class TextLine(
 
     internal void Render(SKCanvas canvas, float x, float y)
     {
-        var baselineY = y + this.BaselineOffset;
+        var baselineY = y + BaselineOffset;
         var currentX = x;
 
-        foreach (var run in this.Runs)
+        foreach (var run in Runs)
         {
             var drawingFont = new DrawingFont(run.Font);
             using var font = drawingFont.AsSkFont();

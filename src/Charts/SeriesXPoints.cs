@@ -15,20 +15,26 @@ internal sealed class SeriesXPoints : IReadOnlyList<IChartPoint>
         var cXValues = cSerXmlElement.GetFirstChild<C.XValues>();
         if (cXValues == null)
         {
-            this.chartPoints = [];
+            chartPoints = [];
             return;
         }
 
         var numberReference = cXValues.NumberReference;
         var numberLiteral = cXValues.NumberLiteral;
-        this.chartPoints = new ChartPointData(chartPart).Create(numberReference, numberLiteral);
+        chartPoints = new ChartPointData(chartPart).Create(numberReference, numberLiteral);
     }
 
-    public int Count => this.chartPoints.Count;
+    public int Count => chartPoints.Count;
 
-    public IChartPoint this[int index] => this.chartPoints[index];
+    public IChartPoint this[int index] => chartPoints[index];
 
-    public IEnumerator<IChartPoint> GetEnumerator() => this.chartPoints.GetEnumerator();
+    public IEnumerator<IChartPoint> GetEnumerator()
+    {
+        return chartPoints.GetEnumerator();
+    }
 
-    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 }

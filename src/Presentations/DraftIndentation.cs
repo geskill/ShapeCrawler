@@ -6,7 +6,7 @@ namespace ShapeCrawler.Presentations;
 public sealed class DraftIndentation
 {
     /// <summary>
-    ///    Gets indentation before text in points.
+    ///     Gets indentation before text in points.
     /// </summary>
     internal decimal? BeforeTextPoints { get; private set; }
 
@@ -15,7 +15,7 @@ public sealed class DraftIndentation
     /// </summary>
     public DraftIndentation BeforeText(decimal points)
     {
-        this.BeforeTextPoints = points;
+        BeforeTextPoints = points;
         return this;
     }
 }

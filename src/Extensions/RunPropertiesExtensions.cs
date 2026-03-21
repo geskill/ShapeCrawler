@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Drawing;
-using A = DocumentFormat.OpenXml.Drawing;
 
 namespace ShapeCrawler.Extensions;
 
@@ -9,7 +8,7 @@ internal static class RunPropertiesExtensions
 {
     internal static void AddAHighlight(this RunProperties arPr, Color color)
     {
-        var aHighlights = arPr.Elements<A.Highlight>().ToList();
+        var aHighlights = arPr.Elements<Highlight>().ToList();
         foreach (var aHighlight in aHighlights)
         {
             aHighlight.Remove();
@@ -20,19 +19,16 @@ internal static class RunPropertiesExtensions
             return;
         }
 
-        var newHighlight = new A.Highlight();
+        var newHighlight = new Highlight();
         newHighlight.Append(color.ToRgbColorModelHex());
 
         arPr.Append(newHighlight);
     }
 
-    private static A.RgbColorModelHex ToRgbColorModelHex(this Color color)
+    private static RgbColorModelHex ToRgbColorModelHex(this Color color)
     {
         // Initialize color model.
-        var model = new A.RgbColorModelHex
-        {
-            Val = color.ToString(),
-        };
+        var model = new RgbColorModelHex { Val = color.ToString() };
 
         // Solid color doesn't have alpha value.
         if (color.IsSolid)
@@ -42,10 +38,7 @@ internal static class RunPropertiesExtensions
         }
 
         // Creates a alpha node...
-        var alpha = new A.Alpha
-        {
-            Val = (Int32Value)(100000f * (color.Alpha / Color.Opacity))
-        };
+        var alpha = new Alpha { Val = (Int32Value)(100000f * (color.Alpha / Color.Opacity)) };
 
         model.AddChild(alpha);
 

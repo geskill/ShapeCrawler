@@ -6,12 +6,12 @@ namespace ShapeCrawler.Presentations;
 public sealed class DraftFont
 {
     /// <summary>
-    ///    Gets font size.
+    ///     Gets font size.
     /// </summary>
     internal decimal? SizeValue { get; private set; }
 
     /// <summary>
-    ///    Gets a value indicating whether font is bold.
+    ///     Gets a value indicating whether font is bold.
     /// </summary>
     internal bool IsBoldValue { get; private set; }
 
@@ -20,7 +20,7 @@ public sealed class DraftFont
     /// </summary>
     public DraftFont Size(int size)
     {
-        this.SizeValue = size;
+        SizeValue = size;
         return this;
     }
 
@@ -29,7 +29,7 @@ public sealed class DraftFont
     /// </summary>
     public DraftFont Bold()
     {
-        this.IsBoldValue = true;
+        IsBoldValue = true;
         return this;
     }
 }

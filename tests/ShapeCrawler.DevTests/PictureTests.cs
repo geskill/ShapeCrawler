@@ -1,11 +1,7 @@
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using DocumentFormat.OpenXml.Drawing;
 using FluentAssertions;
-using NUnit.Framework;
 using ShapeCrawler.DevTests.Helpers;
 using ShapeCrawler.Drawing;
-using ShapeCrawler.Groups;
 
 
 // ReSharper disable TooManyChainedReferences
@@ -246,7 +242,7 @@ public class PictureTests : SCTest
     {
         // Arrange
         var expected = (Geometry)Enum.Parse(typeof(Geometry), expectedStr);
-        var pres = new Presentation(p=>p.Slide());
+        var pres = new Presentation(p => p.Slide());
         var shapes = pres.Slides[0].Shapes;
         var image = TestAsset("063 vector image.svg");
         image.Position = 0;
@@ -266,7 +262,7 @@ public class PictureTests : SCTest
     public void CornerSize_Setter_sets_corner_size(string geometryName)
     {
         // Arrange
-        var pres = new Presentation(p=>p.Slide());
+        var pres = new Presentation(p => p.Slide());
         var shapes = pres.Slides[0].Shapes;
         var image = TestAsset("063 vector image.svg");
         shapes.AddPicture(image);

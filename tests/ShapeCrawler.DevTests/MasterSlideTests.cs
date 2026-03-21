@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using NUnit.Framework;
 using ShapeCrawler.DevTests.Helpers;
 
 namespace ShapeCrawler.DevTests;
@@ -92,7 +91,7 @@ public class MasterSlideTests : SCTest
         var masterautoshapecase3 = slideMaster.Shapes.First(sp => sp.Id == 7);
 
         // Act
-        PlaceholderType? shapePlaceholderTypeCase1 = masterautoshapecase1.PlaceholderType;
+        var shapePlaceholderTypeCase1 = masterautoshapecase1.PlaceholderType;
 
         // Assert
         shapePlaceholderTypeCase1.Should().Be(PlaceholderType.Title);
@@ -106,13 +105,13 @@ public class MasterSlideTests : SCTest
         // Arrange
         var pptx = TestAsset("001.pptx");
         var pres = new Presentation(pptx);
-        IMasterSlide masterSlide = pres.MasterSlides[0];
-        IShape shapeCase1 = masterSlide.Shapes.First(sp => sp.Id == 2);
-        IShape shapeCase2 = masterSlide.Shapes.First(sp => sp.Id == 8);
+        var masterSlide = pres.MasterSlides[0];
+        var shapeCase1 = masterSlide.Shapes.First(sp => sp.Id == 2);
+        var shapeCase2 = masterSlide.Shapes.First(sp => sp.Id == 8);
 
         // Act
-        Geometry geometryTypeCase1 = shapeCase1.GeometryType;
-        Geometry geometryTypeCase2 = shapeCase2.GeometryType;
+        var geometryTypeCase1 = shapeCase1.GeometryType;
+        var geometryTypeCase2 = shapeCase2.GeometryType;
 
         // Assert
         geometryTypeCase1.Should().Be(Geometry.Rectangle);
@@ -123,8 +122,8 @@ public class MasterSlideTests : SCTest
     public void AutoShapeTextBoxText_ReturnsText_WhenTheSlideMasterAutoShapesTextBoxIsNotEmpty()
     {
         // Arrange
-        IMasterSlide masterSlide = new Presentation(TestAsset("001.pptx")).MasterSlides[0];
-        IShape autoShape = (IShape)masterSlide.Shapes.First(sp => sp.Id == 8);
+        var masterSlide = new Presentation(TestAsset("001.pptx")).MasterSlides[0];
+        var autoShape = masterSlide.Shapes.First(sp => sp.Id == 8);
 
         // Act-Assert
         autoShape.TextBox.Text.Should().BeEquivalentTo("id8");
@@ -136,36 +135,30 @@ public class MasterSlideTests : SCTest
         // Act & Assert
         new Presentation().SlideMaster(1).Number.Should().Be(1);
     }
-    
+
     [Test]
     public void SlideLayout_Background_SolidFill_Color_Getter_returns_solid_color_of_the_slide_layout_background()
     {
         // Arrange
         var expectedColor = fixture.Color();
-        var pres = new Presentation(p=>
-        {
-            p.SlideMaster(1).SlideLayout(1).Background.SolidFillColor(expectedColor);
-        });
+        var pres = new Presentation(p => { p.SlideMaster(1).SlideLayout(1).Background.SolidFillColor(expectedColor); });
         var slideMaster = pres.SlideMaster(1);
-        
+
         // Assert
         slideMaster.SlideLayout(1).Background.SolidFill.Color.Should().Be(expectedColor);
     }
-    
+
     [Test]
     public void SlideLayout_Background_Picture_returns_slide_layout_background_picture_image()
     {
         // Arrange
         var expectedImage = fixture.Image();
-        var pres = new Presentation(p=>
-        {
-            p.SlideMaster(1).SlideLayout(1).Background.Picture(expectedImage);
-        });
+        var pres = new Presentation(p => { p.SlideMaster(1).SlideLayout(1).Background.Picture(expectedImage); });
         expectedImage.Position = 0;
         var expectedStream = new MemoryStream();
         expectedImage.CopyTo(expectedStream);
         var slideMaster = pres.SlideMaster(1);
-        
+
         // Act
         var actualStream = slideMaster.SlideLayout(1).Background.Picture();
 

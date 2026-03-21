@@ -10,41 +10,41 @@ namespace ShapeCrawler.Texts;
 
 internal abstract class TextBox : ITextBox
 {
+    private readonly TextAutofit autofit;
     private readonly TextBoxMargins margins;
     private readonly OpenXmlElement textBody;
-    private readonly TextAutofit autofit;
-    private TextVerticalAlignment? vAlignment;
     private TextDirection? textDirection;
+    private TextVerticalAlignment? vAlignment;
 
     private protected TextBox(TextBoxMargins margins, OpenXmlElement textBody)
     {
         this.margins = margins;
         this.textBody = textBody;
         var shapeSize = new ShapeSize(textBody.Parent!);
-        this.autofit = new TextAutofit(
-            this.Paragraphs,
-            () => this.AutofitType,
+        autofit = new TextAutofit(
+            Paragraphs,
+            () => AutofitType,
             shapeSize,
             this.margins,
-            () => this.TextWrapped,
+            () => TextWrapped,
             this.textBody);
     }
 
-    public IParagraphCollection Paragraphs => new ParagraphCollection(this.textBody);
+    public IParagraphCollection Paragraphs => new ParagraphCollection(textBody);
 
     public string Text
     {
         get
         {
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append(this.Paragraphs[0].Text);
+            stringBuilder.Append(Paragraphs[0].Text);
 
-            var paragraphsCount = this.Paragraphs.Count;
+            var paragraphsCount = Paragraphs.Count;
             var index = 1; // we've already added the text of first paragraph
             while (index < paragraphsCount)
             {
                 stringBuilder.AppendLine();
-                stringBuilder.Append(this.Paragraphs[index].Text);
+                stringBuilder.Append(Paragraphs[index].Text);
 
                 index++;
             }
@@ -57,7 +57,7 @@ internal abstract class TextBox : ITextBox
     {
         get
         {
-            var aBodyPr = this.textBody.GetFirstChild<A.BodyProperties>();
+            var aBodyPr = textBody.GetFirstChild<A.BodyProperties>();
 
             if (aBodyPr!.GetFirstChild<A.NormalAutoFit>() != null)
             {
@@ -74,13 +74,13 @@ internal abstract class TextBox : ITextBox
 
         set
         {
-            var currentType = this.AutofitType;
+            var currentType = AutofitType;
             if (currentType == value)
             {
                 return;
             }
 
-            var aBodyPr = this.textBody.GetFirstChild<A.BodyProperties>()!;
+            var aBodyPr = textBody.GetFirstChild<A.BodyProperties>()!;
 
             RemoveExistingAutofitElements(aBodyPr);
 
@@ -94,7 +94,7 @@ internal abstract class TextBox : ITextBox
                     break;
                 case AutofitType.Resize:
                     aBodyPr.Append(new A.ShapeAutoFit());
-                    this.ResizeParentShapeOnDemand();
+                    ResizeParentShapeOnDemand();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(value), value, null);
@@ -104,36 +104,33 @@ internal abstract class TextBox : ITextBox
 
     public decimal LeftMargin
     {
-        get => this.margins.Left;
-        set => this.margins.Left = value;
+        get => margins.Left;
+        set => margins.Left = value;
     }
 
     public decimal RightMargin
     {
-        get => this.margins.Right;
-        set => this.margins.Right = value;
+        get => margins.Right;
+        set => margins.Right = value;
     }
 
     public decimal TopMargin
     {
-        get => this.margins.Top;
-        set
-        {
-            this.margins.Top = value;
-        }
+        get => margins.Top;
+        set => margins.Top = value;
     }
 
     public decimal BottomMargin
     {
-        get => this.margins.Bottom;
-        set => this.margins.Bottom = value;
+        get => margins.Bottom;
+        set => margins.Bottom = value;
     }
 
     public bool TextWrapped
     {
         get
         {
-            var aBodyPr = this.textBody.GetFirstChild<A.BodyProperties>()!;
+            var aBodyPr = textBody.GetFirstChild<A.BodyProperties>()!;
             var wrap = aBodyPr.GetAttributes().FirstOrDefault(a => a.LocalName == "wrap");
 
             if (wrap.Value == "none")
@@ -145,78 +142,78 @@ internal abstract class TextBox : ITextBox
         }
     }
 
-    public string SdkXPath => new XmlPath(this.textBody).XPath;
+    public string SdkXPath => new XmlPath(textBody).XPath;
 
     public TextVerticalAlignment VerticalAlignment
     {
         get
         {
-            if (this.vAlignment.HasValue)
+            if (vAlignment.HasValue)
             {
-                return this.vAlignment.Value;
+                return vAlignment.Value;
             }
 
-            var aBodyPr = this.textBody.GetFirstChild<A.BodyProperties>();
+            var aBodyPr = textBody.GetFirstChild<A.BodyProperties>();
 
             if (aBodyPr!.Anchor?.Value == A.TextAnchoringTypeValues.Center)
             {
-                this.vAlignment = TextVerticalAlignment.Middle;
+                vAlignment = TextVerticalAlignment.Middle;
             }
             else if (aBodyPr.Anchor?.Value == A.TextAnchoringTypeValues.Bottom)
             {
-                this.vAlignment = TextVerticalAlignment.Bottom;
+                vAlignment = TextVerticalAlignment.Bottom;
             }
             else
             {
-                this.vAlignment = TextVerticalAlignment.Top;
+                vAlignment = TextVerticalAlignment.Top;
             }
 
-            return this.vAlignment.Value;
+            return vAlignment.Value;
         }
 
-        set => this.SetVerticalAlignment(value);
+        set => SetVerticalAlignment(value);
     }
 
     public TextDirection TextDirection
     {
         get
         {
-            if (!this.textDirection.HasValue)
+            if (!textDirection.HasValue)
             {
-                var textDirectionVal = this.textBody.GetFirstChild<A.BodyProperties>()!.Vertical?.Value;
+                var textDirectionVal = textBody.GetFirstChild<A.BodyProperties>()!.Vertical?.Value;
 
                 if (textDirectionVal == A.TextVerticalValues.Vertical)
                 {
-                    this.textDirection = TextDirection.Rotate90;
+                    textDirection = TextDirection.Rotate90;
                 }
                 else if (textDirectionVal == A.TextVerticalValues.Vertical270)
                 {
-                    this.textDirection = TextDirection.Rotate270;
+                    textDirection = TextDirection.Rotate270;
                 }
                 else if (textDirectionVal == A.TextVerticalValues.WordArtVertical)
                 {
-                    this.textDirection = TextDirection.Stacked;
+                    textDirection = TextDirection.Stacked;
                 }
                 else
                 {
-                    this.textDirection = TextDirection.Horizontal;
+                    textDirection = TextDirection.Horizontal;
                 }
             }
 
-            return this.textDirection.Value;
+            return textDirection.Value;
         }
 
-        set => this.SetTextDirection(value);
+        set => SetTextDirection(value);
     }
 
     public void SetMarkdownText(string text)
     {
         var markdownText = new MarkdownText(
             text,
-            this.Paragraphs,
-            () => this.AutofitType,
-            this.autofit.ShrinkFont,
-            this.autofit.Apply);
+            Paragraphs,
+            () => AutofitType,
+            autofit.ShrinkFont,
+            autofit.Apply);
         markdownText.ApplyTo();
     }
 
@@ -224,10 +221,10 @@ internal abstract class TextBox : ITextBox
     {
         var textContent = new TextContent(
             text,
-            this.Paragraphs,
-            () => this.AutofitType,
-            this.autofit.ShrinkFont,
-            this.autofit.Apply);
+            Paragraphs,
+            () => AutofitType,
+            autofit.ShrinkFont,
+            autofit.Apply);
         textContent.ApplyTo();
     }
 
@@ -236,13 +233,13 @@ internal abstract class TextBox : ITextBox
     /// </summary>
     internal void DisableWrapping()
     {
-        var bodyProperties = this.textBody.GetFirstChild<A.BodyProperties>()!;
+        var bodyProperties = textBody.GetFirstChild<A.BodyProperties>()!;
         bodyProperties.SetAttribute(new OpenXmlAttribute("wrap", string.Empty, "none"));
     }
 
     internal void ResizeParentShapeOnDemand()
     {
-        this.autofit.Apply();
+        autofit.Apply();
     }
 
     private static void RemoveExistingAutofitElements(A.BodyProperties bodyProperties)
@@ -262,16 +259,16 @@ internal abstract class TextBox : ITextBox
             _ => throw new ArgumentOutOfRangeException(nameof(alignmentValue))
         };
 
-        var aBodyPr = this.textBody.GetFirstChild<A.BodyProperties>();
+        var aBodyPr = textBody.GetFirstChild<A.BodyProperties>();
 
         aBodyPr?.Anchor = aTextAlignmentTypeValue;
 
-        this.vAlignment = alignmentValue;
+        vAlignment = alignmentValue;
     }
 
     private void SetTextDirection(TextDirection direction)
     {
-        var aBodyPr = this.textBody.GetFirstChild<A.BodyProperties>()!;
+        var aBodyPr = textBody.GetFirstChild<A.BodyProperties>()!;
 
         aBodyPr.Vertical = direction switch
         {
@@ -281,7 +278,6 @@ internal abstract class TextBox : ITextBox
             _ => A.TextVerticalValues.Horizontal
         };
 
-        this.textDirection = direction;
+        textDirection = direction;
     }
-
 }

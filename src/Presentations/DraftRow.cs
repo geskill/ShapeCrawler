@@ -10,14 +10,14 @@ public sealed class DraftRow
 {
     private readonly List<DraftCell> cells = [];
 
-    internal IReadOnlyList<DraftCell> Cells => this.cells;
+    internal IReadOnlyList<DraftCell> Cells => cells;
 
     /// <summary>
     ///     Adds a cell to the row.
     /// </summary>
     public DraftRow Cell()
     {
-        this.cells.Add(new DraftCell());
+        cells.Add(new DraftCell());
         return this;
     }
 
@@ -28,7 +28,7 @@ public sealed class DraftRow
     {
         var cellBuilder = new DraftCell();
         configure(cellBuilder);
-        this.cells.Add(cellBuilder);
+        cells.Add(cellBuilder);
         return this;
     }
 
@@ -43,11 +43,11 @@ public sealed class DraftRow
         }
 
         // Ensure we have enough cells
-        while (this.cells.Count < index)
+        while (cells.Count < index)
         {
-            this.cells.Add(new DraftCell());
+            cells.Add(new DraftCell());
         }
 
-        return this.cells[index - 1];
+        return cells[index - 1];
     }
 }

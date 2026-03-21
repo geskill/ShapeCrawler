@@ -11,18 +11,24 @@ internal sealed class SlideShapeOutline(OpenXmlCompositeElement openXmlComposite
 {
     public decimal Weight
     {
-        get => this.ParseWeight();
-        set => this.UpdateWeight(value);
+        get => ParseWeight();
+        set => UpdateWeight(value);
     }
 
-    /// <inheritdoc/>
-    public string? HexColor => this.ParseHexColor();
+    /// <inheritdoc />
+    public string? HexColor => ParseHexColor();
 
-    /// <inheritdoc/>
-    public void SetHexColor(string value) => this.UpdateFill(new A.SolidFill(new A.RgbColorModelHex { Val = value }));
+    /// <inheritdoc />
+    public void SetHexColor(string value)
+    {
+        UpdateFill(new A.SolidFill(new A.RgbColorModelHex { Val = value }));
+    }
 
-    /// <inheritdoc/>
-    public void SetNoOutline() => this.UpdateFill(new A.NoFill());
+    /// <inheritdoc />
+    public void SetNoOutline()
+    {
+        UpdateFill(new A.NoFill());
+    }
 
     private void UpdateWeight(decimal points)
     {

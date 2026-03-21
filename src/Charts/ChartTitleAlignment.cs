@@ -8,20 +8,20 @@ internal sealed class ChartTitleAlignment(ChartPart chartPart) : IChartTitleAlig
 {
     public decimal CustomAngle
     {
-        get => this.GetCustomAngle();
-        set => this.SetCustomAngle(value);
+        get => GetCustomAngle();
+        set => SetCustomAngle(value);
     }
 
     public decimal? X
     {
-        get => this.GetX();
-        set => this.SetX(value);
+        get => GetX();
+        set => SetX(value);
     }
 
     public decimal? Y
     {
-        get => this.GetY();
-        set => this.SetY(value);
+        get => GetY();
+        set => SetY(value);
     }
 
     private static void CleanupEmptyManualLayout(C.Layout? cLayout, C.ManualLayout? cManualLayout)
@@ -265,7 +265,7 @@ internal sealed class ChartTitleAlignment(ChartPart chartPart) : IChartTitleAlig
 
     private void SetX(decimal? value)
     {
-        var (cLayout, cManualLayout) = this.EnsureLayoutStructure();
+        var (cLayout, cManualLayout) = EnsureLayoutStructure();
 
         if (value == null)
         {
@@ -328,7 +328,7 @@ internal sealed class ChartTitleAlignment(ChartPart chartPart) : IChartTitleAlig
 
     private void SetY(decimal? value)
     {
-        var (cLayout, cManualLayout) = this.EnsureLayoutStructure();
+        var (cLayout, cManualLayout) = EnsureLayoutStructure();
 
         if (value == null)
         {

@@ -1,5 +1,4 @@
 using FluentAssertions;
-using NUnit.Framework;
 using ShapeCrawler.DevTests.Helpers;
 
 namespace ShapeCrawler.DevTests;
@@ -10,9 +9,9 @@ public class LineShapeTests : SCTest
     public void StartPoint_returns_start_point_coordinates()
     {
         // Arrange
-        var pres = new Presentation(p=>p.Slide());
+        var pres = new Presentation(p => p.Slide());
         var shapes = pres.Slide(1).Shapes;
-        shapes.AddLine(startPointX: 50, startPointY: 60, endPointX: 100, endPointY: 60);
+        shapes.AddLine(50, 60, 100, 60);
         var line = shapes.Last().Line;
 
         // Act

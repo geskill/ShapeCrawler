@@ -17,9 +17,15 @@ internal sealed class UpdatedSlideCollection(UserSlideCollection userSlideCollec
 
     public IUserSlide this[int index] => userSlideCollection[index];
 
-    public IEnumerator<IUserSlide> GetEnumerator() => userSlideCollection.GetEnumerator();
+    public IEnumerator<IUserSlide> GetEnumerator()
+    {
+        return userSlideCollection.GetEnumerator();
+    }
 
-    IEnumerator IEnumerable.GetEnumerator() => userSlideCollection.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return userSlideCollection.GetEnumerator();
+    }
 
     public void Add(int layoutNumber)
     {
@@ -68,7 +74,7 @@ internal sealed class UpdatedSlideCollection(UserSlideCollection userSlideCollec
 
     public void Add(IUserSlide userSlide, int slideNumber)
     {
-        if (slideNumber < 1 || slideNumber > this.Count + 1)
+        if (slideNumber < 1 || slideNumber > Count + 1)
         {
             throw new SCException(nameof(slideNumber));
         }
@@ -93,9 +99,10 @@ internal sealed class UpdatedSlideCollection(UserSlideCollection userSlideCollec
         }
 
         var sourceSlidePresPart = userSlide.GetSdkPresentationPart();
-        var sourceSlideId = (P.SlideId)sourceSlidePresPart.Presentation!.SlideIdList!.ChildElements[userSlide.Number - 1];
+        var sourceSlideId =
+            (P.SlideId)sourceSlidePresPart.Presentation!.SlideIdList!.ChildElements[userSlide.Number - 1];
         var sourceSlidePart = (SlidePart)sourceSlidePresPart.GetPartById(sourceSlideId.RelationshipId!);
-        string newSlideRelId = new SCOpenXmlPart(presentationPart).NextRelationshipId();
+        var newSlideRelId = new SCOpenXmlPart(presentationPart).NextRelationshipId();
         var clonedSlidePart = new SCSlidePart(sourceSlidePart).CloneTo(presentationPart, newSlideRelId);
 
         SlideHyperlinkFix.FixSlideHyperlinks(sourceSlidePart, clonedSlidePart, presentationPart);
@@ -106,7 +113,7 @@ internal sealed class UpdatedSlideCollection(UserSlideCollection userSlideCollec
 
     public void Add(int layoutNumber, int slideNumber)
     {
-        if (slideNumber < 1 || slideNumber > this.Count + 1)
+        if (slideNumber < 1 || slideNumber > Count + 1)
         {
             throw new ArgumentOutOfRangeException(nameof(slideNumber));
         }
@@ -153,7 +160,7 @@ internal sealed class UpdatedSlideCollection(UserSlideCollection userSlideCollec
                     ShapeProperties = new P.ShapeProperties()
                 });
 
-            slidePart.Slide.CommonSlideData = new P.CommonSlideData()
+            slidePart.Slide.CommonSlideData = new P.CommonSlideData
             {
                 ShapeTree = new P.ShapeTree(placeholderShapes)
                 {
@@ -185,14 +192,15 @@ internal sealed class UpdatedSlideCollection(UserSlideCollection userSlideCollec
                 var newSlideRelId = new SCOpenXmlPart(targetPresPart).NextRelationshipId();
                 var clonedSlidePart = new SCSlidePart(directSourceSlidePart).CloneTo(targetPresPart, newSlideRelId);
                 SlideHyperlinkFix.FixSlideHyperlinks(directSourceSlidePart, clonedSlidePart, targetPresPart);
-                InsertSlideAtPosition(targetPresPart, newSlideRelId, this.Count + 1);
+                InsertSlideAtPosition(targetPresPart, newSlideRelId, Count + 1);
                 targetPres.Save();
                 return;
             }
         }
 
         var sourceSlidePresPart = userSlide.GetSdkPresentationPart();
-        var sourceSlideId = (P.SlideId)sourceSlidePresPart.Presentation!.SlideIdList!.ChildElements[userSlide.Number - 1];
+        var sourceSlideId =
+            (P.SlideId)sourceSlidePresPart.Presentation!.SlideIdList!.ChildElements[userSlide.Number - 1];
         var sourceSlidePart = (SlidePart)sourceSlidePresPart.GetPartById(sourceSlideId.RelationshipId!);
         new SCSlideMasterPart(sourceSlidePart.SlideLayoutPart!.SlideMasterPart!).RemoveLayoutsExcept(sourceSlidePart
             .SlideLayoutPart!);
@@ -244,8 +252,7 @@ internal sealed class UpdatedSlideCollection(UserSlideCollection userSlideCollec
         {
             return new P.TextBody(new A.Paragraph(new A.EndParagraphRunProperties()))
             {
-                BodyProperties = new A.BodyProperties(),
-                ListStyle = new A.ListStyle(),
+                BodyProperties = new A.BodyProperties(), ListStyle = new A.ListStyle()
             };
         }
 
@@ -275,8 +282,7 @@ internal sealed class UpdatedSlideCollection(UserSlideCollection userSlideCollec
         var masterId = CreateId(sdkPresDest.SlideMasterIdList!);
         P.SlideMasterId slideMaterId = new()
         {
-            Id = masterId,
-            RelationshipId = sdkPresDocDest.PresentationPart!.GetIdOfPart(addedSlideMasterPart!)
+            Id = masterId, RelationshipId = sdkPresDocDest.PresentationPart!.GetIdOfPart(addedSlideMasterPart!)
         };
         sdkPresDocDest.PresentationPart!.Presentation!.SlideMasterIdList!.Append(slideMaterId);
         sdkPresDocDest.PresentationPart!.Presentation!.Save();

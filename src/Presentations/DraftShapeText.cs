@@ -13,7 +13,7 @@ public sealed class DraftShapeText
     /// <summary>
     ///     Gets the draft paragraphs.
     /// </summary>
-    internal IReadOnlyList<DraftParagraph> Paragraphs => this.paragraphs;
+    internal IReadOnlyList<DraftParagraph> Paragraphs => paragraphs;
 
     /// <summary>
     ///     Adds a paragraph with specified text.
@@ -22,7 +22,7 @@ public sealed class DraftShapeText
     {
         var draftParagraph = new DraftParagraph();
         draftParagraph.Text(text);
-        this.paragraphs.Add(draftParagraph);
+        paragraphs.Add(draftParagraph);
         return this;
     }
 
@@ -33,7 +33,7 @@ public sealed class DraftShapeText
     {
         var draftParagraph = new DraftParagraph();
         configure(draftParagraph);
-        this.paragraphs.Add(draftParagraph);
+        paragraphs.Add(draftParagraph);
         return this;
     }
 }

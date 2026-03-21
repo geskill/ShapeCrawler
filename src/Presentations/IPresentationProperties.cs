@@ -33,7 +33,7 @@ public interface IPresentationProperties
     /// </summary>
     /// <remarks>
     ///     The identification is environment-specific and can consist of a name, email address, employee ID, etc.
-    ///     It is recommended that this value be only as verbose as necessary to identify the individual.     
+    ///     It is recommended that this value be only as verbose as necessary to identify the individual.
     /// </remarks>
     string? Author { get; set; }
 
@@ -46,7 +46,8 @@ public interface IPresentationProperties
     ///     Gets or sets a delimited set of keywords (tags) to support searching and indexing.
     /// </summary>
     /// <remarks>
-    ///      This is typically a list of terms that are not available elsewhere in the properties. The delimiter to use is not specified.
+    ///     This is typically a list of terms that are not available elsewhere in the properties. The delimiter to use is not
+    ///     specified.
     /// </remarks>
     string? Tags { get; set; }
 
@@ -54,7 +55,8 @@ public interface IPresentationProperties
     ///     Gets or sets the primary language.
     /// </summary>
     /// <remarks>
-    ///     The language tag is composed of one or more parts: A primary language subtag and a (possibly empty) series of subsequent subtags, for example, "EN-US".
+    ///     The language tag is composed of one or more parts: A primary language subtag and a (possibly empty) series of
+    ///     subsequent subtags, for example, "EN-US".
     ///     These values MUST follow the convention specified in RFC 3066. Show in File Explorer, but not in PowerPoint client.
     /// </remarks>
     string? Language { get; set; }
@@ -82,8 +84,9 @@ public interface IPresentationProperties
     ///     Gets or sets the revision number.
     /// </summary>
     /// <remarks>
-    ///      This value indicates the number of saves or revisions. The application is responsible for updating this value after each revision.
-    ///      Show in File Explorer, but not in PowerPoint client.
+    ///     This value indicates the number of saves or revisions. The application is responsible for updating this value after
+    ///     each revision.
+    ///     Show in File Explorer, but not in PowerPoint client.
     /// </remarks>
     int? RevisionNumber { get; set; }
 
@@ -108,6 +111,18 @@ public interface IPresentationProperties
 
 internal class PresentationProperties(IPackageProperties packageProperties) : IPresentationProperties
 {
+    public string? ContentType
+    {
+        get => packageProperties.ContentType;
+        set => packageProperties.ContentType = value;
+    }
+
+    public string? Identifier
+    {
+        get => packageProperties.Identifier;
+        set => packageProperties.Identifier = value;
+    }
+
     public string? Author
     {
         get => packageProperties.Creator;
@@ -118,12 +133,6 @@ internal class PresentationProperties(IPackageProperties packageProperties) : IP
     {
         get => packageProperties.Category;
         set => packageProperties.Category = value;
-    }
-
-    public string? ContentType
-    {
-        get => packageProperties.ContentType;
-        set => packageProperties.ContentType = value;
     }
 
     public string? ContentStatus
@@ -142,12 +151,6 @@ internal class PresentationProperties(IPackageProperties packageProperties) : IP
     {
         get => packageProperties.Description;
         set => packageProperties.Description = value;
-    }
-
-    public string? Identifier
-    {
-        get => packageProperties.Identifier;
-        set => packageProperties.Identifier = value;
     }
 
     public string? Tags
@@ -189,10 +192,8 @@ internal class PresentationProperties(IPackageProperties packageProperties) : IP
             {
                 return null;
             }
-            else
-            {
-                return result;
-            }
+
+            return result;
         }
         set => packageProperties.Revision = value?.ToString();
     }

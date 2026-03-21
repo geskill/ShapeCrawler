@@ -11,13 +11,19 @@ namespace ShapeCrawler.Slides;
 
 internal sealed class UserSlideCollection(IEnumerable<SlidePart> slideParts) : IReadOnlyList<IUserSlide>
 {
-    public int Count => this.GetSlides().Count();
+    public int Count => GetSlides().Count();
 
-    public IUserSlide this[int index] => this.GetSlides().ElementAt(index);
+    public IUserSlide this[int index] => GetSlides().ElementAt(index);
 
-    public IEnumerator<IUserSlide> GetEnumerator() => this.GetSlides().GetEnumerator();
+    public IEnumerator<IUserSlide> GetEnumerator()
+    {
+        return GetSlides().GetEnumerator();
+    }
 
-    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 
     private IEnumerable<UserSlide> GetSlides()
     {

@@ -10,32 +10,32 @@ public interface ITableStyleOptions
     /// <summary>
     ///     Gets or sets a value indicating whether the table has header row.
     /// </summary>
-    public bool HasHeaderRow { get; set; }
+    bool HasHeaderRow { get; set; }
 
     /// <summary>
     ///     Gets or sets a value indicating whether the table has total row.
     /// </summary>
-    public bool HasTotalRow { get; set; }
+    bool HasTotalRow { get; set; }
 
     /// <summary>
     ///     Gets or sets a value indicating whether the table has banded rows.
     /// </summary>
-    public bool HasBandedRows { get; set; }
+    bool HasBandedRows { get; set; }
 
     /// <summary>
     ///     Gets or sets a value indicating whether the table has first column.
     /// </summary>
-    public bool HasFirstColumn { get; set; }
+    bool HasFirstColumn { get; set; }
 
     /// <summary>
     ///     Gets or sets a value indicating whether the table has last column.
     /// </summary>
-    public bool HasLastColumn { get; set; }
+    bool HasLastColumn { get; set; }
 
     /// <summary>
     ///     Gets or sets a value indicating whether the table has banded columns.
     /// </summary>
-    public bool HasBandedColumns { get; set; }
+    bool HasBandedColumns { get; set; }
 }
 
 internal sealed class TableStyleOptions(TableProperties tableProperties)

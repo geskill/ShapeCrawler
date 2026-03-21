@@ -9,10 +9,7 @@ internal sealed class TextBoxMargins(OpenXmlElement textBody)
 {
     internal decimal Left
     {
-        get
-        {
-            return new LeftRightMargin(textBody.GetFirstChild<A.BodyProperties>()!.LeftInset).Value;
-        }
+        get => new LeftRightMargin(textBody.GetFirstChild<A.BodyProperties>()!.LeftInset).Value;
 
         set
         {

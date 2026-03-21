@@ -1,9 +1,7 @@
 using System.Globalization;
-using System.Reflection;
 using DocumentFormat.OpenXml.Presentation;
 using Fixture;
 using FluentAssertions;
-using NUnit.Framework;
 using ShapeCrawler.DevTests.Helpers;
 using ShapeCrawler.Presentations;
 
@@ -398,7 +396,8 @@ public class PresentationTests : SCTest
         pres.Footer.SlideNumberAdded().Should().BeTrue();
     }
 
-    [Test, Ignore("In Progress #540")]
+    [Test]
+    [Ignore("In Progress #540")]
     public void Footer_RemoveSlideNumber_removes_slide_number()
     {
         // Arrange
@@ -748,12 +747,12 @@ public class PresentationTests : SCTest
             pres.Slide(slide =>
             {
                 slide.Picture(
-                    name: "Picture",
-                    x: 100,
-                    y: 100,
-                    width: 200,
-                    height: 50,
-                    image: imageStream);
+                    "Picture",
+                    100,
+                    100,
+                    200,
+                    50,
+                    imageStream);
             });
         });
 

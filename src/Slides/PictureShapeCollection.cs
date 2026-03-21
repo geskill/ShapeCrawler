@@ -25,18 +25,18 @@ internal sealed class PictureShapeCollection(SlidePart slidePart, PresentationIm
                 var svgStream = imageContent.GetOriginalStream();
 
                 var svgHash = imageContent.SvgHash;
-                if (!this.TryGetImageRId(svgHash, out var svgPartRId))
+                if (!TryGetImageRId(svgHash, out var svgPartRId))
                 {
                     svgPartRId = slidePart.AddImagePart(svgStream, "image/svg+xml");
                 }
 
                 var imgHash = imageContent.Hash;
-                if (!this.TryGetImageRId(imgHash, out var imgPartRId))
+                if (!TryGetImageRId(imgHash, out var imgPartRId))
                 {
                     imgPartRId = slidePart.AddImagePart(rasterStream, "image/png");
                 }
 
-                var xmlPicture = new XmlPicture(slidePart, (uint)this.GetNextShapeId(), "Picture");
+                var xmlPicture = new XmlPicture(slidePart, (uint)GetNextShapeId(), "Picture");
                 pPicture = xmlPicture.CreateSvgPPicture(imgPartRId, svgPartRId);
             }
             else
@@ -44,18 +44,20 @@ internal sealed class PictureShapeCollection(SlidePart slidePart, PresentationIm
                 var imageForPart =
 
                     // Preserve original bytes for supported formats to ensure deterministic dedup across slides
-                    imageContent.IsOriginalFormatPreserved ? imageContent.GetOriginalStream() :
+                    imageContent.IsOriginalFormatPreserved
+                        ? imageContent.GetOriginalStream()
+                        :
 
-                    // For formats that we convert (e.g., WebP/AVIF/BMP), write a deterministic raster representation
-                    imageContent.GetRasterStream();
+                        // For formats that we convert (e.g., WebP/AVIF/BMP), write a deterministic raster representation
+                        imageContent.GetRasterStream();
 
                 var hash = imageContent.Hash;
-                if (!this.TryGetImageRId(hash, out var imgPartRId))
+                if (!TryGetImageRId(hash, out var imgPartRId))
                 {
                     imgPartRId = slidePart.AddImagePart(imageForPart, imageContent.MimeType);
                 }
 
-                var xmlPicture = new XmlPicture(slidePart, (uint)this.GetNextShapeId(), "Picture");
+                var xmlPicture = new XmlPicture(slidePart, (uint)GetNextShapeId(), "Picture");
                 pPicture = xmlPicture.CreatePPicture(imgPartRId);
             }
 
@@ -94,7 +96,9 @@ internal sealed class PictureShapeCollection(SlidePart slidePart, PresentationIm
 
             // Yes, we already have a relationship with this part on this slide
             // So use that relationship ID
-            imgPartRId = found.Any() ? slidePart.GetIdOfPart(imagePart) :
+            imgPartRId = found.Any()
+                ? slidePart.GetIdOfPart(imagePart)
+                :
 
                 // No, so let's create a relationship to it
                 slidePart.CreateRelationshipToPart(imagePart);

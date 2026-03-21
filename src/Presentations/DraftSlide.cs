@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Presentation;
 using ShapeCrawler.Shapes;
+using ShapeCrawler.Texts;
 using A = DocumentFormat.OpenXml.Drawing;
+using Shape = ShapeCrawler.Shapes.Shape;
 
 namespace ShapeCrawler.Presentations;
 
@@ -20,7 +23,7 @@ public sealed class DraftSlide
     /// </summary>
     public DraftSlide Picture(string name, int x, int y, int width, int height, Stream image)
     {
-        this.actions.Add((slide, _) =>
+        actions.Add((slide, _) =>
         {
             slide.Shapes.AddPicture(image);
 
@@ -41,7 +44,7 @@ public sealed class DraftSlide
     /// </summary>
     public DraftSlide Picture(byte[] imageBytes)
     {
-        this.actions.Add((slide, pres) =>
+        actions.Add((slide, pres) =>
         {
             using var stream = new MemoryStream(imageBytes);
             slide.Shapes.AddPicture(stream);
@@ -60,7 +63,7 @@ public sealed class DraftSlide
     /// </summary>
     public DraftSlide Picture(Action<DraftPicture> configure)
     {
-        this.actions.Add((slide, _) =>
+        actions.Add((slide, _) =>
         {
             var b = new DraftPicture();
             configure(b);
@@ -86,7 +89,7 @@ public sealed class DraftSlide
     /// <param name="content">Text content.</param>
     public DraftSlide TextShape(string content)
     {
-        return this.TextShape(content, x: null, y: null, width: 100, height: 50);
+        return TextShape(content, null, null, 100, 50);
     }
 
     /// <summary>
@@ -97,7 +100,7 @@ public sealed class DraftSlide
     /// <param name="y">Y coordinate in points.</param>
     public DraftSlide TextShape(string content, int x, int y)
     {
-        return this.TextShape(content, x, y, width: 100, height: 50);
+        return TextShape(content, x, y, 100, 50);
     }
 
     /// <summary>
@@ -110,20 +113,20 @@ public sealed class DraftSlide
     /// <param name="height">Height in points.</param>
     public DraftSlide TextShape(string content, int x, int y, int width, int height)
     {
-        return this.TextShape(content, x, (int?)y, width, height);
+        return TextShape(content, x, (int?)y, width, height);
     }
 
     /// <summary>
     ///     Adds a text box (auto shape) and sets its content.
     /// </summary>
     /// <param name="content">Text content.</param>
-    /// <param name="x">X coordinate in points. If <see langword="null"/>, the text box is centered horizontally.</param>
-    /// <param name="y">Y coordinate in points. If <see langword="null"/>, the text box is centered vertically.</param>
+    /// <param name="x">X coordinate in points. If <see langword="null" />, the text box is centered horizontally.</param>
+    /// <param name="y">Y coordinate in points. If <see langword="null" />, the text box is centered vertically.</param>
     /// <param name="width">Width in points.</param>
     /// <param name="height">Height in points.</param>
     public DraftSlide TextShape(string content, int? x, int? y, int width, int height)
     {
-        this.actions.Add((slide, pres) =>
+        actions.Add((slide, pres) =>
         {
             var effectiveX = x ?? (int)((pres.SlideWidth - width) / 2);
             var effectiveY = y ?? (int)((pres.SlideHeight - height) / 2);
@@ -138,7 +141,7 @@ public sealed class DraftSlide
     /// </summary>
     public DraftSlide TextShape(string name, int x, int y, int width, int height, string content)
     {
-        this.actions.Add((slide, _) =>
+        actions.Add((slide, _) =>
         {
             slide.Shapes.AddTextBox(x, y, width, height, content);
             var addedShape = slide.Shapes[^1];
@@ -153,7 +156,7 @@ public sealed class DraftSlide
     /// </summary>
     public DraftSlide TextShape(Action<DraftTextBox> configure)
     {
-        return this.Shape(t =>
+        return Shape(t =>
         {
             t.IsTextBox = true;
             configure(t);
@@ -165,7 +168,7 @@ public sealed class DraftSlide
     /// </summary>
     public DraftSlide Shape(Action<DraftTextBox> configure)
     {
-        this.actions.Add((slide, _) => AddRectangleShape(slide, configure));
+        actions.Add((slide, _) => AddRectangleShape(slide, configure));
 
         return this;
     }
@@ -175,7 +178,7 @@ public sealed class DraftSlide
     /// </summary>
     public DraftSlide RectangleShape(Action<DraftRectangle> configure)
     {
-        this.actions.Add((slide, _) =>
+        actions.Add((slide, _) =>
         {
             var builder = new DraftRectangle();
             configure(builder);
@@ -200,7 +203,7 @@ public sealed class DraftSlide
     /// </summary>
     public DraftSlide LineShape(string name, int startPointX, int startPointY, int endPointX, int endPointY)
     {
-        this.actions.Add((slide, _) =>
+        actions.Add((slide, _) =>
         {
             slide.Shapes.AddLine(startPointX, startPointY, endPointX, endPointY);
             var line = slide.Shapes[^1];
@@ -215,7 +218,7 @@ public sealed class DraftSlide
     /// </summary>
     public DraftSlide LineShape(Action<DraftLine> configure)
     {
-        this.actions.Add((slide, _) => CreateLine(slide, configure));
+        actions.Add((slide, _) => CreateLine(slide, configure));
 
         return this;
     }
@@ -225,7 +228,7 @@ public sealed class DraftSlide
     /// </summary>
     public DraftSlide ArrowLineShape(Action<DraftLine> configure)
     {
-        this.actions.Add((slide, _) => AddArrowLineShape(slide, configure));
+        actions.Add((slide, _) => AddArrowLineShape(slide, configure));
 
         return this;
     }
@@ -241,7 +244,7 @@ public sealed class DraftSlide
     /// <param name="content">Video stream.</param>
     public DraftSlide Video(string name, int x, int y, int elementWidth, int elementHeight, Stream content)
     {
-        this.actions.Add((slide, _) =>
+        actions.Add((slide, _) =>
         {
             slide.Shapes.AddVideo(x, y, content);
             var media = slide.Shapes[^1];
@@ -260,7 +263,7 @@ public sealed class DraftSlide
     /// </summary>
     public DraftSlide TableShape(string name, int x, int y, int columnsCount, int rowsCount)
     {
-        this.actions.Add((slide, _) =>
+        actions.Add((slide, _) =>
         {
             slide.Shapes.AddTable(x, y, columnsCount, rowsCount);
             var table = slide.Shapes[^1];
@@ -275,7 +278,7 @@ public sealed class DraftSlide
     /// </summary>
     public DraftSlide TableShape(Action<DraftTable> configure)
     {
-        this.actions.Add((slide, _) =>
+        actions.Add((slide, _) =>
         {
             var builder = new DraftTable();
             configure(builder);
@@ -294,7 +297,7 @@ public sealed class DraftSlide
     /// </summary>
     public DraftSlide TableShape(Action<DraftTableShape> configure)
     {
-        this.actions.Add((slide, _) =>
+        actions.Add((slide, _) =>
         {
             var shapeBuilder = new DraftTableShape();
             configure(shapeBuilder);
@@ -319,7 +322,7 @@ public sealed class DraftSlide
     /// </summary>
     public DraftSlide PieChartShape(string name)
     {
-        this.actions.Add((slide, _) =>
+        actions.Add((slide, _) =>
         {
             var categoryValues = new Dictionary<string, double>
             {
@@ -334,10 +337,13 @@ public sealed class DraftSlide
     /// <summary>
     ///     Configures a pie chart shape using a nested builder.
     /// </summary>
-    /// <param name="configure">An action that configures the pie chart shape via the nested <see cref="DraftPieChartShape"/> builder.</param>
+    /// <param name="configure">
+    ///     An action that configures the pie chart shape via the nested <see cref="DraftPieChartShape" />
+    ///     builder.
+    /// </param>
     public DraftSlide PieChartShape(Action<DraftPieChartShape> configure)
     {
-        this.actions.Add((slide, _) =>
+        actions.Add((slide, _) =>
         {
             var shapeBuilder = new DraftPieChartShape();
             configure(shapeBuilder);
@@ -352,11 +358,11 @@ public sealed class DraftSlide
             var (x, y, width, height) = GetChartDimensions(shapeBuilder, chartBuilder);
 
             slide.Shapes.AddPieChart(
-                x, 
-                y, 
-                width, 
-                height, 
-                categoryValues, 
+                x,
+                y,
+                width,
+                height,
+                categoryValues,
                 chartBuilder.SeriesName,
                 chartBuilder.ChartName);
         });
@@ -367,10 +373,13 @@ public sealed class DraftSlide
     /// <summary>
     ///     Configures a bubble chart shape using a nested builder.
     /// </summary>
-    /// <param name="configure">An action that configures the bubble chart shape via the nested <see cref="DraftBubbleChartShape"/> builder.</param>
+    /// <param name="configure">
+    ///     An action that configures the bubble chart shape via the nested
+    ///     <see cref="DraftBubbleChartShape" /> builder.
+    /// </param>
     public DraftSlide BubbleChartShape(Action<DraftBubbleChartShape> configure)
     {
-        this.actions.Add((slide, _) =>
+        actions.Add((slide, _) =>
         {
             var shapeBuilder = new DraftBubbleChartShape();
             configure(shapeBuilder);
@@ -399,7 +408,7 @@ public sealed class DraftSlide
     /// </summary>
     public DraftSlide ClusteredBarChartShape(Action<DraftChart> configure)
     {
-        this.actions.Add((slide, _) =>
+        actions.Add((slide, _) =>
         {
             var builder = new DraftChart();
             configure(builder);
@@ -419,10 +428,13 @@ public sealed class DraftSlide
     /// <summary>
     ///     Configures a clustered bar chart shape using a nested builder.
     /// </summary>
-    /// <param name="configure">An action that configures the clustered bar chart shape via the nested <see cref="DraftClusteredBarChartShape"/> builder.</param>
+    /// <param name="configure">
+    ///     An action that configures the clustered bar chart shape via the nested
+    ///     <see cref="DraftClusteredBarChartShape" /> builder.
+    /// </param>
     public DraftSlide ClusteredBarChartShape(Action<DraftClusteredBarChartShape> configure)
     {
-        this.actions.Add((slide, _) =>
+        actions.Add((slide, _) =>
         {
             var shapeBuilder = new DraftClusteredBarChartShape();
             configure(shapeBuilder);
@@ -453,7 +465,7 @@ public sealed class DraftSlide
     /// <param name="hexColor">Hex color string (e.g., "FF0000" for red).</param>
     public DraftSlide SolidBackground(string hexColor)
     {
-        this.actions.Add((slide, _) =>
+        actions.Add((slide, _) =>
         {
             slide.Fill.SetColor(hexColor);
         });
@@ -466,7 +478,7 @@ public sealed class DraftSlide
     /// </summary>
     public DraftSlide ImageBackground(byte[] imageBytes)
     {
-        this.actions.Add((slide, _) =>
+        actions.Add((slide, _) =>
         {
             slide.Fill.SetPicture(new MemoryStream(imageBytes));
         });
@@ -478,19 +490,19 @@ public sealed class DraftSlide
     {
         // Always add a new slide for each DraftSlide application
         var sdkPres = presentation.PresDocument.PresentationPart!.Presentation!;
-        sdkPres.SlideIdList ??= new DocumentFormat.OpenXml.Presentation.SlideIdList();
+        sdkPres.SlideIdList ??= new SlideIdList();
 
         var blankLayout = presentation.MasterSlides[0].LayoutSlides.First(l => l.Name == "Blank");
         presentation.Slides.Add(blankLayout.Number);
 
         // Target the newly added slide
         var slide = presentation.Slides[^1];
-        foreach (var action in this.actions)
+        foreach (var action in actions)
         {
             action(slide, presentation);
         }
     }
-    
+
     private static Dictionary<string, double> BuildCategoryValues(DraftPieChart chartBuilder)
     {
         var categoryValues = new Dictionary<string, double>();
@@ -617,8 +629,8 @@ public sealed class DraftSlide
 
     private static void ApplyArrowEnds(LineShape lineShape, DraftLine draftLine)
     {
-        var pConnectionShape = (DocumentFormat.OpenXml.Presentation.ConnectionShape)lineShape.OpenXmlElement;
-        pConnectionShape.ShapeProperties ??= new DocumentFormat.OpenXml.Presentation.ShapeProperties();
+        var pConnectionShape = (ConnectionShape)lineShape.OpenXmlElement;
+        pConnectionShape.ShapeProperties ??= new ShapeProperties();
 
         var aOutline = pConnectionShape.ShapeProperties.GetFirstChild<A.Outline>() ??
                        pConnectionShape.ShapeProperties.AppendChild(new A.Outline());
@@ -672,7 +684,7 @@ public sealed class DraftSlide
         var alphaPercent = 100 - transparencyPercent;
         var alphaVal = alphaPercent * 1000;
 
-        var pShapeProperties = pShapeTreeElement.Descendants<DocumentFormat.OpenXml.Presentation.ShapeProperties>()
+        var pShapeProperties = pShapeTreeElement.Descendants<ShapeProperties>()
             .FirstOrDefault();
         var aSolidFill = pShapeProperties?.GetFirstChild<A.SolidFill>();
         if (aSolidFill == null)
@@ -801,7 +813,7 @@ public sealed class DraftSlide
             return;
         }
 
-        var scTextBox = (Texts.TextBox)shape.TextBox!;
+        var scTextBox = (TextBox)shape.TextBox!;
         scTextBox.DisableWrapping();
         scTextBox.AutofitType = AutofitType.Resize;
     }

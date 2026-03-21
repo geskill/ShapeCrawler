@@ -13,10 +13,11 @@ public class SlideQueryPortionAttribute(
     int portionNumber)
     : Attribute, ITestBuilder
 {
-    private readonly int shapeId;
     private readonly object expectedResult;
+    private readonly int shapeId;
 
-    public SlideQueryPortionAttribute(string pptxName, int slideNumber, int shapeId, int paragraphNumber, int portionNumber) : this(pptxName, slideNumber, null, paragraphNumber, portionNumber)
+    public SlideQueryPortionAttribute(string pptxName, int slideNumber, int shapeId, int paragraphNumber,
+        int portionNumber) : this(pptxName, slideNumber, null, paragraphNumber, portionNumber)
     {
         this.shapeId = shapeId;
     }
@@ -24,12 +25,12 @@ public class SlideQueryPortionAttribute(
     public IEnumerable<TestMethod> BuildFrom(IMethodInfo method, Test suite)
     {
         var pres = new Presentation(SCTest.TestAsset(pptxName));
-        var portionQuery = shapeName == null 
-            ? new TestSlidePortionQuery(slideNumber, this.shapeId, paragraphNumber, portionNumber) 
+        var portionQuery = shapeName == null
+            ? new TestSlidePortionQuery(slideNumber, shapeId, paragraphNumber, portionNumber)
             : new TestSlidePortionQuery(slideNumber, shapeName, paragraphNumber, portionNumber);
 
         var parameters = new TestCaseParameters(new object[] { pres, portionQuery });
-        
+
         yield return new NUnitTestCaseBuilder().BuildTestMethod(method, suite, parameters);
     }
 }

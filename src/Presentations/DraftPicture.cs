@@ -26,7 +26,7 @@ public sealed class DraftPicture
     /// </summary>
     public DraftPicture Name(string name)
     {
-        this.DraftName = name;
+        DraftName = name;
         return this;
     }
 
@@ -35,7 +35,7 @@ public sealed class DraftPicture
     /// </summary>
     public DraftPicture X(int x)
     {
-        this.DraftX = x;
+        DraftX = x;
         return this;
     }
 
@@ -44,7 +44,7 @@ public sealed class DraftPicture
     /// </summary>
     public DraftPicture Y(int y)
     {
-        this.DraftY = y;
+        DraftY = y;
         return this;
     }
 
@@ -53,7 +53,7 @@ public sealed class DraftPicture
     /// </summary>
     public DraftPicture Width(int width)
     {
-        this.DraftWidth = width;
+        DraftWidth = width;
         return this;
     }
 
@@ -62,7 +62,7 @@ public sealed class DraftPicture
     /// </summary>
     public DraftPicture Height(int height)
     {
-        this.DraftHeight = height;
+        DraftHeight = height;
         return this;
     }
 
@@ -71,7 +71,7 @@ public sealed class DraftPicture
     /// </summary>
     public DraftPicture Image(Stream image)
     {
-        this.ImageStream = image;
+        ImageStream = image;
         return this;
     }
 
@@ -80,7 +80,7 @@ public sealed class DraftPicture
     /// </summary>
     public DraftPicture GeometryType(string geometry)
     {
-        this.GeometryName = geometry;
+        GeometryName = geometry;
         return this;
     }
 }

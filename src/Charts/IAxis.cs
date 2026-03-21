@@ -1,7 +1,6 @@
 ﻿#pragma warning disable IDE0130
 namespace ShapeCrawler;
 #pragma warning restore IDE0130
-
 using C = DocumentFormat.OpenXml.Drawing.Charts;
 
 /// <summary>
@@ -32,26 +31,26 @@ internal sealed record Axis : IAxis
 
     public double Minimum
     {
-        get => this.GetMinimum();
-        set => this.cScaling.MinAxisValue = new C.MinAxisValue { Val = value };
+        get => GetMinimum();
+        set => cScaling.MinAxisValue = new C.MinAxisValue { Val = value };
     }
 
     public double Maximum
     {
-        get => this.GetMaximum();
-        set => this.cScaling.MaxAxisValue = new C.MaxAxisValue { Val = value };
+        get => GetMaximum();
+        set => cScaling.MaxAxisValue = new C.MaxAxisValue { Val = value };
     }
 
     private double GetMinimum()
     {
-        var cMin = this.cScaling.MinAxisValue;
+        var cMin = cScaling.MinAxisValue;
 
         return cMin == null ? 0 : cMin.Val!;
     }
 
     private double GetMaximum()
     {
-        var cMax = this.cScaling.MaxAxisValue;
+        var cMax = cScaling.MaxAxisValue;
 
         return cMax == null ? DefaultMax : cMax.Val!;
     }

@@ -22,18 +22,20 @@ internal sealed class MarkdownText(
         var lines = Regex.Split(markdownText, "\r\n|\r|\n", RegexOptions.None, TimeSpan.FromMilliseconds(1000));
         if (IsList(lines))
         {
-            this.RenderList(lines);
+            RenderList(lines);
         }
         else
         {
-            this.RenderRegular(markdownText);
+            RenderRegular(markdownText);
         }
 
         applyResize();
     }
 
-    private static bool IsList(string[] lines) =>
-        lines.Any(l => l.TrimStart().StartsWith("- ", StringComparison.CurrentCulture));
+    private static bool IsList(string[] lines)
+    {
+        return lines.Any(l => l.TrimStart().StartsWith("- ", StringComparison.CurrentCulture));
+    }
 
     private void RenderList(string[] lines)
     {
@@ -54,7 +56,7 @@ internal sealed class MarkdownText(
             portion.Remove();
         }
 
-        int paraIndex = 0;
+        var paraIndex = 0;
         foreach (var rawLine in lines)
         {
             if (string.IsNullOrWhiteSpace(rawLine))

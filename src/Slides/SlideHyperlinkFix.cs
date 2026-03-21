@@ -6,7 +6,7 @@ using DocumentFormat.OpenXml.Presentation;
 namespace ShapeCrawler.Slides;
 
 /// <summary>
-/// Adjusts slide hyperlinks so they target the correct relationships in a destination presentation.
+///     Adjusts slide hyperlinks so they target the correct relationships in a destination presentation.
 /// </summary>
 internal static class SlideHyperlinkFix
 {

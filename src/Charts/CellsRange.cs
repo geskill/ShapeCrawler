@@ -14,8 +14,8 @@ internal readonly ref struct CellsRange(string range)
     /// <remarks>input="B10:B12", output=['B10','B11','B12'].</remarks>
     internal List<string> Addresses()
     {
-        this.Letter();
-        return [.. this.tempList];
+        Letter();
+        return [.. tempList];
     }
 
     #region Private Methods
@@ -26,13 +26,13 @@ internal readonly ref struct CellsRange(string range)
         var letterStr = string.Concat(letterCharacters);
         var nextStart = startIndex + letterCharacters.Count();
 
-        this.Digit(letterStr, nextStart);
+        Digit(letterStr, nextStart);
     }
 
     private void Digit(string letterPart, int startIndex)
     {
-        var digitInt = this.Digit(startIndex);
-        this.tempList.AddLast(letterPart + digitInt); // e.g. 'B'+'10' -> B10
+        var digitInt = Digit(startIndex);
+        tempList.AddLast(letterPart + digitInt); // e.g. 'B'+'10' -> B10
 
         var endIndex = startIndex + digitInt.ToString(CultureInfo.CurrentCulture).Length;
         if (endIndex >= range.Length)
@@ -43,21 +43,21 @@ internal readonly ref struct CellsRange(string range)
         var nextStart = endIndex + letterPart.Length + 1; // skip separator and letter lengths
         if (range[endIndex] == ':')
         {
-            this.LetterAfterColon(letterPart, digitInt, nextStart);
+            LetterAfterColon(letterPart, digitInt, nextStart);
         }
 
         if (range[endIndex] == ',')
         {
-            this.Letter(nextStart);
+            Letter(nextStart);
         }
     }
 
     private void LetterAfterColon(string letterPart, int digitPart, int startIndex)
     {
-        var digitInt = this.Digit(startIndex);
+        var digitInt = Digit(startIndex);
         for (var nextDigitInt = digitPart + 1; nextDigitInt <= digitInt; nextDigitInt++)
         {
-            this.tempList.AddLast(letterPart + nextDigitInt);
+            tempList.AddLast(letterPart + nextDigitInt);
         }
 
         var nextStart =
@@ -65,7 +65,7 @@ internal readonly ref struct CellsRange(string range)
             1; // skip last digit and separator characters
         if (nextStart < range.Length)
         {
-            this.Letter(nextStart);
+            Letter(nextStart);
         }
     }
 

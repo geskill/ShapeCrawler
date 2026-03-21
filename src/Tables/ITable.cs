@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DocumentFormat.OpenXml;
-using ShapeCrawler.Extensions;
 using ShapeCrawler.Tables;
 using A = DocumentFormat.OpenXml.Drawing;
 using P = DocumentFormat.OpenXml.Presentation;
@@ -32,7 +31,7 @@ public interface ITable
     ITableStyle TableStyle { get; set; }
 
     /// <summary>
-    ///    Gets the table style options.
+    ///     Gets the table style options.
     /// </summary>
     ITableStyleOptions StyleOptions { get; }
 
@@ -65,28 +64,31 @@ internal sealed class Table(
 {
     private ITableStyle? tableStyle;
 
+    private A.Table ATable => pGraphicFrame.GetFirstChild<A.Graphic>()!.GraphicData!.GetFirstChild<A.Table>()!;
+
     public ITableColumnCollection Columns => columns;
 
     public ITableRowCollection Rows => rows;
 
     public ITableStyle TableStyle
     {
-        get => this.GetTableStyle();
-        set => this.SetTableStyle(value);
+        get => GetTableStyle();
+        set => SetTableStyle(value);
     }
 
     public ITableStyleOptions StyleOptions => styleOptions;
 
-    private A.Table ATable => pGraphicFrame.GetFirstChild<A.Graphic>()!.GraphicData!.GetFirstChild<A.Table>()!;
-
-    public ITableCell this[int rowIndex, int columnIndex] => this.Rows[rowIndex].Cells[columnIndex];
+    public ITableCell this[int rowIndex, int columnIndex] => Rows[rowIndex].Cells[columnIndex];
 
     public void UpdateFill(string colorHex)
     {
         throw new NotImplementedException();
     }
 
-    public ITableCell Cell(int rowNumber, int columnNumber) => this.Rows[rowNumber - 1].Cells[columnNumber - 1];
+    public ITableCell Cell(int rowNumber, int columnNumber)
+    {
+        return Rows[rowNumber - 1].Cells[columnNumber - 1];
+    }
 
     public void MergeCells(ITableCell cell1, ITableCell cell2)
     {
@@ -110,30 +112,35 @@ internal sealed class Table(
             ? cell1Internal.ColumnIndex
             : cell2Internal.ColumnIndex;
 
-        var aTableRows = this.ATable.Elements<A.TableRow>().ToList();
+        var aTableRows = ATable.Elements<A.TableRow>().ToList();
         if (minColIndex != maxColIndex)
         {
-            this.MergeHorizontal(maxColIndex, minColIndex, minRowIndex, maxRowIndex, aTableRows);
+            MergeHorizontal(maxColIndex, minColIndex, minRowIndex, maxRowIndex, aTableRows);
         }
 
         if (minRowIndex != maxRowIndex)
         {
-            this.MergeVertically(maxRowIndex, minRowIndex, aTableRows, minColIndex, maxColIndex);
+            MergeVertically(maxRowIndex, minRowIndex, aTableRows, minColIndex, maxColIndex);
         }
 
-        this.RemoveColumnIfNeeded(aTableRows);
-        this.RemoveRowOnDemand();
+        RemoveColumnIfNeeded(aTableRows);
+        RemoveRowOnDemand();
     }
 
-    public void Remove() => pGraphicFrame.Remove();
+    public void Remove()
+    {
+        pGraphicFrame.Remove();
+    }
 
     public void SetVideo(Stream video)
     {
         throw new NotImplementedException();
     }
 
-    private static bool IsParagraphEmpty(A.Paragraph aParagraph) =>
-        aParagraph.Descendants<A.Text>().All(t => string.IsNullOrEmpty(t.Text));
+    private static bool IsParagraphEmpty(A.Paragraph aParagraph)
+    {
+        return aParagraph.Descendants<A.Text>().All(t => string.IsNullOrEmpty(t.Text));
+    }
 
     private static void DeleteTableCells(int colIdx, int deleteColumnCount, List<A.TableRow> aTableRows)
     {
@@ -149,38 +156,38 @@ internal sealed class Table(
 
     private void SetTableStyle(ITableStyle style)
     {
-        this.ATable.TableProperties!.GetFirstChild<A.TableStyleId>()!.Text = ((TableStyle)style).Guid;
-        this.tableStyle = style;
+        ATable.TableProperties!.GetFirstChild<A.TableStyleId>()!.Text = ((TableStyle)style).Guid;
+        tableStyle = style;
     }
 
     private ITableStyle GetTableStyle()
     {
-        if (this.tableStyle is null)
+        if (tableStyle is null)
         {
-            var aTableStyleId = this.ATable.TableProperties!.GetFirstChild<A.TableStyleId>()!.Text;
+            var aTableStyleId = ATable.TableProperties!.GetFirstChild<A.TableStyleId>()!.Text;
             var style = CommonTableStyles.GetTableStyleByGuid(aTableStyleId)!;
-            this.tableStyle = style;
+            tableStyle = style;
         }
 
-        return this.tableStyle;
+        return tableStyle;
     }
 
     private void RemoveRowOnDemand()
     {
-        int rowIdx = 0;
+        var rowIdx = 0;
 
-        while (rowIdx < this.Rows.Count)
+        while (rowIdx < Rows.Count)
         {
-            var cells = this.Rows[rowIdx].Cells.OfType<TableCell>().ToList();
+            var cells = Rows[rowIdx].Cells.OfType<TableCell>().ToList();
             var firstCell = cells[0];
             var firstCellSpan = firstCell.ATableCell.RowSpan?.Value;
 
             if (firstCellSpan > 1 && cells.All(cell => cell.ATableCell.RowSpan?.Value == firstCellSpan))
             {
-                int deleteRowsCount = firstCellSpan.Value - 1;
-                var targetRow = (TableRow)this.Rows[rowIdx];
+                var deleteRowsCount = firstCellSpan.Value - 1;
+                var targetRow = (TableRow)Rows[rowIdx];
                 var newHeight = targetRow.Height;
-                foreach (var row in this.Rows.Skip(rowIdx + 1).Take(deleteRowsCount))
+                foreach (var row in Rows.Skip(rowIdx + 1).Take(deleteRowsCount))
                 {
                     ((TableRow)row).ATableRow.Remove();
                     newHeight += row.Height;
@@ -205,7 +212,7 @@ internal sealed class Table(
         int leftColIndex,
         int rightColIndex)
     {
-        int verticalMergingCount = bottomIndex - topRowIndex + 1;
+        var verticalMergingCount = bottomIndex - topRowIndex + 1;
         var numMergingCells = rightColIndex - leftColIndex + 1;
         var horizontalCells =
             aTableRows[topRowIndex].Elements<A.TableCell>().Skip(leftColIndex).Take(numMergingCells);
@@ -221,7 +228,7 @@ internal sealed class Table(
                          .Take(rightColIndex - leftColIndex + 1))
             {
                 aTc.VerticalMerge = new BooleanValue(true);
-                this.MergeParagraphs(topRowIndex, leftColIndex, aTc);
+                MergeParagraphs(topRowIndex, leftColIndex, aTc);
             }
         }
     }
@@ -229,9 +236,9 @@ internal sealed class Table(
     private void MergeParagraphs(int minRowIndex, int minColIndex, A.TableCell aTblCell)
     {
         var mergedCellTextBody = ((TableCell)this[minRowIndex, minColIndex]).ATableCell.TextBody;
-        bool hasMoreOnePara = false;
+        var hasMoreOnePara = false;
         var aParagraphsWithARun = aTblCell.TextBody!.Elements<A.Paragraph>().Where(p => !IsParagraphEmpty(p));
-        foreach (A.Paragraph aParagraph in aParagraphsWithARun)
+        foreach (var aParagraph in aParagraphsWithARun)
         {
             mergedCellTextBody!.Append(aParagraph.CloneNode(true));
             hasMoreOnePara = true;
@@ -242,7 +249,7 @@ internal sealed class Table(
             return;
         }
 
-        foreach (A.Paragraph aParagraph in mergedCellTextBody!.Elements<A.Paragraph>().Where(IsParagraphEmpty))
+        foreach (var aParagraph in mergedCellTextBody!.Elements<A.Paragraph>().Where(IsParagraphEmpty))
         {
             aParagraph.Remove();
         }
@@ -255,35 +262,35 @@ internal sealed class Table(
         int maxRowIndex,
         List<A.TableRow> aTableRows)
     {
-        int horizontalMergingCount = maxColIndex - minColIndex + 1;
-        for (int rowIdx = minRowIndex; rowIdx <= maxRowIndex; rowIdx++)
+        var horizontalMergingCount = maxColIndex - minColIndex + 1;
+        for (var rowIdx = minRowIndex; rowIdx <= maxRowIndex; rowIdx++)
         {
             A.TableCell[] rowATblCells = [.. aTableRows[rowIdx].Elements<A.TableCell>()];
-            A.TableCell firstMergingCell = rowATblCells[minColIndex];
+            var firstMergingCell = rowATblCells[minColIndex];
             firstMergingCell.GridSpan = new Int32Value(horizontalMergingCount);
-            Span<A.TableCell> nextMergingCells =
+            var nextMergingCells =
                 new Span<A.TableCell>(rowATblCells, minColIndex + 1, horizontalMergingCount - 1);
-            foreach (A.TableCell aTblCell in nextMergingCells)
+            foreach (var aTblCell in nextMergingCells)
             {
                 aTblCell.HorizontalMerge = new BooleanValue(true);
-                this.MergeParagraphs(minRowIndex, minColIndex, aTblCell);
+                MergeParagraphs(minRowIndex, minColIndex, aTblCell);
             }
         }
     }
 
     private void RemoveColumnIfNeeded(List<A.TableRow> aTableRows)
     {
-        int colIdx = 0;
-        while (colIdx < this.Columns.Count)
+        var colIdx = 0;
+        while (colIdx < Columns.Count)
         {
-            var topColumnCell = ((TableRow)this.Rows[0]).ATableRow.Elements<A.TableCell>().ToList()[colIdx];
+            var topColumnCell = ((TableRow)Rows[0]).ATableRow.Elements<A.TableCell>().ToList()[colIdx];
             var topColumnCellSpan = topColumnCell.GridSpan?.Value;
-            var nextBottomColumnCells = this.Rows
+            var nextBottomColumnCells = Rows
                 .Select(row => ((TableRow)row).ATableRow.Elements<A.TableCell>().ToList()[colIdx]).ToList();
             var sameGridSpan = nextBottomColumnCells.All(c => c.GridSpan?.Value == topColumnCellSpan);
             if (topColumnCellSpan > 1 && sameGridSpan)
             {
-                colIdx += this.ProcessColumnsWithSameGridSpan(colIdx, topColumnCellSpan.Value, aTableRows);
+                colIdx += ProcessColumnsWithSameGridSpan(colIdx, topColumnCellSpan.Value, aTableRows);
             }
             else
             {
@@ -297,7 +304,7 @@ internal sealed class Table(
         var deleteColumnCount = topColumnCellSpan - 1;
 
         // Delete a:gridCol elements and append width of deleting column to merged column
-        this.DeleteAndUpdateGridColumns(colIdx, deleteColumnCount);
+        DeleteAndUpdateGridColumns(colIdx, deleteColumnCount);
 
         // Delete a:tc elements
         DeleteTableCells(colIdx, deleteColumnCount, aTableRows);
@@ -307,11 +314,11 @@ internal sealed class Table(
 
     private void DeleteAndUpdateGridColumns(int colIdx, int deleteColumnCount)
     {
-        for (int i = 0; i < deleteColumnCount; i++)
+        for (var i = 0; i < deleteColumnCount; i++)
         {
-            var column = (Column)this.Columns[colIdx + 1 + i];
+            var column = (Column)Columns[colIdx + 1 + i];
             column.AGridColumn.Remove();
-            this.Columns[colIdx].Width += column.Width;
+            Columns[colIdx].Width += column.Width;
         }
     }
 }

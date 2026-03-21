@@ -16,7 +16,7 @@ public sealed class DraftCell
     /// </summary>
     public DraftCell FillSolidColor(string hex)
     {
-        this.SolidColorHex = hex;
+        SolidColorHex = hex;
         return this;
     }
 
@@ -25,7 +25,7 @@ public sealed class DraftCell
     /// </summary>
     public DraftCell FontColor(string hex)
     {
-        this.FontColorHex = hex;
+        FontColorHex = hex;
         return this;
     }
 
@@ -34,7 +34,7 @@ public sealed class DraftCell
     /// </summary>
     public DraftCell TextBox(string content)
     {
-        this.TextContent = content;
+        TextContent = content;
         return this;
     }
 }

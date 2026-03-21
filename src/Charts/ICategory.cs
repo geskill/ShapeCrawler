@@ -10,12 +10,12 @@ public interface ICategory
     /// <summary>
     ///     Gets a value indicating whether the category has a main category.
     /// </summary>
-    public bool HasMainCategory { get; }
+    bool HasMainCategory { get; }
 
     /// <summary>
     ///     Gets main category.
     /// </summary>
-    public ICategory MainCategory { get; }
+    ICategory MainCategory { get; }
 
     /// <summary>
     ///     Gets or sets category name.

@@ -25,5 +25,5 @@ internal readonly struct PixelTextPortion(string text, ITextPortionFont? font, f
     /// <summary>
     ///     Gets a value indicating whether the text portion contains only whitespace.
     /// </summary>
-    internal bool IsWhitespace => string.IsNullOrEmpty(this.Text) || this.Text.All(char.IsWhiteSpace);
+    internal bool IsWhitespace => string.IsNullOrEmpty(Text) || Text.All(char.IsWhiteSpace);
 }

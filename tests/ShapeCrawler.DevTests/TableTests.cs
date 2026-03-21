@@ -1,9 +1,7 @@
 using Fixture;
 using FluentAssertions;
-using NUnit.Framework;
 using ShapeCrawler.DevTests.Helpers;
 using ShapeCrawler.Tables;
-using A = DocumentFormat.OpenXml.Drawing;
 
 namespace ShapeCrawler.DevTests;
 
@@ -174,7 +172,7 @@ public class TableTests : SCTest
         // Arrange
         var pres = new Presentation(TestAsset("009_table.pptx"));
         var table = pres.Slide(3).Shape(3).Table;
-        int originRowsCount = table.Rows.Count;
+        var originRowsCount = table.Rows.Count;
         var mStream = new MemoryStream();
 
         // Act
@@ -479,7 +477,7 @@ public class TableTests : SCTest
 
         void AssertTable(ITable table)
         {
-            string expectedText = $"id5{Environment.NewLine}Text1_0";
+            var expectedText = $"id5{Environment.NewLine}Text1_0";
             table[0, 0].IsMergedCell.Should().BeTrue();
             table[0, 1].IsMergedCell.Should().BeFalse();
             table[0, 0].TextBox.Text.Should().Be(expectedText);
@@ -784,6 +782,7 @@ public class TableTests : SCTest
         // Assert
         table[0, 1].Should().NotBeSameAs(table[1, 1]);
     }
+
     [Test]
     [SlideShape("009_table.pptx", 3, 3, 3)]
     [SlideShape("001.pptx", 2, 5, 4)]
@@ -1033,14 +1032,14 @@ public class TableTests : SCTest
             });
         });
         var table = pres.Slide(1).Shapes.First().Table!;
-        
+
         // Act
         table.Rows.Add(1, 0);
-        
+
         // Assert
         table.Rows[1].Cells[0].TextBox.Paragraphs[0].FontColor.Should().Be(expectedRedColor);
     }
-    
+
     [Test]
     public void Rows_Add_copies_solid_fill_color_from_template_row()
     {
@@ -1062,10 +1061,10 @@ public class TableTests : SCTest
             });
         });
         var table = pres.Slide(1).Shapes.First().Table!;
-        
+
         // Act
         table.Rows.Add(1, 0); // Add new row at index 1, using row 0 as template
-        
+
         // Assert
         table.Rows[1].Cells[0].Fill.Color.Should().Be(redColor);
     }

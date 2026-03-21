@@ -21,7 +21,10 @@ namespace ShapeCrawler.Slides;
 internal readonly ref struct SCSlidePart(SlidePart slidePart)
 {
     private const string SmartArtDiagramUri = "http://schemas.openxmlformats.org/drawingml/2006/diagram";
-    private const string DiagramDrawingRelationshipType = "http://schemas.microsoft.com/office/2007/relationships/diagramDrawing";
+
+    private const string DiagramDrawingRelationshipType =
+        "http://schemas.microsoft.com/office/2007/relationships/diagramDrawing";
+
     private const string DiagramDrawingContentType = "application/vnd.ms-office.drawingml.diagramDrawing+xml";
     private const string BasicBlockListDataAsset = "smartart-basicblocklist-data.xml";
     private const string BasicBlockListLayoutAsset = "smartart-basicblocklist-layout.xml";
@@ -30,7 +33,7 @@ internal readonly ref struct SCSlidePart(SlidePart slidePart)
     private const string BasicBlockListDrawingAsset = "smartart-basicblocklist-drawing.xml";
 
     /// <summary>
-    /// Clones the wrapped slide part to the specified presentation part using the provided relationship id.
+    ///     Clones the wrapped slide part to the specified presentation part using the provided relationship id.
     /// </summary>
     /// <param name="targetPresentationPart">Destination presentation part.</param>
     /// <param name="relationshipId">Relationship identifier to use for the new slide.</param>
@@ -38,12 +41,12 @@ internal readonly ref struct SCSlidePart(SlidePart slidePart)
     internal SlidePart CloneTo(PresentationPart targetPresentationPart, string relationshipId)
     {
         var clonedSlidePart = targetPresentationPart.AddNewPart<SlidePart>(relationshipId);
-        this.CopySlideContent(clonedSlidePart);
-        this.CopyCustomXmlParts(clonedSlidePart);
-        this.CopyNotesSlidePart(clonedSlidePart);
-        this.CopyImageParts(clonedSlidePart);
-        this.CopyChartParts(clonedSlidePart);
-        this.LinkToLayoutPart(targetPresentationPart, clonedSlidePart);
+        CopySlideContent(clonedSlidePart);
+        CopyCustomXmlParts(clonedSlidePart);
+        CopyNotesSlidePart(clonedSlidePart);
+        CopyImageParts(clonedSlidePart);
+        CopyChartParts(clonedSlidePart);
+        LinkToLayoutPart(targetPresentationPart, clonedSlidePart);
 
         return clonedSlidePart;
     }
@@ -55,15 +58,14 @@ internal readonly ref struct SCSlidePart(SlidePart slidePart)
             throw new NotSupportedException($"SmartArt type '{smartArtType}' is not supported.");
         }
 
-        var diagramPartIds = this.CreateBasicBlockListDiagramParts();
+        var diagramPartIds = CreateBasicBlockListDiagramParts();
         var pGraphicFrame = new GraphicFrame();
 
         // Add ID and name properties
         var nvGraphicFrameProperties = new NonVisualGraphicFrameProperties();
         var nonVisualDrawingProperties = new NonVisualDrawingProperties
         {
-            Id = this.GetNextShapeId(),
-            Name = $"SmartArt {smartArtType}"
+            Id = GetNextShapeId(), Name = $"SmartArt {smartArtType}"
         };
         var nonVisualGraphicFrameDrawingProperties = new NonVisualGraphicFrameDrawingProperties();
         var applicationNonVisualDrawingProperties = new ApplicationNonVisualDrawingProperties();
@@ -81,12 +83,15 @@ internal readonly ref struct SCSlidePart(SlidePart slidePart)
 
         // Create the diagram graphic
         var graphic = new A.Graphic();
-        var graphicData = new A.GraphicData { Uri = SmartArtDiagramUri, InnerXml = "<dgm:relIds xmlns:dgm=\"http://schemas.openxmlformats.org/drawingml/2006/diagram\" " +
-                                                                                   "xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" " +
-                                                                                   $"r:dm=\"{diagramPartIds.DataId}\" " +
-                                                                                   $"r:lo=\"{diagramPartIds.LayoutId}\" " +
-                                                                                   $"r:qs=\"{diagramPartIds.QuickStyleId}\" " +
-                                                                                   $"r:cs=\"{diagramPartIds.ColorsId}\" />"
+        var graphicData = new A.GraphicData
+        {
+            Uri = SmartArtDiagramUri,
+            InnerXml = "<dgm:relIds xmlns:dgm=\"http://schemas.openxmlformats.org/drawingml/2006/diagram\" " +
+                       "xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" " +
+                       $"r:dm=\"{diagramPartIds.DataId}\" " +
+                       $"r:lo=\"{diagramPartIds.LayoutId}\" " +
+                       $"r:qs=\"{diagramPartIds.QuickStyleId}\" " +
+                       $"r:cs=\"{diagramPartIds.ColorsId}\" />"
         };
         graphic.Append(graphicData);
         pGraphicFrame.Append(graphic);
@@ -116,7 +121,7 @@ internal readonly ref struct SCSlidePart(SlidePart slidePart)
         }
 
         var template = assets.StringOf(assetName).Replace("{{DRAWING_REL_ID}}", drawingRelationshipId);
-        using var writer = new StreamWriter(destinationStream, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+        using var writer = new StreamWriter(destinationStream, new UTF8Encoding(false));
         writer.Write(template);
     }
 
@@ -437,25 +442,29 @@ internal readonly ref struct SCSlidePart(SlidePart slidePart)
                 CopyStream(sourceChildPart, targetChildPart);
             }
         }
-
     }
 
     private static OpenXmlElement? GetNotesSlideIdElement(SlidePart slidePart)
-        => slidePart.Slide?.Descendants<OpenXmlElement>()
+    {
+        return slidePart.Slide?.Descendants<OpenXmlElement>()
             .FirstOrDefault(element => string.Equals(element.LocalName, "notesSlideId", StringComparison.Ordinal));
+    }
 
-    private static OpenXmlPart CreatePart(OpenXmlPartContainer partContainer, OpenXmlPart sourcePart, string relationshipId)
+    private static OpenXmlPart CreatePart(OpenXmlPartContainer partContainer, OpenXmlPart sourcePart,
+        string relationshipId)
     {
         return sourcePart switch
         {
             ImagePart => partContainer.AddNewPart<ImagePart>(sourcePart.ContentType, relationshipId),
             SlidePart => partContainer.AddNewPart<SlidePart>(sourcePart.ContentType, relationshipId),
             ChartPart => partContainer.AddNewPart<ChartPart>(sourcePart.ContentType, relationshipId),
-            EmbeddedPackagePart => partContainer.AddNewPart<EmbeddedPackagePart>(sourcePart.ContentType, relationshipId),
+            EmbeddedPackagePart =>
+                partContainer.AddNewPart<EmbeddedPackagePart>(sourcePart.ContentType, relationshipId),
             EmbeddedObjectPart => partContainer.AddNewPart<EmbeddedObjectPart>(sourcePart.ContentType, relationshipId),
             VmlDrawingPart => partContainer.AddNewPart<VmlDrawingPart>(sourcePart.ContentType, relationshipId),
             DiagramDataPart => partContainer.AddNewPart<DiagramDataPart>(sourcePart.ContentType, relationshipId),
-            DiagramLayoutDefinitionPart => partContainer.AddNewPart<DiagramLayoutDefinitionPart>(sourcePart.ContentType, relationshipId),
+            DiagramLayoutDefinitionPart => partContainer.AddNewPart<DiagramLayoutDefinitionPart>(sourcePart.ContentType,
+                relationshipId),
             DiagramStylePart => partContainer.AddNewPart<DiagramStylePart>(sourcePart.ContentType, relationshipId),
             DiagramColorsPart => partContainer.AddNewPart<DiagramColorsPart>(sourcePart.ContentType, relationshipId),
             ExtendedPart extendedPart => CreateExtendedPart(partContainer, extendedPart, relationshipId),

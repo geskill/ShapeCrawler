@@ -17,18 +17,22 @@ internal struct TextLayout(IReadOnlyList<IParagraph> paragraphs, float available
     private float defaultLineHeight;
     private float defaultBaselineOffset;
 
-    internal void Render(SKCanvas canvas, float x, float y, float availableHeight, TextVerticalAlignment verticalAlignment)
+    internal void Render(SKCanvas canvas, float x, float y, float availableHeight,
+        TextVerticalAlignment verticalAlignment)
     {
         var drawingFont = new DrawingFont(null);
         using var font = drawingFont.AsSkFont();
-        this.defaultLineHeight = font.Spacing;
-        this.defaultBaselineOffset = DrawingFont.BaselineOffset(font);
+        defaultLineHeight = font.Spacing;
+        defaultBaselineOffset = DrawingFont.BaselineOffset(font);
 
-        var lines = this.LayoutLines();
+        var lines = LayoutLines();
         new TextLines(lines, availableWidth).Render(canvas, x, y, availableHeight, verticalAlignment);
     }
 
-    private static bool IsWhitespace(string value) => string.IsNullOrEmpty(value) || value.All(char.IsWhiteSpace);
+    private static bool IsWhitespace(string value)
+    {
+        return string.IsNullOrEmpty(value) || value.All(char.IsWhiteSpace);
+    }
 
     private static IEnumerable<string> SplitToTokens(string text)
     {
@@ -52,7 +56,10 @@ internal struct TextLayout(IReadOnlyList<IParagraph> paragraphs, float available
         }
     }
 
-    private static bool IsLineBreak(IParagraphPortion portion) => portion.Text == Environment.NewLine;
+    private static bool IsLineBreak(IParagraphPortion portion)
+    {
+        return portion.Text == Environment.NewLine;
+    }
 
     private static int GetFittingPartLength(string token, int offset, SKFont font, float maxWidth)
     {
@@ -124,7 +131,7 @@ internal struct TextLayout(IReadOnlyList<IParagraph> paragraphs, float available
 
         if (IsWhitespace(token))
         {
-            return this.LayoutWhitespaceToken(
+            return LayoutWhitespaceToken(
                 token,
                 font,
                 tokenWidth,
@@ -134,7 +141,7 @@ internal struct TextLayout(IReadOnlyList<IParagraph> paragraphs, float available
                 currentLine);
         }
 
-        return this.LayoutNonWhitespaceToken(
+        return LayoutNonWhitespaceToken(
             token,
             font,
             skFont,
@@ -159,8 +166,9 @@ internal struct TextLayout(IReadOnlyList<IParagraph> paragraphs, float available
             return currentLine;
         }
 
-        paragraphLayout.Buffer.Add(currentLine.Build(this.defaultLineHeight, this.defaultBaselineOffset));
-        return new LineBuilder(paragraphLayout.ParagraphAlignment, paragraphLayout.BaseParaLeftMargin); // Drop whitespace at wrap boundary.
+        paragraphLayout.Buffer.Add(currentLine.Build(defaultLineHeight, defaultBaselineOffset));
+        return new LineBuilder(paragraphLayout.ParagraphAlignment,
+            paragraphLayout.BaseParaLeftMargin); // Drop whitespace at wrap boundary.
     }
 
     private LineBuilder LayoutNonWhitespaceToken(
@@ -180,7 +188,7 @@ internal struct TextLayout(IReadOnlyList<IParagraph> paragraphs, float available
 
         if (currentLine.HasRuns)
         {
-            paragraphLayout.Buffer.Add(currentLine.Build(this.defaultLineHeight, this.defaultBaselineOffset));
+            paragraphLayout.Buffer.Add(currentLine.Build(defaultLineHeight, defaultBaselineOffset));
             currentLine = new LineBuilder(paragraphLayout.ParagraphAlignment, paragraphLayout.BaseParaLeftMargin);
         }
 
@@ -190,7 +198,7 @@ internal struct TextLayout(IReadOnlyList<IParagraph> paragraphs, float available
             return currentLine;
         }
 
-        return this.LayoutSplitToken(
+        return LayoutSplitToken(
             token,
             font,
             skFont,
@@ -210,10 +218,11 @@ internal struct TextLayout(IReadOnlyList<IParagraph> paragraphs, float available
         var remainingToken = token;
         while (remainingToken.Length > 0)
         {
-            var availableWidthForLine = paragraphLayout.TotalAvailableWidth - (currentLine.ParaLeftMargin + currentLine.Width);
+            var availableWidthForLine =
+                paragraphLayout.TotalAvailableWidth - (currentLine.ParaLeftMargin + currentLine.Width);
             if (availableWidthForLine <= 0 && currentLine.HasRuns)
             {
-                paragraphLayout.Buffer.Add(currentLine.Build(this.defaultLineHeight, this.defaultBaselineOffset));
+                paragraphLayout.Buffer.Add(currentLine.Build(defaultLineHeight, defaultBaselineOffset));
                 currentLine = new LineBuilder(paragraphLayout.ParagraphAlignment, paragraphLayout.BaseParaLeftMargin);
                 availableWidthForLine = paragraphLayout.TotalAvailableWidth - currentLine.ParaLeftMargin;
             }
@@ -223,7 +232,8 @@ internal struct TextLayout(IReadOnlyList<IParagraph> paragraphs, float available
                 // No available width even on an empty line: force the remaining token into this line
                 var forcedPart = remainingToken;
                 var forcedPartWidth = skFont.MeasureText(forcedPart);
-                currentLine.Add(new PixelTextPortion(forcedPart, font, forcedPartWidth), skFont.Spacing, baselineOffset);
+                currentLine.Add(new PixelTextPortion(forcedPart, font, forcedPartWidth), skFont.Spacing,
+                    baselineOffset);
                 break;
             }
 
@@ -236,7 +246,7 @@ internal struct TextLayout(IReadOnlyList<IParagraph> paragraphs, float available
 
             if (remainingToken.Length > 0)
             {
-                paragraphLayout.Buffer.Add(currentLine.Build(this.defaultLineHeight, this.defaultBaselineOffset));
+                paragraphLayout.Buffer.Add(currentLine.Build(defaultLineHeight, defaultBaselineOffset));
                 currentLine = new LineBuilder(paragraphLayout.ParagraphAlignment, paragraphLayout.BaseParaLeftMargin);
             }
         }
@@ -250,7 +260,7 @@ internal struct TextLayout(IReadOnlyList<IParagraph> paragraphs, float available
 
         foreach (var paragraph in paragraphs)
         {
-            this.LayoutParagraph(paragraph, lines);
+            LayoutParagraph(paragraph, lines);
         }
 
         return lines;
@@ -283,15 +293,15 @@ internal struct TextLayout(IReadOnlyList<IParagraph> paragraphs, float available
         {
             if (IsLineBreak(portion))
             {
-                textLines.Add(line.Build(this.defaultLineHeight, this.defaultBaselineOffset));
+                textLines.Add(line.Build(defaultLineHeight, defaultBaselineOffset));
                 line = new LineBuilder(paragraph.HorizontalAlignment, paraLeftMargin);
                 continue;
             }
 
-            line = this.LayoutTextPortion(portion, line, paragraph.HorizontalAlignment, paraLeftMargin, textLines);
+            line = LayoutTextPortion(portion, line, paragraph.HorizontalAlignment, paraLeftMargin, textLines);
         }
 
-        textLines.Add(line.Build(this.defaultLineHeight, this.defaultBaselineOffset));
+        textLines.Add(line.Build(defaultLineHeight, defaultBaselineOffset));
     }
 
     private LineBuilder LayoutTextPortion(
@@ -314,7 +324,7 @@ internal struct TextLayout(IReadOnlyList<IParagraph> paragraphs, float available
         {
             foreach (var token in SplitToTokens(segments[i]))
             {
-                currentLine = this.LayoutToken(
+                currentLine = LayoutToken(
                     token,
                     portion.Font,
                     font,
@@ -325,7 +335,7 @@ internal struct TextLayout(IReadOnlyList<IParagraph> paragraphs, float available
 
             if (i < segments.Length - 1)
             {
-                paragraphLayout.Buffer.Add(currentLine.Build(this.defaultLineHeight, this.defaultBaselineOffset));
+                paragraphLayout.Buffer.Add(currentLine.Build(defaultLineHeight, defaultBaselineOffset));
                 currentLine = new LineBuilder(paragraphLayout.ParagraphAlignment, baseParaLeftMargin);
             }
         }

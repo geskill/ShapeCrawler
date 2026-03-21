@@ -20,17 +20,17 @@ public interface IMedia
     // ReSharper disable once InconsistentNaming
     string MIME { get; }
 
-    /// <summary>
-    ///     Gets bytes of video content.
-    /// </summary>
-    public byte[] AsByteArray();
-
 #if DEBUG
     /// <summary>
     ///     Gets or sets audio start mode.
     /// </summary>
     AudioStartMode StartMode { get; set; }
 #endif
+
+    /// <summary>
+    ///     Gets bytes of video content.
+    /// </summary>
+    byte[] AsByteArray();
 }
 
 internal class Media(SlideShapeOutline outline, ShapeFill fill, P.Picture pPicture) : IMedia

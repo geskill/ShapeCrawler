@@ -8,33 +8,33 @@ namespace ShapeCrawler;
 public enum ShapeContentType
 {
     /// <summary>
-    ///    Shape.
+    ///     Shape.
     /// </summary>
     Shape,
 
     /// <summary>
-    ///    Text.
+    ///     Text.
     /// </summary>
     Text,
 
     /// <summary>
-    ///    Picture.
+    ///     Picture.
     /// </summary>
     Picture,
 
     /// <summary>
-    ///    Table.
+    ///     Table.
     /// </summary>
     Table,
 
     /// <summary>
-    ///    Chart.
+    ///     Chart.
     /// </summary>
     Chart,
 
     /// <summary>
-    ///    SmartArt Graphic.
-    /// </summary>  
+    ///     SmartArt Graphic.
+    /// </summary>
     SmartArt,
 
     /// <summary>

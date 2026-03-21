@@ -47,7 +47,7 @@ public interface IParagraph
     string FontColor { get; }
 
     /// <summary>
-    ///    Gets paragraph left margin in points.
+    ///     Gets paragraph left margin in points.
     /// </summary>
     decimal LeftMargin { get; }
 
@@ -87,17 +87,17 @@ public interface IParagraph
     void SetFontColor(string colorHex);
 
     /// <summary>
-    ///    Sets paragraph left margin in points.
+    ///     Sets paragraph left margin in points.
     /// </summary>
     void SetLeftMargin(decimal points);
 }
 
 internal sealed class Paragraph : IParagraph
 {
-    private readonly Lazy<Bullet> bullet;
-    private readonly SCAParagraph scAParagraph;
     private readonly A.Paragraph aParagraph;
+    private readonly Lazy<Bullet> bullet;
     private readonly ParagraphPortions portions;
+    private readonly SCAParagraph scAParagraph;
     private TextHorizontalAlignment? alignment;
 
     internal Paragraph(A.Paragraph aParagraph)
@@ -110,31 +110,31 @@ internal sealed class Paragraph : IParagraph
         this.aParagraph = aParagraph;
         this.scAParagraph = scAParagraph;
         this.aParagraph.ParagraphProperties ??= new A.ParagraphProperties();
-        this.bullet = new Lazy<Bullet>(this.GetBullet);
-        this.portions = new ParagraphPortions(this.aParagraph);
+        bullet = new Lazy<Bullet>(GetBullet);
+        portions = new ParagraphPortions(this.aParagraph);
     }
 
     public string Text
     {
         get
         {
-            if (this.portions.Count == 0)
+            if (portions.Count == 0)
             {
                 return string.Empty;
             }
 
-            return this.portions.Select(portion => portion.Text).Aggregate((result, next) => result + next)!;
+            return portions.Select(portion => portion.Text).Aggregate((result, next) => result + next)!;
         }
 
         set
         {
-            if (!this.portions.Any())
+            if (!portions.Any())
             {
-                this.portions.AddText(" ");
+                portions.AddText(" ");
             }
 
-            var removingRuns = this.aParagraph.OfType<A.Run>().Skip(1); // to preserve text formatting
-            var removingBreaks = this.aParagraph.OfType<A.Break>();
+            var removingRuns = aParagraph.OfType<A.Run>().Skip(1); // to preserve text formatting
+            var removingBreaks = aParagraph.OfType<A.Break>();
             foreach (var removing in removingRuns.ToArray())
             {
                 removing.Remove();
@@ -150,69 +150,69 @@ internal sealed class Paragraph : IParagraph
 #else
             var textLines = value.Split(Environment.NewLine);
 #endif
-            var mainRun = this.aParagraph.GetFirstChild<A.Run>()!;
+            var mainRun = aParagraph.GetFirstChild<A.Run>()!;
             if (mainRun != null)
             {
                 mainRun.Text!.Text = textLines[0];
             }
-            
+
             foreach (var textLine in textLines.Skip(1))
             {
                 if (!string.IsNullOrEmpty(textLine))
                 {
-                    this.portions.AddLineBreak();
-                    this.portions.AddText(textLine);
+                    portions.AddLineBreak();
+                    portions.AddText(textLine);
                 }
                 else
                 {
-                    this.portions.AddLineBreak();
+                    portions.AddLineBreak();
                 }
             }
 
-            var textBody = this.aParagraph.Parent!;
+            var textBody = aParagraph.Parent!;
             var textBox = new DrawingTextBox(new TextBoxMargins(textBody), textBody);
             textBox.ResizeParentShapeOnDemand();
         }
     }
 
-    public IParagraphPortions Portions => this.portions;
+    public IParagraphPortions Portions => portions;
 
-    public Bullet Bullet => this.bullet.Value;
+    public Bullet Bullet => bullet.Value;
 
     public TextHorizontalAlignment HorizontalAlignment
     {
         get
         {
-            if (this.alignment.HasValue)
+            if (alignment.HasValue)
             {
-                return this.alignment.Value;
+                return alignment.Value;
             }
 
-            var calculatedAlignment = new ParagraphHorizontalAlignment(this.aParagraph).ValueOrNull();
-            this.alignment = calculatedAlignment ?? TextHorizontalAlignment.Left;
-            return this.alignment.Value;
+            var calculatedAlignment = new ParagraphHorizontalAlignment(aParagraph).ValueOrNull();
+            alignment = calculatedAlignment ?? TextHorizontalAlignment.Left;
+            return alignment.Value;
         }
-        set => this.SetAlignment(value);
+        set => SetAlignment(value);
     }
 
     public int IndentLevel
     {
-        get => this.scAParagraph.GetIndentLevel();
-        set => this.scAParagraph.UpdateIndentLevel(value);
+        get => scAParagraph.GetIndentLevel();
+        set => scAParagraph.UpdateIndentLevel(value);
     }
 
-    public ISpacing Spacing => this.GetSpacing();
+    public ISpacing Spacing => GetSpacing();
 
     public string FontColor
     {
         get
         {
-            if (this.Portions.Count == 0)
+            if (Portions.Count == 0)
             {
                 return string.Empty;
             }
 
-            return this.Portions[0].Font!.Color.Hex;
+            return Portions[0].Font!.Color.Hex;
         }
     }
 
@@ -220,19 +220,19 @@ internal sealed class Paragraph : IParagraph
     {
         get
         {
-            var leftMargin = this.aParagraph.ParagraphProperties!.LeftMargin;
+            var leftMargin = aParagraph.ParagraphProperties!.LeftMargin;
             if (leftMargin is not null)
             {
                 return new Emus(leftMargin.Value).AsPoints();
             }
 
-            return this.IndentationFromStylesOrDefault("marL");
+            return IndentationFromStylesOrDefault("marL");
         }
 
         set
         {
             var leftMarginEmu = (int)new Points(value).AsEmus();
-            this.aParagraph.ParagraphProperties!.LeftMargin = new Int32Value(leftMarginEmu);
+            aParagraph.ParagraphProperties!.LeftMargin = new Int32Value(leftMarginEmu);
         }
     }
 
@@ -240,40 +240,43 @@ internal sealed class Paragraph : IParagraph
     {
         get
         {
-            var indent = this.aParagraph.ParagraphProperties!.Indent;
+            var indent = aParagraph.ParagraphProperties!.Indent;
             if (indent is not null)
             {
                 return new Emus(indent.Value).AsPoints();
             }
 
-            return this.IndentationFromStylesOrDefault("indent");
+            return IndentationFromStylesOrDefault("indent");
         }
 
         set
         {
             var indentEmu = (int)new Points(value).AsEmus();
-            this.aParagraph.ParagraphProperties!.Indent = new Int32Value(indentEmu);
+            aParagraph.ParagraphProperties!.Indent = new Int32Value(indentEmu);
         }
     }
 
     public void ReplaceText(string oldValue, string newValue)
     {
-        foreach (var portion in this.portions.Where(portion => portion is not ParagraphLineBreak))
+        foreach (var portion in portions.Where(portion => portion is not ParagraphLineBreak))
         {
             portion.Text = portion.Text.Replace(oldValue, newValue);
         }
 
-        if (this.Text.Contains(oldValue))
+        if (Text.Contains(oldValue))
         {
-            this.Text = this.Text.Replace(oldValue, newValue);
+            Text = Text.Replace(oldValue, newValue);
         }
     }
 
-    public void Remove() => this.aParagraph.Remove();
+    public void Remove()
+    {
+        aParagraph.Remove();
+    }
 
     public void SetFontSize(int fontSize)
     {
-        foreach (var portion in this.portions)
+        foreach (var portion in portions)
         {
             portion.Font!.Size = fontSize;
         }
@@ -281,7 +284,7 @@ internal sealed class Paragraph : IParagraph
 
     public void SetFontName(string fontName)
     {
-        foreach (var portion in this.Portions)
+        foreach (var portion in Portions)
         {
             portion.Font!.LatinName = fontName;
         }
@@ -289,18 +292,18 @@ internal sealed class Paragraph : IParagraph
 
     public void SetFontColor(string colorHex)
     {
-        if (!this.Portions.Any())
+        if (!Portions.Any())
         {
-            this.Portions.AddText(" ");
+            Portions.AddText(" ");
         }
 
-        foreach (var portion in this.Portions)
+        foreach (var portion in Portions)
         {
             portion.Font!.Color.Set(colorHex);
         }
 
         // Also set on EndParagraphRunProperties so newly typed text inherits the color
-        var endParaRPr = this.aParagraph.GetFirstChild<A.EndParagraphRunProperties>();
+        var endParaRPr = aParagraph.GetFirstChild<A.EndParagraphRunProperties>();
         if (endParaRPr != null)
         {
             colorHex = colorHex.StartsWith("#", StringComparison.Ordinal) ? colorHex[1..] : colorHex;
@@ -317,7 +320,7 @@ internal sealed class Paragraph : IParagraph
 
     public void SetLeftMargin(decimal points)
     {
-        this.LeftMargin = points;
+        LeftMargin = points;
     }
 
     private static long? EmusAttributeFromIndentStylesOrNull(
@@ -369,17 +372,18 @@ internal sealed class Paragraph : IParagraph
 
     private decimal IndentationFromStylesOrDefault(string attributeLocalName)
     {
-        var indentLevel = this.IndentLevel;
+        var indentLevel = IndentLevel;
 
-        var listStyle = this.aParagraph.Parent?.GetFirstChild<A.ListStyle>();
+        var listStyle = aParagraph.Parent?.GetFirstChild<A.ListStyle>();
         var listStyleEmus = EmusAttributeFromIndentStylesOrNull(listStyle, indentLevel, attributeLocalName);
         if (listStyleEmus.HasValue)
         {
             return new Emus(listStyleEmus.Value).AsPoints();
         }
 
-        var defaultTextStyle = this.DefaultTextStyleOrNull();
-        var defaultTextStyleEmus = EmusAttributeFromIndentStylesOrNull(defaultTextStyle, indentLevel, attributeLocalName);
+        var defaultTextStyle = DefaultTextStyleOrNull();
+        var defaultTextStyleEmus =
+            EmusAttributeFromIndentStylesOrNull(defaultTextStyle, indentLevel, attributeLocalName);
         if (defaultTextStyleEmus.HasValue)
         {
             return new Emus(defaultTextStyleEmus.Value).AsPoints();
@@ -390,7 +394,7 @@ internal sealed class Paragraph : IParagraph
 
     private OpenXmlCompositeElement? DefaultTextStyleOrNull()
     {
-        var openXmlPartOrNull = this.aParagraph.Ancestors<OpenXmlPartRootElement>().FirstOrDefault()?.OpenXmlPart;
+        var openXmlPartOrNull = aParagraph.Ancestors<OpenXmlPartRootElement>().FirstOrDefault()?.OpenXmlPart;
         if (openXmlPartOrNull?.OpenXmlPackage is not PresentationDocument presDocument)
         {
             return null;
@@ -399,9 +403,15 @@ internal sealed class Paragraph : IParagraph
         return presDocument.PresentationPart!.Presentation!.DefaultTextStyle;
     }
 
-    private ISpacing GetSpacing() => new Spacing(this.aParagraph);
+    private ISpacing GetSpacing()
+    {
+        return new Spacing(aParagraph);
+    }
 
-    private Bullet GetBullet() => new(this.aParagraph.ParagraphProperties!);
+    private Bullet GetBullet()
+    {
+        return new Bullet(aParagraph.ParagraphProperties!);
+    }
 
     private void SetAlignment(TextHorizontalAlignment alignmentValue)
     {
@@ -414,19 +424,19 @@ internal sealed class Paragraph : IParagraph
             _ => throw new ArgumentOutOfRangeException(nameof(alignmentValue))
         };
 
-        if (this.aParagraph.ParagraphProperties == null)
+        if (aParagraph.ParagraphProperties == null)
         {
-            this.aParagraph.ParagraphProperties = new A.ParagraphProperties
+            aParagraph.ParagraphProperties = new A.ParagraphProperties
             {
                 Alignment = new EnumValue<A.TextAlignmentTypeValues>(aTextAlignmentTypeValue)
             };
         }
         else
         {
-            this.aParagraph.ParagraphProperties.Alignment =
+            aParagraph.ParagraphProperties.Alignment =
                 new EnumValue<A.TextAlignmentTypeValues>(aTextAlignmentTypeValue);
         }
 
-        this.alignment = alignmentValue;
+        alignment = alignmentValue;
     }
 }

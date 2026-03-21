@@ -1,5 +1,4 @@
 using FluentAssertions;
-using NUnit.Framework;
 using ShapeCrawler.DevTests.Helpers;
 
 namespace ShapeCrawler.DevTests;
@@ -188,7 +187,7 @@ public class TableColumnTests : SCTest
         var table = new Presentation(TestAsset("001.pptx")).Slide(2).Shape(4).Table;
 
         // Act
-        int columnsCount = table.Columns.Count;
+        var columnsCount = table.Columns.Count;
 
         // Assert
         columnsCount.Should().Be(3);

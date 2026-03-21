@@ -6,6 +6,6 @@ public sealed class StringOptions
 
     public void Length(int length)
     {
-        this.LengthValue = length;
+        LengthValue = length;
     }
 }

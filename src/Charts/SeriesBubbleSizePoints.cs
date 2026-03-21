@@ -14,7 +14,7 @@ internal sealed class SeriesBubbleSizePoints : IReadOnlyList<IChartPoint>
     private readonly List<ChartPoint> chartPoints;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="SeriesBubbleSizePoints"/> class.
+    ///     Initializes a new instance of the <see cref="SeriesBubbleSizePoints" /> class.
     /// </summary>
     /// <param name="chartPart">The chart part owning the series.</param>
     /// <param name="cSerXmlElement">The series Open XML element.</param>
@@ -23,24 +23,30 @@ internal sealed class SeriesBubbleSizePoints : IReadOnlyList<IChartPoint>
         var cBubbleSize = cSerXmlElement.GetFirstChild<C.BubbleSize>();
         if (cBubbleSize == null)
         {
-            this.chartPoints = [];
+            chartPoints = [];
             return;
         }
 
         var numberReference = cBubbleSize.NumberReference;
         var numberLiteral = cBubbleSize.NumberLiteral;
-        this.chartPoints = new ChartPointData(chartPart).Create(numberReference, numberLiteral);
+        chartPoints = new ChartPointData(chartPart).Create(numberReference, numberLiteral);
     }
 
     /// <inheritdoc />
-    public int Count => this.chartPoints.Count;
+    public int Count => chartPoints.Count;
 
     /// <inheritdoc />
-    public IChartPoint this[int index] => this.chartPoints[index];
+    public IChartPoint this[int index] => chartPoints[index];
 
     /// <inheritdoc />
-    public IEnumerator<IChartPoint> GetEnumerator() => this.chartPoints.GetEnumerator();
+    public IEnumerator<IChartPoint> GetEnumerator()
+    {
+        return chartPoints.GetEnumerator();
+    }
 
     /// <inheritdoc />
-    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 }

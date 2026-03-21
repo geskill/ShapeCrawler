@@ -21,20 +21,17 @@ internal sealed class GroupShape : DrawingShape
         : base(new Position(pGroupShape), new ShapeSize(pGroupShape), new ShapeId(pGroupShape), pGroupShape)
     {
         this.pGroupShape = pGroupShape;
-        this.GroupedShapes = new GroupedShapeCollection(pGroupShape.Elements<OpenXmlCompositeElement>());
+        GroupedShapes = new GroupedShapeCollection(pGroupShape.Elements<OpenXmlCompositeElement>());
     }
 
-    internal GroupShape(P.GroupShape pGroupShape, IShape[] groupingShapes, NewShapeProperties idGenerator, SlidePart slidePart)
+    internal GroupShape(P.GroupShape pGroupShape, IShape[] groupingShapes, NewShapeProperties idGenerator,
+        SlidePart slidePart)
         : base(new Position(pGroupShape), new ShapeSize(pGroupShape), new ShapeId(pGroupShape), pGroupShape)
     {
         var nonVisualGroupShapeProperties = new P.NonVisualGroupShapeProperties();
         var id = idGenerator.Id();
         var name = $"Shape {id}";
-        var nonVisualDrawingProperties = new P.NonVisualDrawingProperties
-        {
-            Id = (uint)id,
-            Name = name
-        };
+        var nonVisualDrawingProperties = new P.NonVisualDrawingProperties { Id = (uint)id, Name = name };
         var nonVisualGroupShapeDrawingProperties = new P.NonVisualGroupShapeDrawingProperties();
         var applicationNonVisualDrawingProperties = new P.ApplicationNonVisualDrawingProperties();
 
@@ -44,10 +41,10 @@ internal sealed class GroupShape : DrawingShape
 
         var groupShapeProperties = new P.GroupShapeProperties();
 
-        decimal minX = decimal.MaxValue;
-        decimal minY = decimal.MaxValue;
-        decimal maxX = decimal.MinValue;
-        decimal maxY = decimal.MinValue;
+        var minX = decimal.MaxValue;
+        var minY = decimal.MaxValue;
+        var maxX = decimal.MinValue;
+        var maxY = decimal.MinValue;
 
         foreach (var groupingShape in groupingShapes)
         {
@@ -92,7 +89,7 @@ internal sealed class GroupShape : DrawingShape
         }
 
         this.pGroupShape = pGroupShape;
-        this.GroupedShapes = new GroupedShapeCollection(pGroupShape.Elements<OpenXmlCompositeElement>());
+        GroupedShapes = new GroupedShapeCollection(pGroupShape.Elements<OpenXmlCompositeElement>());
     }
 
     public override Geometry GeometryType => Geometry.Rectangle;
@@ -105,7 +102,7 @@ internal sealed class GroupShape : DrawingShape
     {
         get
         {
-            var aTransformGroup = this.pGroupShape.GroupShapeProperties!.TransformGroup!;
+            var aTransformGroup = pGroupShape.GroupShapeProperties!.TransformGroup!;
             var rotation = aTransformGroup.Rotation?.Value ?? 0;
             return rotation / 60_000d;
         }
@@ -115,32 +112,37 @@ internal sealed class GroupShape : DrawingShape
 
     public bool HasFill => true;
 
-    public IShape Shape(string groupedShapeName) => this.GroupedShapes.Shape(groupedShapeName);
+    public IShape Shape(string groupedShapeName)
+    {
+        return GroupedShapes.Shape(groupedShapeName);
+    }
 
-    public T Shape<T>(string groupedShapeName) =>
-        (T)this.GroupedShapes.First(groupedShape => groupedShape is T && groupedShape.Name == groupedShapeName);
+    public T Shape<T>(string groupedShapeName)
+    {
+        return (T)GroupedShapes.First(groupedShape => groupedShape is T && groupedShape.Name == groupedShapeName);
+    }
 
     internal override void Render(SKCanvas canvas)
     {
         canvas.Save();
-        this.ApplyRotation(canvas);
-        this.RenderGroupedShapes(canvas);
+        ApplyRotation(canvas);
+        RenderGroupedShapes(canvas);
         canvas.Restore();
     }
 
     private void ApplyRotation(SKCanvas canvas)
     {
         const double epsilon = 1e-6;
-        if (Math.Abs(this.Rotation) <= epsilon)
+        if (Math.Abs(Rotation) <= epsilon)
         {
             return;
         }
 
-        var (x, y, width, height) = this.AbsoluteBounds();
+        var (x, y, width, height) = AbsoluteBounds();
         var centerX = x + (width / 2);
         var centerY = y + (height / 2);
         canvas.RotateDegrees(
-            (float)this.Rotation,
+            (float)Rotation,
             (float)new Points(centerX).AsPixels(),
             (float)new Points(centerY).AsPixels()
         );
@@ -148,7 +150,7 @@ internal sealed class GroupShape : DrawingShape
 
     private void RenderGroupedShapes(SKCanvas canvas)
     {
-        foreach (var shape in this.GroupedShapes)
+        foreach (var shape in GroupedShapes)
         {
             if (shape.Hidden)
             {
@@ -164,16 +166,16 @@ internal sealed class GroupShape : DrawingShape
 
     private (decimal X, decimal Y, decimal Width, decimal Height) AbsoluteBounds()
     {
-        var pGroupShapes = this.pGroupShape.Ancestors<P.GroupShape>().ToArray();
+        var pGroupShapes = pGroupShape.Ancestors<P.GroupShape>().ToArray();
         if (pGroupShapes.Length == 0)
         {
-            return (this.X, this.Y, this.Width, this.Height);
+            return (X, Y, Width, Height);
         }
 
-        decimal absoluteX = this.X;
-        decimal absoluteY = this.Y;
-        decimal scaleFactorX = 1.0m;
-        decimal scaleFactorY = 1.0m;
+        var absoluteX = X;
+        var absoluteY = Y;
+        var scaleFactorX = 1.0m;
+        var scaleFactorY = 1.0m;
 
         foreach (var childPGroupShape in pGroupShapes)
         {
@@ -183,13 +185,13 @@ internal sealed class GroupShape : DrawingShape
             var offset = transformGroup.Offset!;
             var extents = transformGroup.Extents!;
 
-            decimal currentScaleFactorX = 1.0m;
+            var currentScaleFactorX = 1.0m;
             if (childExtents.Cx!.Value != 0)
             {
                 currentScaleFactorX = (decimal)extents.Cx!.Value / childExtents.Cx!.Value;
             }
 
-            decimal currentScaleFactorY = 1.0m;
+            var currentScaleFactorY = 1.0m;
             if (childExtents.Cy!.Value != 0)
             {
                 currentScaleFactorY = (decimal)extents.Cy!.Value / childExtents.Cy!.Value;
@@ -203,8 +205,8 @@ internal sealed class GroupShape : DrawingShape
             scaleFactorY *= currentScaleFactorY;
         }
 
-        var absoluteWidth = this.Width * scaleFactorX;
-        var absoluteHeight = this.Height * scaleFactorY;
+        var absoluteWidth = Width * scaleFactorX;
+        var absoluteHeight = Height * scaleFactorY;
 
         return (absoluteX, absoluteY, absoluteWidth, absoluteHeight);
     }

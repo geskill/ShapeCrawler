@@ -20,7 +20,7 @@ internal sealed class ReferencedFont(ReferencedFontColor fontColor, A.Text aText
         var openXmlPart = aText.Ancestors<OpenXmlPartRootElement>().First().OpenXmlPart!;
         if (openXmlPart is SlidePart)
         {
-            return this.SlideFontBoldFlagOrNull();
+            return SlideFontBoldFlagOrNull();
         }
 
         return null;
@@ -44,10 +44,10 @@ internal sealed class ReferencedFont(ReferencedFontColor fontColor, A.Text aText
             return null;
         }
 
-        var refLayoutPShapeOfSlide = this.ReferencedLayoutPShapeOrNull(slidePShape);
+        var refLayoutPShapeOfSlide = ReferencedLayoutPShapeOrNull(slidePShape);
         if (refLayoutPShapeOfSlide == null)
         {
-            var refMasterPShape = this.ReferencedMasterPShapeOrNull(slidePShape);
+            var refMasterPShape = ReferencedMasterPShapeOrNull(slidePShape);
             if (refMasterPShape != null)
             {
                 var fonts = new IndentFonts(refMasterPShape.TextBody!.ListStyle!);
@@ -77,7 +77,7 @@ internal sealed class ReferencedFont(ReferencedFontColor fontColor, A.Text aText
             return (int)layoutIndentFont.Value.Size! / 100m;
         }
 
-        return this.MasterFontSizeOrNull(refLayoutPShapeOfSlide, indentLevel) / 100m;
+        return MasterFontSizeOrNull(refLayoutPShapeOfSlide, indentLevel) / 100m;
     }
 
     internal A.LatinFont? ALatinFontOrNull()
@@ -85,9 +85,9 @@ internal sealed class ReferencedFont(ReferencedFontColor fontColor, A.Text aText
         var openXmlPart = aText.Ancestors<OpenXmlPartRootElement>().First().OpenXmlPart!;
         return openXmlPart switch
         {
-            SlidePart slidePart => this.SlideALatinFontOrNull(slidePart),
-            SlideLayoutPart or SlideMasterPart => this.SlideMasterALatinFont(),
-            NotesSlidePart notesSlidePart => this.NotesSlideALatinFontOrNull(notesSlidePart),
+            SlidePart slidePart => SlideALatinFontOrNull(slidePart),
+            SlideLayoutPart or SlideMasterPart => SlideMasterALatinFont(),
+            NotesSlidePart notesSlidePart => NotesSlideALatinFontOrNull(notesSlidePart),
             _ => throw new SCException("Not implemented.")
         };
     }
@@ -103,8 +103,9 @@ internal sealed class ReferencedFont(ReferencedFontColor fontColor, A.Text aText
         var pPlaceholderShape = pShape.NonVisualShapeProperties!.ApplicationNonVisualDrawingProperties!
             .GetFirstChild<P.PlaceholderShape>()!;
         var referencedLayoutPShape =
-            new SCPShapeTree(slidePart.SlideLayoutPart!.SlideLayout!.CommonSlideData!.ShapeTree!).ReferencedPShapeOrNull(
-                pPlaceholderShape);
+            new SCPShapeTree(slidePart.SlideLayoutPart!.SlideLayout!.CommonSlideData!.ShapeTree!)
+                .ReferencedPShapeOrNull(
+                    pPlaceholderShape);
 
         return referencedLayoutPShape;
     }
@@ -149,10 +150,10 @@ internal sealed class ReferencedFont(ReferencedFontColor fontColor, A.Text aText
             return null;
         }
 
-        var refLayoutPShapeOfSlide = this.ReferencedLayoutPShapeOrNull(slidePShape);
+        var refLayoutPShapeOfSlide = ReferencedLayoutPShapeOrNull(slidePShape);
         if (refLayoutPShapeOfSlide == null)
         {
-            var refMasterPShape = this.ReferencedMasterPShapeOrNull(slidePShape);
+            var refMasterPShape = ReferencedMasterPShapeOrNull(slidePShape);
             if (refMasterPShape?.TextBody?.ListStyle == null)
             {
                 return null;
@@ -170,7 +171,7 @@ internal sealed class ReferencedFont(ReferencedFontColor fontColor, A.Text aText
             return layoutIndentColorType.Value.IsBold;
         }
 
-        var refMasterPShapeOfLayout = this.ReferencedMasterPShapeOrNull(refLayoutPShapeOfSlide);
+        var refMasterPShapeOfLayout = ReferencedMasterPShapeOrNull(refLayoutPShapeOfSlide);
         if (refMasterPShapeOfLayout == null)
         {
             return null;
@@ -188,7 +189,7 @@ internal sealed class ReferencedFont(ReferencedFontColor fontColor, A.Text aText
 
     private int? MasterFontSizeOrNull(P.Shape refLayoutPShapeOfSlide, int indentLevel)
     {
-        var refMasterPShapeOfLayout = this.ReferencedMasterPShapeOrNull(refLayoutPShapeOfSlide);
+        var refMasterPShapeOfLayout = ReferencedMasterPShapeOrNull(refLayoutPShapeOfSlide);
         if (refMasterPShapeOfLayout == null)
         {
             return null;
@@ -221,10 +222,10 @@ internal sealed class ReferencedFont(ReferencedFontColor fontColor, A.Text aText
             return null;
         }
 
-        var refLayoutPShape = this.ReferencedLayoutPShapeOrNull(pShape);
+        var refLayoutPShape = ReferencedLayoutPShapeOrNull(pShape);
         if (refLayoutPShape == null)
         {
-            var refMasterPShape = this.ReferencedMasterPShapeOrNull(pShape);
+            var refMasterPShape = ReferencedMasterPShapeOrNull(pShape);
             if (refMasterPShape == null)
             {
                 if (pPlaceholderShape.Type?.Value == P.PlaceholderValues.CenteredTitle)
@@ -250,7 +251,7 @@ internal sealed class ReferencedFont(ReferencedFontColor fontColor, A.Text aText
             return layoutIndentColorType.Value.ALatinFont;
         }
 
-        var refMasterPShapeOfLayout = this.ReferencedMasterPShapeOrNull(refLayoutPShape);
+        var refMasterPShapeOfLayout = ReferencedMasterPShapeOrNull(refLayoutPShape);
         var masterFontsOfLayout = new IndentFonts(refMasterPShapeOfLayout!.TextBody!.ListStyle!);
         var masterOfLayoutIndentColorType = masterFontsOfLayout.FontOrNull(indentLevel);
         if (masterOfLayoutIndentColorType.HasValue)

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Presentation;
 
 namespace ShapeCrawler.Presentations;
 
@@ -14,18 +15,18 @@ internal readonly ref struct SCSlideMasterPart
 
     internal void RemoveLayoutsExcept(SlideLayoutPart exceptSlideLayoutPart)
     {
-        var pSlideLayoutIds = this.slideMasterPart.SlideMaster!.SlideLayoutIdList!.OfType<DocumentFormat.OpenXml.Presentation.SlideLayoutId>();
-        foreach (var slideLayoutPart in this.slideMasterPart.SlideLayoutParts.ToList())
+        var pSlideLayoutIds = slideMasterPart.SlideMaster!.SlideLayoutIdList!.OfType<SlideLayoutId>();
+        foreach (var slideLayoutPart in slideMasterPart.SlideLayoutParts.ToList())
         {
             if (slideLayoutPart == exceptSlideLayoutPart)
             {
                 continue;
             }
 
-            var id = this.slideMasterPart.GetIdOfPart(slideLayoutPart);
+            var id = slideMasterPart.GetIdOfPart(slideLayoutPart);
             var layoutId = pSlideLayoutIds.First(x => x.RelationshipId == id);
             layoutId.Remove();
-            this.slideMasterPart.DeletePart(slideLayoutPart);
+            slideMasterPart.DeletePart(slideLayoutPart);
         }
     }
 }

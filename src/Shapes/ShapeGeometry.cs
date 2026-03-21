@@ -36,7 +36,7 @@ internal sealed class ShapeGeometry(P.ShapeProperties pShapeProperties) : IShape
         { Geometry.DiagonalCornersRoundedRectangle, ShapeTypeValues.Round2DiagonalRectangle },
         { Geometry.UTurnArrow, ShapeTypeValues.UTurnArrow },
         { Geometry.LineInverse, ShapeTypeValues.LineInverse },
-        { Geometry.RightTriangle, ShapeTypeValues.RightTriangle },
+        { Geometry.RightTriangle, ShapeTypeValues.RightTriangle }
     };
 
     private static readonly Dictionary<ShapeTypeValues, Geometry> ShapeTypeValuesToGeometryMap
@@ -57,14 +57,16 @@ internal sealed class ShapeGeometry(P.ShapeProperties pShapeProperties) : IShape
         { Geometry.Snip1Rectangle, 1 },
         { Geometry.Snip2DiagonalRectangle, 2 },
         { Geometry.Snip2SameRectangle, 2 },
-        { Geometry.SnipRoundRectangle, 2 },
+        { Geometry.SnipRoundRectangle, 2 }
     };
+
+    private PresetGeometry? APresetGeometry => pShapeProperties.GetFirstChild<PresetGeometry>();
 
     public Geometry GeometryType
     {
         get
         {
-            var preset = this.APresetGeometry?.Preset;
+            var preset = APresetGeometry?.Preset;
             if (preset is null)
             {
                 if (pShapeProperties.OfType<CustomGeometry>().Any())
@@ -92,14 +94,14 @@ internal sealed class ShapeGeometry(P.ShapeProperties pShapeProperties) : IShape
                 throw new SCException("Can't set custom geometry");
             }
 
-            var aPresetGeometry = this.APresetGeometry;
+            var aPresetGeometry = APresetGeometry;
             if (aPresetGeometry?.Preset is null && pShapeProperties.OfType<CustomGeometry>().Any())
             {
                 throw new SCException("Can't set new geometry on a shape with custom geometry");
             }
 
-            aPresetGeometry ??= pShapeProperties.InsertAt<PresetGeometry>(new(), 0)
-                ?? throw new SCException("Unable to add new preset geometry");
+            aPresetGeometry ??= pShapeProperties.InsertAt<PresetGeometry>(new PresetGeometry(), 0)
+                                ?? throw new SCException("Unable to add new preset geometry");
 
             if (!GeometryToShapeTypeValuesMap.TryGetValue(value, out var newPreset))
             {
@@ -118,7 +120,7 @@ internal sealed class ShapeGeometry(P.ShapeProperties pShapeProperties) : IShape
             // Presets have different expectations of an adjusted value lists, so changing the
             // preset means we must remove any existing adjustments, and create a new empty one
             aPresetGeometry.RemoveAllChildren<AdjustValueList>();
-            aPresetGeometry.AppendChild<AdjustValueList>(new());
+            aPresetGeometry.AppendChild<AdjustValueList>(new AdjustValueList());
         }
     }
 
@@ -126,42 +128,42 @@ internal sealed class ShapeGeometry(P.ShapeProperties pShapeProperties) : IShape
     {
         get
         {
-            var adjustments = this.Adjustments;
-            return (this.GeometryType, adjustments.Length) switch
+            var adjustments = Adjustments;
+            return (GeometryType, adjustments.Length) switch
             {
                 (Geometry.RoundedRectangle, 0) or
-                (Geometry.TopCornersRoundedRectangle, 0) => DefaultCornerSize,
+                    (Geometry.TopCornersRoundedRectangle, 0) => DefaultCornerSize,
                 (Geometry.RoundedRectangle, _) or
-                (Geometry.TopCornersRoundedRectangle, _) => adjustments[0],
+                    (Geometry.TopCornersRoundedRectangle, _) => adjustments[0],
                 _ => 0
             };
         }
 
         set
         {
-            var geometryType = this.GeometryType;
-            this.Adjustments = geometryType switch
+            var geometryType = GeometryType;
+            Adjustments = geometryType switch
             {
                 Geometry.RoundedRectangle => [value],
                 Geometry.TopCornersRoundedRectangle => [value, 0],
-                _ => throw new SCException($"{geometryType} does not support {nameof(this.CornerSize)}")
+                _ => throw new SCException($"{geometryType} does not support {nameof(CornerSize)}")
             };
         }
     }
 
     public decimal[] Adjustments
     {
-        get => this.ExtractAdjustmentsFromShapeGuide();
+        get => ExtractAdjustmentsFromShapeGuide();
         set
         {
-            if (GeometryToNumberOfAdjustmentsMap.TryGetValue(this.GeometryType, out var numAdjustments))
+            if (GeometryToNumberOfAdjustmentsMap.TryGetValue(GeometryType, out var numAdjustments))
             {
                 if (value.Length > numAdjustments)
                 {
-                    throw new SCException($"{this.GeometryType} only supports {numAdjustments} adjustments");
+                    throw new SCException($"{GeometryType} only supports {numAdjustments} adjustments");
                 }
 
-                if (value.Length < numAdjustments && this.ExtractAdjustmentsFromShapeGuide().Length < numAdjustments)
+                if (value.Length < numAdjustments && ExtractAdjustmentsFromShapeGuide().Length < numAdjustments)
                 {
                     // If user is not setting sufficient quantity of adjustments, AND there are
                     // not already enough adjustments in place, we need to resize up to the
@@ -171,25 +173,23 @@ internal sealed class ShapeGeometry(P.ShapeProperties pShapeProperties) : IShape
 
                 if (numAdjustments == 1)
                 {
-                    this.InjectSingleAdjustmentToShapeGuide(value);
+                    InjectSingleAdjustmentToShapeGuide(value);
                 }
                 else
                 {
-                    this.InjectMultipleAdjustmentsIntoShapeGuide(value);
+                    InjectMultipleAdjustmentsIntoShapeGuide(value);
                 }
             }
             else
             {
-                throw new SCException($"{this.GeometryType} does not support adjustments");
+                throw new SCException($"{GeometryType} does not support adjustments");
             }
         }
     }
 
-    private PresetGeometry? APresetGeometry => pShapeProperties.GetFirstChild<PresetGeometry>();
-
     internal void UpdateGeometry(Geometry type)
     {
-        this.GeometryType = type;
+        GeometryType = type;
     }
 
     private static string ToCamelCaseInvariant(string value)
@@ -232,14 +232,14 @@ internal sealed class ShapeGeometry(P.ShapeProperties pShapeProperties) : IShape
 
     private decimal[] ExtractAdjustmentsFromShapeGuide()
     {
-        return this.APresetGeometry?
-            .AdjustValueList?
-            .Descendants<ShapeGuide>()
-            .Where(x => x.Name?.Value?.StartsWith("adj", StringComparison.InvariantCulture) ?? false)
-            .OrderBy(x => x.Name?.Value ?? string.Empty)
-            .Select(ExtractAdjustmentFromShapeGuide)
-            .ToArray()
-            ?? throw new SCException("Malformed geometry.");
+        return APresetGeometry?
+                   .AdjustValueList?
+                   .Descendants<ShapeGuide>()
+                   .Where(x => x.Name?.Value?.StartsWith("adj", StringComparison.InvariantCulture) ?? false)
+                   .OrderBy(x => x.Name?.Value ?? string.Empty)
+                   .Select(ExtractAdjustmentFromShapeGuide)
+                   .ToArray()
+               ?? throw new SCException("Malformed geometry.");
     }
 
     private void InjectSingleAdjustmentToShapeGuide(decimal[] values)
@@ -249,21 +249,21 @@ internal sealed class ShapeGeometry(P.ShapeProperties pShapeProperties) : IShape
             throw new SCException("This geometry supports only a single adjustment value.");
         }
 
-        this.Inject("adj", values[0]);
+        Inject("adj", values[0]);
     }
 
     private void InjectMultipleAdjustmentsIntoShapeGuide(decimal[] values)
     {
         for (var i = 0; i < values.Length; i++)
         {
-            this.Inject($"adj{i + 1}", values[i]);
+            Inject($"adj{i + 1}", values[i]);
         }
     }
 
     private void Inject(string name, decimal value)
     {
-        var avList = this.APresetGeometry?.AdjustValueList
-            ?? throw new SCException("Malformed geometry. Missing AdjustValueList.");
+        var avList = APresetGeometry?.AdjustValueList
+                     ?? throw new SCException("Malformed geometry. Missing AdjustValueList.");
 
         var sgs = avList
             .Descendants<ShapeGuide>()
@@ -276,8 +276,8 @@ internal sealed class ShapeGeometry(P.ShapeProperties pShapeProperties) : IShape
 
         // Will add a shape guide if there isn't already one
         var sg = sgs.SingleOrDefault()
-            ?? avList.AppendChild(new ShapeGuide() { Name = name })
-            ?? throw new SCException("Failed attempting to add a shape guide to AdjustValueList");
+                 ?? avList.AppendChild(new ShapeGuide { Name = name })
+                 ?? throw new SCException("Failed attempting to add a shape guide to AdjustValueList");
 
         sg.Formula = new StringValue($"val {(int)(value * 500m)}");
     }

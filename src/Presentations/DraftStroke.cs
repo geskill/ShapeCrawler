@@ -12,7 +12,7 @@ public sealed class DraftStroke
     /// </summary>
     public DraftStroke Width(decimal points)
     {
-        this.DraftWidthPoints = points;
+        DraftWidthPoints = points;
         return this;
     }
 }

@@ -24,7 +24,7 @@ public sealed class DraftRectangle
     /// </summary>
     public DraftRectangle Name(string name)
     {
-        this.DraftName = name;
+        DraftName = name;
         return this;
     }
 
@@ -33,7 +33,7 @@ public sealed class DraftRectangle
     /// </summary>
     public DraftRectangle X(int x)
     {
-        this.DraftX = x;
+        DraftX = x;
         return this;
     }
 
@@ -42,7 +42,7 @@ public sealed class DraftRectangle
     /// </summary>
     public DraftRectangle Y(int y)
     {
-        this.DraftY = y;
+        DraftY = y;
         return this;
     }
 
@@ -51,7 +51,7 @@ public sealed class DraftRectangle
     /// </summary>
     public DraftRectangle Width(int width)
     {
-        this.DraftWidth = width;
+        DraftWidth = width;
         return this;
     }
 
@@ -60,7 +60,7 @@ public sealed class DraftRectangle
     /// </summary>
     public DraftRectangle Height(int height)
     {
-        this.DraftHeight = height;
+        DraftHeight = height;
         return this;
     }
 
@@ -69,8 +69,8 @@ public sealed class DraftRectangle
     /// </summary>
     public DraftRectangle SolidFill(Action<DraftSolidFill> configure)
     {
-        this.SolidFillDraft = new DraftSolidFill();
-        configure(this.SolidFillDraft);
+        SolidFillDraft = new DraftSolidFill();
+        configure(SolidFillDraft);
         return this;
     }
 }

@@ -19,13 +19,16 @@ internal class BottomBorder(A.TableCellProperties aTableCellProperties) : IBorde
 
             return new Emus(emus).AsPoints();
         }
-        set => this.UpdateWidth(value);
+        set => UpdateWidth(value);
     }
 
-    public string? Color { get => this.GetColor(); set => this.SetColor(value!); }
+    public string? Color { get => GetColor(); set => SetColor(value!); }
 
-    private string? GetColor() => aTableCellProperties.BottomBorderLineProperties?.GetFirstChild<A.SolidFill>()
-        ?.RgbColorModelHex?.Val;
+    private string? GetColor()
+    {
+        return aTableCellProperties.BottomBorderLineProperties?.GetFirstChild<A.SolidFill>()
+            ?.RgbColorModelHex?.Val;
+    }
 
     private void SetColor(string color)
     {
@@ -51,7 +54,7 @@ internal class BottomBorder(A.TableCellProperties aTableCellProperties) : IBorde
     {
         if (aTableCellProperties.BottomBorderLineProperties is null)
         {
-            var aSolidFill = new A.SolidFill { RgbColorModelHex = new() { Val = "000000" } };
+            var aSolidFill = new A.SolidFill { RgbColorModelHex = new A.RgbColorModelHex { Val = "000000" } };
 
             aTableCellProperties.BottomBorderLineProperties = new A.BottomBorderLineProperties();
             aTableCellProperties.BottomBorderLineProperties.AppendChild(aSolidFill);

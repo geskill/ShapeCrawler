@@ -20,7 +20,7 @@ public interface IMasterSlide
     int Number { get; }
 
     /// <summary>
-    ///     Gets background image if slide master has background, otherwise <see langword="null"/>.
+    ///     Gets background image if slide master has background, otherwise <see langword="null" />.
     /// </summary>
     IImage? Background { get; }
 
@@ -40,7 +40,7 @@ public interface IMasterSlide
     ITheme Theme { get; }
 
     /// <summary>
-    ///     Gets slide number. Returns <see langword="null"/> if slide master does not have slide number.
+    ///     Gets slide number. Returns <see langword="null" /> if slide master does not have slide number.
     /// </summary>
     IMasterSlideNumber? SlideNumber { get; }
 
@@ -65,47 +65,59 @@ public interface IMasterSlide
 internal sealed class MasterSlide : IMasterSlide
 {
     private readonly LayoutSlideCollection layouts;
-    private readonly Lazy<MasterSlideNumber?> slideNumber;
     private readonly SlideMasterPart slideMasterPart;
+    private readonly Lazy<MasterSlideNumber?> slideNumber;
 
     internal MasterSlide(SlideMasterPart slideMasterPart)
     {
         this.slideMasterPart = slideMasterPart;
-        this.layouts = new LayoutSlideCollection(slideMasterPart);
-        this.slideNumber = new Lazy<MasterSlideNumber?>(this.CreateSlideNumber);
-        this.Shapes = new ShapeCollection(this.slideMasterPart);
+        layouts = new LayoutSlideCollection(slideMasterPart);
+        slideNumber = new Lazy<MasterSlideNumber?>(CreateSlideNumber);
+        Shapes = new ShapeCollection(this.slideMasterPart);
     }
 
     public IImage? Background => null;
 
-    public ILayoutSlideCollection LayoutSlides => this.layouts;
+    public ILayoutSlideCollection LayoutSlides => layouts;
 
     public IShapeCollection Shapes { get; }
 
-    public ITheme Theme => new Theme(this.slideMasterPart, this.slideMasterPart.ThemePart!.Theme!);
+    public ITheme Theme => new Theme(slideMasterPart, slideMasterPart.ThemePart!.Theme!);
 
-    public IMasterSlideNumber? SlideNumber => this.slideNumber.Value;
+    public IMasterSlideNumber? SlideNumber => slideNumber.Value;
 
     public int Number
     {
         get
         {
-            var match = Regex.Match(this.slideMasterPart.Uri.ToString(), @"\d+", RegexOptions.None, TimeSpan.FromSeconds(1));
+            var match = Regex.Match(slideMasterPart.Uri.ToString(), @"\d+", RegexOptions.None, TimeSpan.FromSeconds(1));
             return int.Parse(match.Value);
         }
     }
 
-    public IShape Shape(string shape) => this.Shapes.Shape(shape);
+    public IShape Shape(string shape)
+    {
+        return Shapes.Shape(shape);
+    }
 
-    public ILayoutSlide SlideLayout(string name) => this.layouts.First(l => l.Name == name);
+    public ILayoutSlide SlideLayout(string name)
+    {
+        return layouts.First(l => l.Name == name);
+    }
 
-    public ILayoutSlide SlideLayout(int number) => this.InternalSlideLayout(number);
+    public ILayoutSlide SlideLayout(int number)
+    {
+        return InternalSlideLayout(number);
+    }
 
-    internal LayoutSlide InternalSlideLayout(int number) => this.layouts.Layout(number);
+    internal LayoutSlide InternalSlideLayout(int number)
+    {
+        return layouts.Layout(number);
+    }
 
     private MasterSlideNumber? CreateSlideNumber()
     {
-        var pSldNum = this.slideMasterPart.SlideMaster!.CommonSlideData!.ShapeTree!
+        var pSldNum = slideMasterPart.SlideMaster!.CommonSlideData!.ShapeTree!
             .Elements<P.Shape>()
             .FirstOrDefault(s =>
                 s.NonVisualShapeProperties?.ApplicationNonVisualDrawingProperties?.PlaceholderShape?.Type?.Value ==

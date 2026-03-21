@@ -19,7 +19,7 @@ internal sealed class SmartArt : ISmartArt
 {
     internal SmartArt(SmartArtNodeCollection nodeCollection)
     {
-        this.Nodes = nodeCollection;
+        Nodes = nodeCollection;
     }
 
     public ISmartArtNodeCollection Nodes { get; }

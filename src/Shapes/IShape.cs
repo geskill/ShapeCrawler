@@ -30,7 +30,7 @@ public interface IShape : IPosition, IShapeGeometry
     int Id { get; }
 
     /// <summary>
-    ///    Gets or sets the name of the shape.
+    ///     Gets or sets the name of the shape.
     /// </summary>
     string Name { get; set; }
 
@@ -45,7 +45,7 @@ public interface IShape : IPosition, IShapeGeometry
     bool Hidden { get; }
 
     /// <summary>
-    ///     Gets the placeholder type. Returns <see langword="null"/> if the shape is not a placeholder.
+    ///     Gets the placeholder type. Returns <see langword="null" /> if the shape is not a placeholder.
     /// </summary>
     PlaceholderType? PlaceholderType { get; }
 
@@ -55,12 +55,12 @@ public interface IShape : IPosition, IShapeGeometry
     string? CustomData { get; set; }
 
     /// <summary>
-    ///     Gets outline of the shape. Returns <see langword="null"/> if the shape cannot be outlined, for example, a picture.
+    ///     Gets outline of the shape. Returns <see langword="null" /> if the shape cannot be outlined, for example, a picture.
     /// </summary>
     IShapeOutline? Outline { get; }
 
     /// <summary>
-    ///     Gets the fill of the shape. Returns <see langword="null"/> if the shape cannot be filled, for example, a line.
+    ///     Gets the fill of the shape. Returns <see langword="null" /> if the shape cannot be filled, for example, a line.
     /// </summary>
     IShapeFill? Fill { get; }
 
@@ -102,7 +102,11 @@ public interface IShape : IPosition, IShapeGeometry
     /// <summary>
     ///     Gets bubble chart. Returns <c>null</c> if the shape doesn't contain a bubble chart.
     /// </summary>
-    IBubbleChart? BubbleChart { get; } // TODO: combine with ScatterChart since in the PowerPoint Bubble Chart is a subtype of the Scatter Chart
+    IBubbleChart?
+        BubbleChart
+    {
+        get;
+    } // TODO: combine with ScatterChart since in the PowerPoint Bubble Chart is a subtype of the Scatter Chart
 
     /// <summary>
     ///     Gets area chart. Returns <c>null</c> if the shape doesn't contain an area chart.
@@ -142,7 +146,7 @@ public interface IShape : IPosition, IShapeGeometry
     /// <summary>
     ///     Gets XPath of the underlying Open XML element.
     /// </summary>
-    public string SdkXPath { get; }
+    string SdkXPath { get; }
 
     /// <summary>
     ///     Gets a copy of the underlying Open XML element.
@@ -158,7 +162,7 @@ public interface IShape : IPosition, IShapeGeometry
     ///     Gets grouped shapes. Returns <c>null</c> if the shape is not a group shape.
     /// </summary>
     IShapeCollection? GroupedShapes { get; }
-    
+
     /// <summary>
     ///     Gets the main shape content type.
     /// </summary>
@@ -175,22 +179,22 @@ public interface IShape : IPosition, IShapeGeometry
     void Duplicate();
 
     /// <summary>
-    ///     Sets text content. 
-    ///     Use property <see cref="TextBox"/> to check whether the shape is a text holder.
+    ///     Sets text content.
+    ///     Use property <see cref="TextBox" /> to check whether the shape is a text holder.
     /// </summary>
     /// <exception cref="SCException">Thrown when the shape is not a text holder.</exception>
     void SetText(string text);
 
     /// <summary>
-    ///     Sets text content. 
-    ///     Use property <see cref="TextBox"/> to check whether the shape is a text holder.
+    ///     Sets text content.
+    ///     Use property <see cref="TextBox" /> to check whether the shape is a text holder.
     /// </summary>
     /// <exception cref="SCException">Thrown when the shape is not a text holder.</exception>
     void SetMarkdownText(string text);
 
     /// <summary>
     ///     Sets image content.
-    ///     Use <see cref="Picture"/> property to check whether shape contains image content.
+    ///     Use <see cref="Picture" /> property to check whether shape contains image content.
     /// </summary>
     /// <exception cref="SCException">Thrown if the shape doesn't contain image content.</exception>
     void SetImage(string imagePath);

@@ -16,14 +16,14 @@ public sealed class DraftTable
 
     internal int TableY { get; private set; } = 0;
 
-    internal IReadOnlyList<DraftRow> Rows => this.rows;
+    internal IReadOnlyList<DraftRow> Rows => rows;
 
     /// <summary>
     ///     Sets the number of columns in the table.
     /// </summary>
     public DraftTable Columns(int count)
     {
-        this.ColumnsCount = count;
+        ColumnsCount = count;
         return this;
     }
 
@@ -34,7 +34,7 @@ public sealed class DraftTable
     {
         var rowBuilder = new DraftRow();
         configure(rowBuilder);
-        this.rows.Add(rowBuilder);
+        rows.Add(rowBuilder);
         return this;
     }
 }

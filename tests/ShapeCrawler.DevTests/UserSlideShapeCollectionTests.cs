@@ -1,8 +1,6 @@
-using System;
 using System.Diagnostics.CodeAnalysis;
 using Fixture;
 using FluentAssertions;
-using NUnit.Framework;
 using ShapeCrawler.DevTests.Helpers;
 
 
@@ -31,7 +29,7 @@ public class UserSlideShapeCollectionTests : SCTest
         // Assert
         shapes.Shape("TextBox 2").Should().NotBeNull();
     }
-    
+
     [Test]
     public void AddDateAndTime_adds_Date_and_time_placeholder_shape()
     {
@@ -46,7 +44,7 @@ public class UserSlideShapeCollectionTests : SCTest
         shapes.Should().Contain(shape => shape.PlaceholderType == PlaceholderType.DateAndTime);
         ValidatePresentation(pres);
     }
-    
+
     [Test]
     public void AddFooter_adds_Footer_placeholder_shape()
     {
@@ -61,7 +59,7 @@ public class UserSlideShapeCollectionTests : SCTest
         shapes.Should().Contain(shape => shape.PlaceholderType == PlaceholderType.Footer);
         ValidatePresentation(pres);
     }
-    
+
     [Test]
     public void AddSlideNumber_adds_Slide_number_placeholder_shape()
     {
@@ -198,7 +196,7 @@ public class UserSlideShapeCollectionTests : SCTest
         var shapes = pres.Slides[0].Shapes;
 
         // Act
-        shapes.AddLine(startPointX: 10, startPointY: 10, endPointX: 20, endPointY: 5);
+        shapes.AddLine(10, 10, 20, 5);
 
         // Assert
         var addedLine = shapes.Last().Line;
@@ -218,7 +216,7 @@ public class UserSlideShapeCollectionTests : SCTest
         var shapes = pres.Slides[0].Shapes;
 
         // Act
-        shapes.AddLine(startPointX: 10, startPointY: 10, endPointX: 10, endPointY: 5);
+        shapes.AddLine(10, 10, 10, 5);
 
         // Assert
         var addedLine = shapes.Last().Line;
@@ -237,7 +235,7 @@ public class UserSlideShapeCollectionTests : SCTest
         var shapes = pres.Slides[0].Shapes;
 
         // Act
-        shapes.AddLine(startPointX: 100, startPointY: 50, endPointX: 40, endPointY: 20);
+        shapes.AddLine(100, 50, 40, 20);
 
         // Assert
         var addedLine = shapes.Last().Line;
@@ -256,7 +254,7 @@ public class UserSlideShapeCollectionTests : SCTest
         var shapes = pres.Slides[0].Shapes;
 
         // Act
-        shapes.AddLine(startPointX: 50, startPointY: 10, endPointX: 40, endPointY: 20);
+        shapes.AddLine(50, 10, 40, 20);
 
         // Assert
         var addedLine = shapes.Last().Line;
@@ -275,7 +273,7 @@ public class UserSlideShapeCollectionTests : SCTest
         var shapes = pres.Slides[0].Shapes;
 
         // Act
-        shapes.AddLine(startPointX: 50, startPointY: 60, endPointX: 100, endPointY: 60);
+        shapes.AddLine(50, 60, 100, 60);
 
         // Assert
         var line = shapes.Last().Line;
@@ -294,7 +292,7 @@ public class UserSlideShapeCollectionTests : SCTest
         var shapes = pres.Slides[0].Shapes;
 
         // Act
-        shapes.AddLine(startPointX: 50, startPointY: 60, endPointX: 100, endPointY: 60);
+        shapes.AddLine(50, 60, 100, 60);
 
         // Assert
         shapes.Should().ContainSingle();
@@ -312,7 +310,7 @@ public class UserSlideShapeCollectionTests : SCTest
         var shapes = pres.Slides[0].Shapes;
 
         // Act
-        shapes.AddLine(startPointX: 100, startPointY: 50, endPointX: 80, endPointY: 50);
+        shapes.AddLine(100, 50, 80, 50);
 
         // Assert
         var line = shapes.Last().Line;
@@ -322,7 +320,7 @@ public class UserSlideShapeCollectionTests : SCTest
         line.EndPoint.Y.Should().Be(50);
         ValidatePresentation(pres);
     }
-    
+
     [Test]
     public void AddAudio_adds_audio_shape_with_WAVE_content()
     {
@@ -340,7 +338,8 @@ public class UserSlideShapeCollectionTests : SCTest
     }
 
 #if DEBUG
-    [Test, Explicit("Should be implemented with https://github.com/ShapeCrawler/ShapeCrawler/issues/581")]
+    [Test]
+    [Explicit("Should be implemented with https://github.com/ShapeCrawler/ShapeCrawler/issues/581")]
     public void AddAudio_adds_audio_shape_with_the_default_start_mode_In_Click_Sequence()
     {
         // Arrange
@@ -349,7 +348,7 @@ public class UserSlideShapeCollectionTests : SCTest
         var shapes = pres.Slide(1).Shapes;
 
         // Act
-        shapes.AddAudio(x: 300, y: 100, mp3, AudioType.MP3);
+        shapes.AddAudio(300, 100, mp3, AudioType.MP3);
 
         // Assert
         pres = SaveAndOpenPresentation(pres);
@@ -479,7 +478,7 @@ public class UserSlideShapeCollectionTests : SCTest
         var shapes = pres.Slides[0].Shapes;
 
         // Act
-        shapes.AddTable(x: 50, y: 60, columnsCount: 3, rowsCount: 2);
+        shapes.AddTable(50, 60, 3, 2);
 
         // Assert
         var tableShape = shapes.Last();
@@ -607,7 +606,7 @@ public class UserSlideShapeCollectionTests : SCTest
         // Assert
         slides[1].Shapes.Should().HaveCount(0);
     }
-    
+
     [Test]
     public void Add_adds_chart_from_another_presentation()
     {
@@ -633,7 +632,7 @@ public class UserSlideShapeCollectionTests : SCTest
         var shapeCountAfter = targetPres.Slide(1).Shapes.Count;
         shapeCountAfter.Should().Be(shapeCountBefore + 1);
     }
-    
+
     [Test]
     public void AddPieChart_adds_pie_chart()
     {
@@ -747,7 +746,7 @@ public class UserSlideShapeCollectionTests : SCTest
         group.GroupedShapes.Should().HaveCount(2);
         ValidatePresentation(pres);
     }
-    
+
     [Test]
     public void AddLine_adds_line_shape()
     {

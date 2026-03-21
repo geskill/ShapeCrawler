@@ -17,16 +17,16 @@ internal readonly record struct SCATableRow
     {
         var tableCell = CreateNewATableCell();
 
-        this.aTableRow.Append(tableCell);
+        aTableRow.Append(tableCell);
     }
 
     internal void InsertNewCellAfter(int columnNumber)
     {
-        var cells = this.aTableRow.Elements<A.TableCell>().ToList();
+        var cells = aTableRow.Elements<A.TableCell>().ToList();
         var targetCell = cells[columnNumber - 1];
         var aTableCell = CreateNewATableCell();
 
-        this.aTableRow.InsertAfter(aTableCell, targetCell);
+        aTableRow.InsertAfter(aTableCell, targetCell);
     }
 
     private static A.TableCell CreateNewATableCell()

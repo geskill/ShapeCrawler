@@ -15,5 +15,8 @@ internal readonly ref struct AssetCollection(Assembly assembly)
         return asset;
     }
 
-    internal string StringOf(string file) => new StreamReader(this.StreamOf(file)).ReadToEnd();
+    internal string StringOf(string file)
+    {
+        return new StreamReader(StreamOf(file)).ReadToEnd();
+    }
 }

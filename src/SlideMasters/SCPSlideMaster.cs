@@ -13,6 +13,8 @@ internal readonly ref struct SCPSlideMaster
         this.pSlideMaster = pSlideMaster;
     }
 
-    internal IndentFont? BodyStyleFontOrNull(int paraLevel) =>
-        new IndentFonts(this.pSlideMaster.TextStyles!.BodyStyle!).FontOrNull(paraLevel);
+    internal IndentFont? BodyStyleFontOrNull(int paraLevel)
+    {
+        return new IndentFonts(pSlideMaster.TextStyles!.BodyStyle!).FontOrNull(paraLevel);
+    }
 }

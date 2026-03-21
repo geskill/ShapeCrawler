@@ -17,7 +17,10 @@ namespace ShapeCrawler.Slides;
 
 internal sealed class AudioVideoShapeCollection(SlidePart slidePart, PresentationImageFiles presentationImageFiles)
 {
-    public void AddAudio(int x, int y, Stream audio) => this.AddAudio(x, y, audio, AudioType.MP3);
+    public void AddAudio(int x, int y, Stream audio)
+    {
+        AddAudio(x, y, audio, AudioType.MP3);
+    }
 
     public void AddAudio(int x, int y, Stream audio, AudioType type)
     {
@@ -62,7 +65,7 @@ internal sealed class AudioVideoShapeCollection(SlidePart slidePart, Presentatio
         appNonVisualDrawingPropsExtension.Append(media);
         appNonVisualDrawingPropsExtensionList.Append(appNonVisualDrawingPropsExtension);
 
-        var pPicture = this.CreatePPicture(imageStream, "Audio");
+        var pPicture = CreatePPicture(imageStream, "Audio");
 
         var transform2D = pPicture.ShapeProperties!.Transform2D!;
         transform2D.Offset!.X = xEmu;
@@ -94,7 +97,7 @@ internal sealed class AudioVideoShapeCollection(SlidePart slidePart, Presentatio
         var videoRr = slidePart.AddVideoReferenceRelationship(mediaDataPart);
         var mediaRr = slidePart.AddMediaReferenceRelationship(mediaDataPart);
 
-        var shapeId = (uint)this.GetNextShapeId();
+        var shapeId = (uint)GetNextShapeId();
         P.NonVisualDrawingProperties nonVisualDrawingProperties = new() { Id = shapeId, Name = $"Video{shapeId}" };
         var hyperlinkOnClick = new A.HyperlinkOnClick { Id = string.Empty, Action = "ppaction://media" };
 
@@ -211,17 +214,16 @@ internal sealed class AudioVideoShapeCollection(SlidePart slidePart, Presentatio
         var imageStream = new ImageStream(image);
         var hash = imageStream.Base64Hash;
 
-        if (!this.TryGetImageRId(hash, out var imgPartRId))
+        if (!TryGetImageRId(hash, out var imgPartRId))
         {
             imgPartRId = slidePart.AddImagePart(image, mimeType);
         }
 
         var nonVisualPictureProperties = new P.NonVisualPictureProperties();
-        var shapeId = (uint)this.GetNextShapeId();
+        var shapeId = (uint)GetNextShapeId();
         var nonVisualDrawingProperties = new P.NonVisualDrawingProperties
         {
-            Id = shapeId,
-            Name = $"{shapeName} {shapeId}"
+            Id = shapeId, Name = $"{shapeName} {shapeId}"
         };
         var nonVisualPictureDrawingProperties = new P.NonVisualPictureDrawingProperties();
         var appNonVisualDrawingProperties = new P.ApplicationNonVisualDrawingProperties();

@@ -4,5 +4,8 @@ namespace ShapeCrawler.Drawing;
 
 internal struct RelationshipId
 {
-    internal static string New() => $"rId-{Guid.NewGuid().ToString("N")[..5]}";
+    internal static string New()
+    {
+        return $"rId-{Guid.NewGuid().ToString("N")[..5]}";
+    }
 }

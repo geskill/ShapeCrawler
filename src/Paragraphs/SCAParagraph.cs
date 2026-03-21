@@ -17,5 +17,8 @@ internal sealed class SCAParagraph(A.Paragraph aParagraph)
         return level + 1;
     }
 
-    internal void UpdateIndentLevel(int level) => aParagraph.ParagraphProperties!.Level = new Int32Value(level - 1);
+    internal void UpdateIndentLevel(int level)
+    {
+        aParagraph.ParagraphProperties!.Level = new Int32Value(level - 1);
+    }
 }

@@ -33,12 +33,14 @@ public interface ITableRow
 
 internal sealed class TableRow(A.TableRow aTableRow, int index) : ITableRow
 {
+    internal A.TableRow ATableRow => aTableRow;
+
     public IReadOnlyList<ITableCell> Cells
     {
         get
         {
             var cells = new List<TableCell?>();
-            var aTcList = this.ATableRow.Elements<A.TableCell>();
+            var aTcList = ATableRow.Elements<A.TableCell>();
             TableCell? addedCell = null;
 
             var columnIdx = 0;
@@ -51,7 +53,7 @@ internal sealed class TableRow(A.TableRow aTableRow, int index) : ITableRow
                 }
                 else if (aTc.VerticalMerge is not null)
                 {
-                    var pGraphicFrame = this.ATableRow.Ancestors<P.GraphicFrame>().First();
+                    var pGraphicFrame = ATableRow.Ancestors<P.GraphicFrame>().First();
                     var aTable = pGraphicFrame.GetFirstChild<A.Graphic>()!.GraphicData!.GetFirstChild<A.Table>()!;
                     var table = new Table(
                         new TableRowCollection(pGraphicFrame),
@@ -79,10 +81,10 @@ internal sealed class TableRow(A.TableRow aTableRow, int index) : ITableRow
 
     public decimal Height
     {
-        get => new Emus(this.ATableRow.Height!.Value).AsPoints();
+        get => new Emus(ATableRow.Height!.Value).AsPoints();
         set
         {
-            var currentPoints = new Emus(this.ATableRow.Height!.Value).AsPoints();
+            var currentPoints = new Emus(ATableRow.Height!.Value).AsPoints();
             if (currentPoints == value)
             {
                 return;
@@ -90,27 +92,25 @@ internal sealed class TableRow(A.TableRow aTableRow, int index) : ITableRow
 
             // Update the row height
             var newEmu = new Points(value).AsEmus();
-            this.ATableRow.Height!.Value = newEmu;
+            ATableRow.Height!.Value = newEmu;
 
             // Adjust the table shape height directly to avoid triggering proportional row scaling
-            var pGraphicFrame = this.ATableRow.Ancestors<P.GraphicFrame>().First();
+            var pGraphicFrame = ATableRow.Ancestors<P.GraphicFrame>().First();
             var shapeSize = new ShapeSize(pGraphicFrame);
             var diffPoints = value - currentPoints;
             shapeSize.Height += diffPoints;
         }
     }
 
-    internal A.TableRow ATableRow => aTableRow;
-
     public void Duplicate()
     {
-        var rowCopy = (A.TableRow)this.ATableRow.Clone();
-        this.ATableRow.Parent!.Append(rowCopy);
+        var rowCopy = (A.TableRow)ATableRow.Clone();
+        ATableRow.Parent!.Append(rowCopy);
     }
 
     internal void SetHeight(int newPoints)
     {
-        var currentPixels = new Emus(this.ATableRow.Height!.Value).AsPoints();
+        var currentPixels = new Emus(ATableRow.Height!.Value).AsPoints();
 
         if (currentPixels == newPoints)
         {
@@ -118,18 +118,18 @@ internal sealed class TableRow(A.TableRow aTableRow, int index) : ITableRow
         }
 
         var newEmu = new Points(newPoints).AsEmus();
-        this.ATableRow.Height!.Value = newEmu;
+        ATableRow.Height!.Value = newEmu;
     }
 
     internal void SetHeight(decimal newPoints)
     {
-        var currentPoints = new Emus(this.ATableRow.Height!.Value).AsPoints();
+        var currentPoints = new Emus(ATableRow.Height!.Value).AsPoints();
         if (currentPoints == newPoints)
         {
             return;
         }
 
         var newEmu = new Points(newPoints).AsEmus();
-        this.ATableRow.Height!.Value = newEmu;
+        ATableRow.Height!.Value = newEmu;
     }
 }

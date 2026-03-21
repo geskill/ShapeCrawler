@@ -29,7 +29,8 @@ internal sealed class ConnectionShape(SlidePart slidePart, NewShapeProperties ne
         var flipH = startPointX > endPointX;
         var flipV = startPointY > endPointY;
 
-        pConnectionShape.NonVisualConnectionShapeProperties!.NonVisualDrawingProperties!.Id = (uint)newShapeProperties.Id();
+        pConnectionShape.NonVisualConnectionShapeProperties!.NonVisualDrawingProperties!.Id =
+            (uint)newShapeProperties.Id();
 
         var xEmu = new Points(x).AsEmus();
         var yEmu = new Points(y).AsEmus();

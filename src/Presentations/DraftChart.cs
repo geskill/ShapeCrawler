@@ -26,7 +26,7 @@ public sealed class DraftChart
     /// </summary>
     public DraftChart Name(string name)
     {
-        this.ChartName = name;
+        ChartName = name;
         return this;
     }
 
@@ -35,7 +35,7 @@ public sealed class DraftChart
     /// </summary>
     public DraftChart X(int x)
     {
-        this.ChartX = x;
+        ChartX = x;
         return this;
     }
 
@@ -44,7 +44,7 @@ public sealed class DraftChart
     /// </summary>
     public DraftChart Y(int y)
     {
-        this.ChartY = y;
+        ChartY = y;
         return this;
     }
 
@@ -53,7 +53,7 @@ public sealed class DraftChart
     /// </summary>
     public DraftChart Width(int width)
     {
-        this.ChartWidth = width;
+        ChartWidth = width;
         return this;
     }
 
@@ -62,7 +62,7 @@ public sealed class DraftChart
     /// </summary>
     public DraftChart Height(int height)
     {
-        this.ChartHeight = height;
+        ChartHeight = height;
         return this;
     }
 
@@ -75,10 +75,10 @@ public sealed class DraftChart
         {
             throw new SCException($"{nameof(categories)} cannot be null.");
         }
-        
+
         foreach (var category in categories)
         {
-            this.CategoryNames.Add([category]);
+            CategoryNames.Add([category]);
         }
 
         return this;
@@ -91,7 +91,7 @@ public sealed class DraftChart
     {
         foreach (var (main, sub) in categories)
         {
-            this.CategoryNames.Add([main, sub]);
+            CategoryNames.Add([main, sub]);
         }
 
         return this;
@@ -102,7 +102,7 @@ public sealed class DraftChart
     /// </summary>
     public DraftChart Series(string seriesName, params double[] values)
     {
-        this.SeriesDataList.Add(new SeriesData(seriesName, values));
+        SeriesDataList.Add(new SeriesData(seriesName, values));
         return this;
     }
 

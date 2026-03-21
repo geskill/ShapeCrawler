@@ -39,14 +39,14 @@ public interface IParagraphPortions : IEnumerable<IParagraphPortion>
 
 internal sealed class ParagraphPortions(A.Paragraph aParagraph) : IParagraphPortions
 {
-    public int Count => this.GetPortions().Count;
+    public int Count => GetPortions().Count;
 
-    public IParagraphPortion this[int index] => this.GetPortions()[index];
+    public IParagraphPortion this[int index] => GetPortions()[index];
 
     public void AddText(string text)
     {
         var lastRunOrBreak = aParagraph.LastOrDefault(p => p is A.Run or A.Break);
-        var textPortions = this.GetPortions().OfType<TextParagraphPortion>();
+        var textPortions = GetPortions().OfType<TextParagraphPortion>();
         var aTextParent = textPortions.LastOrDefault()?.AText.Parent;
         if (aTextParent is null)
         {
@@ -55,7 +55,7 @@ internal sealed class ParagraphPortions(A.Paragraph aParagraph) : IParagraphPort
             aTextParent = new A.Run(aRunProperties, aText);
         }
 
-        this.AddText(ref lastRunOrBreak, aTextParent, text);
+        AddText(ref lastRunOrBreak, aTextParent, text);
     }
 
     public void AddLineBreak()
@@ -64,9 +64,15 @@ internal sealed class ParagraphPortions(A.Paragraph aParagraph) : IParagraphPort
         lastARunOrABreak.InsertAfterSelf(new A.Break());
     }
 
-    public IEnumerator<IParagraphPortion> GetEnumerator() => this.GetPortions().GetEnumerator();
+    public IEnumerator<IParagraphPortion> GetEnumerator()
+    {
+        return GetPortions().GetEnumerator();
+    }
 
-    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 
     private void AddText(ref OpenXmlElement? lastElement, OpenXmlElement aTextParent, string text)
     {

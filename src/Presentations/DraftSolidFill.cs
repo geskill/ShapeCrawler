@@ -15,7 +15,7 @@ public sealed class DraftSolidFill
     /// <param name="hexColor">Hex color string (e.g., "0000FF").</param>
     public DraftSolidFill Color(string hexColor)
     {
-        this.HexColor = hexColor;
+        HexColor = hexColor;
         return this;
     }
 
@@ -24,7 +24,7 @@ public sealed class DraftSolidFill
     /// </summary>
     public DraftSolidFill Transparency(decimal transparencyPercent)
     {
-        this.TransparencyPercent = transparencyPercent;
+        TransparencyPercent = transparencyPercent;
         return this;
     }
 }

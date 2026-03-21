@@ -19,7 +19,8 @@ internal sealed class TextLines(IReadOnlyList<TextLine> lines, float availableWi
     /// <param name="y">The y coordinate of the text block.</param>
     /// <param name="availableHeight">The maximum available height.</param>
     /// <param name="verticalAlignment">The vertical alignment.</param>
-    internal void Render(SKCanvas canvas, float x, float y, float availableHeight, TextVerticalAlignment verticalAlignment)
+    internal void Render(SKCanvas canvas, float x, float y, float availableHeight,
+        TextVerticalAlignment verticalAlignment)
     {
         var textBlockHeight = lines.Sum(l => l.Height);
         var verticalOffset = GetVerticalOffset(verticalAlignment, availableHeight, textBlockHeight);

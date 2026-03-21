@@ -14,7 +14,7 @@ internal readonly ref struct SCImagePart
 
     internal byte[] AsBytes()
     {
-        var stream = this.imagePart.GetStream();
+        var stream = imagePart.GetStream();
 
         var mStream = new MemoryStream();
         var buffer = new byte[1024];

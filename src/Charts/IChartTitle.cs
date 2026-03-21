@@ -35,31 +35,41 @@ public interface IChartTitle
     IChartTitleAlignment Alignment { get; }
 }
 
-internal sealed class ChartTitle(ChartPart chartPart, ChartType chartType, ISeriesCollection seriesCollection, ChartTitleAlignment alignment) : IChartTitle
+internal sealed class ChartTitle(
+    ChartPart chartPart,
+    ChartType chartType,
+    ISeriesCollection seriesCollection,
+    ChartTitleAlignment alignment) : IChartTitle
 {
     public string? Text
     {
-        get => this.GetTitleText();
-        set => this.UpdateTitleText(value);
+        get => GetTitleText();
+        set => UpdateTitleText(value);
     }
 
     public string FontColor
     {
-        get => this.GetFontColor();
-        set => this.SetFontColor(value);
+        get => GetFontColor();
+        set => SetFontColor(value);
     }
 
     public int FontSize
     {
-        get => this.GetFontSize();
-        set => this.SetFontSize(value);
+        get => GetFontSize();
+        set => SetFontSize(value);
     }
 
     public IChartTitleAlignment Alignment => alignment;
 
-    public static implicit operator string?(ChartTitle? title) => title?.Text;
+    public static implicit operator string?(ChartTitle? title)
+    {
+        return title?.Text;
+    }
 
-    public override string? ToString() => this.Text;
+    public override string? ToString()
+    {
+        return Text;
+    }
 
     private static bool TryGetStaticTitle(C.ChartText? chartText, ChartType chartType, out string? staticTitle)
     {
@@ -165,10 +175,10 @@ internal sealed class ChartTitle(ChartPart chartPart, ChartType chartType, ISeri
                 return null;
             }
 
-            return this.GetPieChartSeriesName();
+            return GetPieChartSeriesName();
         }
 
-        return this.GetTextFromExistingTitle(cTitle);
+        return GetTextFromExistingTitle(cTitle);
     }
 
     private string? GetTextFromExistingTitle(C.Title cTitle)
@@ -186,7 +196,7 @@ internal sealed class ChartTitle(ChartPart chartPart, ChartType chartType, ISeri
             return stringPoint.InnerText;
         }
 
-        return this.GetPieChartSeriesName();
+        return GetPieChartSeriesName();
     }
 
     private string? GetPieChartSeriesName()
@@ -291,7 +301,7 @@ internal sealed class ChartTitle(ChartPart chartPart, ChartType chartType, ISeri
         if (cRichText == null)
         {
             // Create title structure with default text if it doesn't exist
-            var currentText = this.Text ?? "Chart Title";
+            var currentText = Text ?? "Chart Title";
             cRichText = cChartText.AppendChild(new C.RichText());
             cRichText.Append(new A.BodyProperties());
             cRichText.Append(new A.ListStyle());

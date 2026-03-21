@@ -31,13 +31,13 @@ public interface ISeries
 
     /// <summary>
     ///     Gets the collection of X-values points of the series.
-    ///     Returns <see langword="null"/> when the series doesn't support X-values.
+    ///     Returns <see langword="null" /> when the series doesn't support X-values.
     /// </summary>
     IReadOnlyList<IChartPoint>? XPoints { get; }
 
     /// <summary>
     ///     Gets the collection of bubble size points of the series.
-    ///     Returns <see langword="null"/> when the series doesn't support bubble size values.
+    ///     Returns <see langword="null" /> when the series doesn't support bubble size values.
     /// </summary>
     IReadOnlyList<IChartPoint>? BubbleSizePoints { get; }
 
@@ -54,15 +54,15 @@ internal sealed class Series : ISeries
 
     internal Series(ChartPart sdkChartPart, OpenXmlElement cSer, ChartType type)
     {
-        this.chartPart = sdkChartPart;
+        chartPart = sdkChartPart;
         this.cSer = cSer;
-        this.Type = type;
-        this.Points = new ChartPoints(this.chartPart, this.cSer);
-        this.XPoints = type is ChartType.ScatterChart or ChartType.BubbleChart
-            ? new SeriesXPoints(this.chartPart, this.cSer)
+        Type = type;
+        Points = new ChartPoints(chartPart, this.cSer);
+        XPoints = type is ChartType.ScatterChart or ChartType.BubbleChart
+            ? new SeriesXPoints(chartPart, this.cSer)
             : null;
-        this.BubbleSizePoints = type is ChartType.BubbleChart
-            ? new SeriesBubbleSizePoints(this.chartPart, this.cSer)
+        BubbleSizePoints = type is ChartType.BubbleChart
+            ? new SeriesBubbleSizePoints(chartPart, this.cSer)
             : null;
     }
 
@@ -74,15 +74,18 @@ internal sealed class Series : ISeries
 
     public IReadOnlyList<IChartPoint>? BubbleSizePoints { get; }
 
-    public bool HasName => this.cSer.GetFirstChild<C.SeriesText>()?.StringReference != null;
+    public bool HasName => cSer.GetFirstChild<C.SeriesText>()?.StringReference != null;
 
-    public string Name => this.ParseName();
+    public string Name => ParseName();
 
     private string ParseName()
     {
-        var cStrRef = this.cSer.GetFirstChild<C.SeriesText>()?.StringReference ?? throw new SCException($"Series does not have name. Use {nameof(this.HasName)} property to check if series has name.");
+        var cStrRef = cSer.GetFirstChild<C.SeriesText>()?.StringReference ??
+                      throw new SCException(
+                          $"Series does not have name. Use {nameof(HasName)} property to check if series has name.");
         var fromCache = cStrRef.StringCache?.GetFirstChild<C.StringPoint>()!.Single().InnerText;
 
-        return fromCache ?? new Workbook(this.chartPart.EmbeddedPackagePart!).FormulaValues(cStrRef.Formula!.Text)[0].ToString();
+        return fromCache ?? new Workbook(chartPart.EmbeddedPackagePart!).FormulaValues(cStrRef.Formula!.Text)[0]
+            .ToString();
     }
 }

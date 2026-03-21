@@ -3,7 +3,6 @@ using System.Linq;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Packaging;
-using A = DocumentFormat.OpenXml.Drawing;
 using P = DocumentFormat.OpenXml.Presentation;
 
 #pragma warning disable IDE0130
@@ -39,16 +38,16 @@ public interface IHyperlink
 
 internal class Hyperlink(RunProperties aRunProperties) : IHyperlink
 {
-    public int? SlideNumber => this.GetSlideNumberOrNull();
+    public int? SlideNumber => GetSlideNumberOrNull();
 
-    public string? File => this.GetFileOrNull();
+    public string? File => GetFileOrNull();
 
     public void AddSlideNumber(int slide)
     {
-        var hyperlink = aRunProperties.GetFirstChild<A.HyperlinkOnClick>();
+        var hyperlink = aRunProperties.GetFirstChild<HyperlinkOnClick>();
         if (hyperlink == null)
         {
-            hyperlink = new A.HyperlinkOnClick();
+            hyperlink = new HyperlinkOnClick();
             aRunProperties.Append(hyperlink);
         }
 
@@ -74,10 +73,10 @@ internal class Hyperlink(RunProperties aRunProperties) : IHyperlink
 
     public void AddFile(string file)
     {
-        var hyperlink = aRunProperties.GetFirstChild<A.HyperlinkOnClick>();
+        var hyperlink = aRunProperties.GetFirstChild<HyperlinkOnClick>();
         if (hyperlink == null)
         {
-            hyperlink = new A.HyperlinkOnClick();
+            hyperlink = new HyperlinkOnClick();
             aRunProperties.Append(hyperlink);
         }
 
@@ -90,7 +89,7 @@ internal class Hyperlink(RunProperties aRunProperties) : IHyperlink
 
     private string? GetFileOrNull()
     {
-        var hyperlink = aRunProperties.GetFirstChild<A.HyperlinkOnClick>();
+        var hyperlink = aRunProperties.GetFirstChild<HyperlinkOnClick>();
         if (hyperlink == null)
         {
             return null;
@@ -104,7 +103,7 @@ internal class Hyperlink(RunProperties aRunProperties) : IHyperlink
 
     private int? GetSlideNumberOrNull()
     {
-        var hyperlink = aRunProperties.GetFirstChild<A.HyperlinkOnClick>();
+        var hyperlink = aRunProperties.GetFirstChild<HyperlinkOnClick>();
         if (hyperlink == null || hyperlink.Action?.Value != "ppaction://hlinksldjump" ||
             string.IsNullOrEmpty(hyperlink.Id))
         {

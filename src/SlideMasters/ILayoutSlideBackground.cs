@@ -42,7 +42,7 @@ internal sealed class LayoutSlideBackground(SlideLayoutPart slideLayoutPart) : I
 {
     private BackgroundSolidFill? solidFill;
 
-    public ISolidFill SolidFill => this.solidFill ??= new BackgroundSolidFill(slideLayoutPart);
+    public ISolidFill SolidFill => solidFill ??= new BackgroundSolidFill(slideLayoutPart);
 
     public void SolidFillColor(string hex)
     {

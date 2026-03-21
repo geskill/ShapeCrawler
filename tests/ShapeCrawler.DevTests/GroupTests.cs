@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using NUnit.Framework;
 using ShapeCrawler.DevTests.Helpers;
 
 namespace ShapeCrawler.DevTests;
@@ -127,7 +126,7 @@ public class GroupTests : SCTest
         var shape = pres.Slide(2).Shape("Group 1").GroupedShapes.Shape("Shape 1");
 
         // Act
-        decimal x = shape.X;
+        var x = shape.X;
 
         // Assert
         x.Should().BeApproximately(39.94m, 0.01m);
@@ -164,12 +163,12 @@ public class GroupTests : SCTest
             .GroupedShape("Group 1")
             .GroupedShape("Group 3")
             .GroupedShape("Rectangle 4");
-        
+
         // Act & Assert
         groupShape.Width.Should().BeApproximately(290, 1m);
         groupShape.Height.Should().BeApproximately(36, 1m);
     }
-    
+
     [Test]
     public void GroupedShape_X()
     {
@@ -181,11 +180,11 @@ public class GroupTests : SCTest
             .GroupedShape("Group 1")
             .GroupedShape("Group 3")
             .GroupedShape("Rectangle 4");
-        
+
         // Act & Assert
         groupedShape.X.Should().BeApproximately(607, 1m);
     }
-    
+
     [Test]
     public void GroupedShape_Y_Setter_returns_absolute_y_coordinate()
     {
@@ -197,7 +196,7 @@ public class GroupTests : SCTest
             .GroupedShape("Group 1")
             .GroupedShape("Group 3")
             .GroupedShape("Rectangle 4");
-        
+
         // Act & Assert
         groupedShape.Y.Should().BeApproximately(125, 1m);
     }

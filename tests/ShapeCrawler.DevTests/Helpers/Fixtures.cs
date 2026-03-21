@@ -6,28 +6,31 @@ namespace Fixture;
 
 public sealed class Fixtures
 {
-    private readonly Random random = new();
     private readonly Assembly assembly = Assembly.GetCallingAssembly();
+    private readonly Random random = new();
 
-    public int Int() => this.random.Next(1, 400);
+    public int Int()
+    {
+        return random.Next(1, 400);
+    }
 
     public string Color()
     {
-        var r = this.random.Next(256);
-        var g = this.random.Next(256);
-        var b = this.random.Next(256);
+        var r = random.Next(256);
+        var g = random.Next(256);
+        var b = random.Next(256);
         return $"{r:X2}{g:X2}{b:X2}";
     }
 
     public Stream Image()
     {
-        var width = this.random.Next(32, 256);
-        var height = this.random.Next(32, 256);
+        var width = random.Next(32, 256);
+        var height = random.Next(32, 256);
 
         var stream = new MemoryStream();
 
-        var background = new MagickColor((byte)this.random.Next(256), (byte)this.random.Next(256),
-            (byte)this.random.Next(256));
+        var background = new MagickColor((byte)random.Next(256), (byte)random.Next(256),
+            (byte)random.Next(256));
         using (var image = new MagickImage(background, (uint)width, (uint)height))
         {
             image.Format = MagickFormat.Png;
@@ -35,7 +38,7 @@ public sealed class Fixtures
         }
 
         stream.Position = 0;
-        
+
         return stream;
     }
 
@@ -44,12 +47,12 @@ public sealed class Fixtures
         var options = new ImageOptions();
         configure(options);
 
-        var width = this.random.Next(32, 256);
-        var height = this.random.Next(32, 256);
+        var width = random.Next(32, 256);
+        var height = random.Next(32, 256);
         var stream = new MemoryStream();
 
-        var background = new MagickColor((byte)this.random.Next(256), (byte)this.random.Next(256),
-            (byte)this.random.Next(256));
+        var background = new MagickColor((byte)random.Next(256), (byte)random.Next(256),
+            (byte)random.Next(256));
 
         var formatUpper = (options.FormatName ?? "PNG").ToUpperInvariant();
         if (formatUpper == "GIF")
@@ -67,7 +70,7 @@ public sealed class Fixtures
                 MagickColors.Cyan
             };
 
-            for (int i = 0; i < colors.Length; i++)
+            for (var i = 0; i < colors.Length; i++)
             {
                 using var frame = new MagickImage(colors[i], (uint)width, (uint)height);
                 frame.Format = MagickFormat.Gif;
@@ -105,7 +108,10 @@ public sealed class Fixtures
         return stream;
     }
 
-    public static string String() => Guid.NewGuid().ToString();
+    public static string String()
+    {
+        return Guid.NewGuid().ToString();
+    }
 
     public string String(Action<StringOptions> configure)
     {
@@ -113,29 +119,26 @@ public sealed class Fixtures
         configure(options);
 
         var targetLength = options.LengthValue ?? 36;
-        if (targetLength <= 0)
-        {
-            return string.Empty;
-        }
+        if (targetLength <= 0) return string.Empty;
 
         // Generate a readable random string with spaces that can wrap in text boxes
         // while guaranteeing exact requested length.
         const string letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
         var buffer = new char[targetLength];
-        bool lastWasSpace = false;
-        for (int i = 0; i < targetLength; i++)
+        var lastWasSpace = false;
+        for (var i = 0; i < targetLength; i++)
         {
-            bool canBeSpace = i != 0 && i != targetLength - 1 && !lastWasSpace;
+            var canBeSpace = i != 0 && i != targetLength - 1 && !lastWasSpace;
             // Roughly 1/6 chance to place a space when allowed to encourage wrapping
-            if (canBeSpace && this.random.Next(6) == 0)
+            if (canBeSpace && random.Next(6) == 0)
             {
                 buffer[i] = ' ';
                 lastWasSpace = true;
                 continue;
             }
 
-            buffer[i] = letters[this.random.Next(letters.Length)];
+            buffer[i] = letters[random.Next(letters.Length)];
             lastWasSpace = false;
         }
 
@@ -155,17 +158,15 @@ public sealed class Fixtures
     private MemoryStream GetResourceStream(string fileName)
     {
         var pattern = $@"\.{Regex.Escape(fileName)}";
-        var path = this.assembly.GetManifestResourceNames().First(r =>
+        var path = assembly.GetManifestResourceNames().First(r =>
         {
             var matched = Regex.Match(r, pattern, RegexOptions.None, TimeSpan.FromSeconds(1));
             return matched.Success;
         });
-        var stream = this.assembly.GetManifestResourceStream(path);
+        var stream = assembly.GetManifestResourceStream(path);
         if (stream is null)
-        {
             throw new InvalidOperationException(
-                $"Resource '{path}' was not found in assembly '{this.assembly.FullName}'.");
-        }
+                $"Resource '{path}' was not found in assembly '{assembly.FullName}'.");
 
         var mStream = new MemoryStream();
         stream.CopyTo(mStream);

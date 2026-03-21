@@ -12,16 +12,16 @@ namespace ShapeCrawler.Tables;
 
 internal sealed class TableCellTextBox(A.TableCell aTableCell) : ITextBox
 {
-    private TextVerticalAlignment? vAlignment;
     private TextDirection? textDirection;
+    private TextVerticalAlignment? vAlignment;
 
     public TextVerticalAlignment VerticalAlignment
     {
         get
         {
-            if (this.vAlignment.HasValue)
+            if (vAlignment.HasValue)
             {
-                return this.vAlignment.Value;
+                return vAlignment.Value;
             }
 
             var aBodyPr = aTableCell.TableCellProperties!;
@@ -29,18 +29,18 @@ internal sealed class TableCellTextBox(A.TableCell aTableCell) : ITextBox
 
             if (aBodyPr.Anchor!.Value == A.TextAnchoringTypeValues.Center)
             {
-                this.vAlignment = TextVerticalAlignment.Middle;
+                vAlignment = TextVerticalAlignment.Middle;
             }
             else if (aBodyPr.Anchor!.Value == A.TextAnchoringTypeValues.Bottom)
             {
-                this.vAlignment = TextVerticalAlignment.Bottom;
+                vAlignment = TextVerticalAlignment.Bottom;
             }
             else
             {
-                this.vAlignment = TextVerticalAlignment.Top;
+                vAlignment = TextVerticalAlignment.Top;
             }
 
-            return this.vAlignment.Value;
+            return vAlignment.Value;
         }
 
         set
@@ -55,7 +55,7 @@ internal sealed class TableCellTextBox(A.TableCell aTableCell) : ITextBox
 
             var aCellProperties = aTableCell.TableCellProperties!;
             aCellProperties.Anchor = aTextAlignmentTypeValue;
-            this.vAlignment = value;
+            vAlignment = value;
         }
     }
 
@@ -110,14 +110,14 @@ internal sealed class TableCellTextBox(A.TableCell aTableCell) : ITextBox
         get
         {
             var sb = new StringBuilder();
-            sb.Append(this.Paragraphs[0].Text);
+            sb.Append(Paragraphs[0].Text);
 
-            var paragraphsCount = this.Paragraphs.Count;
+            var paragraphsCount = Paragraphs.Count;
             var index = 1; // we've already added the text of first paragraph
             while (index < paragraphsCount)
             {
                 sb.AppendLine();
-                sb.Append(this.Paragraphs[index].Text);
+                sb.Append(Paragraphs[index].Text);
 
                 index++;
             }
@@ -136,34 +136,34 @@ internal sealed class TableCellTextBox(A.TableCell aTableCell) : ITextBox
     {
         get
         {
-            if (this.textDirection.HasValue)
+            if (textDirection.HasValue)
             {
-                return this.textDirection.Value;
+                return textDirection.Value;
             }
 
             var textPositionValue = aTableCell.TableCellProperties!.Vertical?.Value;
 
             if (textPositionValue == A.TextVerticalValues.Vertical)
             {
-                this.textDirection = TextDirection.Rotate90;
+                textDirection = TextDirection.Rotate90;
             }
             else if (textPositionValue == A.TextVerticalValues.Vertical270)
             {
-                this.textDirection = TextDirection.Rotate270;
+                textDirection = TextDirection.Rotate270;
             }
             else if (textPositionValue == A.TextVerticalValues.WordArtVertical)
             {
-                this.textDirection = TextDirection.Stacked;
+                textDirection = TextDirection.Stacked;
             }
             else
             {
-                this.textDirection = TextDirection.Horizontal;
+                textDirection = TextDirection.Horizontal;
             }
 
-            return this.textDirection.Value;
+            return textDirection.Value;
         }
 
-        set => this.SetTextDirection(value);
+        set => SetTextDirection(value);
     }
 
     public void SetMarkdownText(string text)
@@ -175,8 +175,8 @@ internal sealed class TableCellTextBox(A.TableCell aTableCell) : ITextBox
     {
         var textLines = SplitLines(text);
 
-        var firstParagraph = this.EnsureFirstParagraph();
-        this.RemoveExtraParagraphs();
+        var firstParagraph = EnsureFirstParagraph();
+        RemoveExtraParagraphs();
         ClearParagraphPortions(firstParagraph);
 
         if (textLines.Length > 0)
@@ -184,9 +184,9 @@ internal sealed class TableCellTextBox(A.TableCell aTableCell) : ITextBox
             firstParagraph.Portions.AddText(textLines[0]);
         }
 
-        this.AddRemainingLinesAsParagraphs(textLines);
+        AddRemainingLinesAsParagraphs(textLines);
 
-        this.AdjustRowHeightForCurrentContent();
+        AdjustRowHeightForCurrentContent();
     }
 
     private static string[] SplitLines(string text)
@@ -210,20 +210,20 @@ internal sealed class TableCellTextBox(A.TableCell aTableCell) : ITextBox
 
     private IParagraph EnsureFirstParagraph()
     {
-        var existingParagraphs = this.Paragraphs.ToList();
+        var existingParagraphs = Paragraphs.ToList();
         var firstParagraph = existingParagraphs.FirstOrDefault();
         if (firstParagraph != null)
         {
             return firstParagraph;
         }
 
-        this.Paragraphs.Add();
-        return this.Paragraphs[0];
+        Paragraphs.Add();
+        return Paragraphs[0];
     }
 
     private void RemoveExtraParagraphs()
     {
-        var existingParagraphs = this.Paragraphs.ToList();
+        var existingParagraphs = Paragraphs.ToList();
         foreach (var paragraph in existingParagraphs.Skip(1))
         {
             paragraph.Remove();
@@ -234,8 +234,8 @@ internal sealed class TableCellTextBox(A.TableCell aTableCell) : ITextBox
     {
         for (var i = 1; i < textLines.Length; i++)
         {
-            this.Paragraphs.Add();
-            var newParagraph = this.Paragraphs[this.Paragraphs.Count - 1];
+            Paragraphs.Add();
+            var newParagraph = Paragraphs[Paragraphs.Count - 1];
             ClearParagraphPortions(newParagraph);
             newParagraph.Portions.AddText(textLines[i]);
         }
@@ -255,20 +255,20 @@ internal sealed class TableCellTextBox(A.TableCell aTableCell) : ITextBox
             return;
         }
 
-        var colIndex = this.GetColumnIndex(aTableRow);
+        var colIndex = GetColumnIndex(aTableRow);
         if (colIndex < 0)
         {
             return;
         }
 
-        var widthCapacity = this.GetWidthCapacityPoints(aTable, colIndex);
+        var widthCapacity = GetWidthCapacityPoints(aTable, colIndex);
         if (widthCapacity <= 0)
         {
             return;
         }
 
-        var textHeight = this.CalculateTextHeight(widthCapacity);
-        var requiredHeight = textHeight + this.TopMargin + this.BottomMargin;
+        var textHeight = CalculateTextHeight(widthCapacity);
+        var requiredHeight = textHeight + TopMargin + BottomMargin;
         var currentRowHeight = new Emus(aTableRow.Height!.Value).AsPoints();
         if (requiredHeight <= currentRowHeight)
         {
@@ -276,7 +276,7 @@ internal sealed class TableCellTextBox(A.TableCell aTableCell) : ITextBox
         }
 
         var rowIndex = aTable.Elements<A.TableRow>().ToList().IndexOf(aTableRow);
-        var scRow = new ShapeCrawler.TableRow(aTableRow, rowIndex);
+        var scRow = new TableRow(aTableRow, rowIndex);
         scRow.SetHeight(requiredHeight);
     }
 
@@ -295,13 +295,13 @@ internal sealed class TableCellTextBox(A.TableCell aTableCell) : ITextBox
         }
 
         var columnWidthPts = new Emus(gridColumns[colIndex].Width!.Value).AsPoints();
-        return columnWidthPts - this.LeftMargin - this.RightMargin;
+        return columnWidthPts - LeftMargin - RightMargin;
     }
 
     private decimal CalculateTextHeight(decimal widthCapacity)
     {
         decimal textHeight = 0;
-        foreach (var paragraph in this.Paragraphs)
+        foreach (var paragraph in Paragraphs)
         {
             var paragraphPortions = paragraph.Portions.OfType<TextParagraphPortion>();
             if (!paragraphPortions.Any())
@@ -340,6 +340,6 @@ internal sealed class TableCellTextBox(A.TableCell aTableCell) : ITextBox
             _ => A.TextVerticalValues.Horizontal
         };
 
-        this.TextDirection = value;
+        TextDirection = value;
     }
 }

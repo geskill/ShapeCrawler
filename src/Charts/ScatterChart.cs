@@ -41,8 +41,7 @@ internal sealed class ScatterChart(
         var xValues = new XValues();
         var xNumberLiteral = new NumberLiteral
         {
-            FormatCode = new FormatCode("General"),
-            PointCount = new PointCount { Val = pointsCount }
+            FormatCode = new FormatCode("General"), PointCount = new PointCount { Val = pointsCount }
         };
 
         uint index = 0;
@@ -61,8 +60,7 @@ internal sealed class ScatterChart(
         var yValues = new YValues();
         var yNumberLiteral = new NumberLiteral
         {
-            FormatCode = new FormatCode("General"),
-            PointCount = new PointCount { Val = pointsCount }
+            FormatCode = new FormatCode("General"), PointCount = new PointCount { Val = pointsCount }
         };
 
         index = 0;

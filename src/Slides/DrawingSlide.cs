@@ -5,21 +5,21 @@ using SkiaSharp;
 
 namespace ShapeCrawler.Slides;
 
-/// <inheritdoc/>
+/// <inheritdoc />
 internal sealed class DrawingSlide(ILayoutSlide layoutSlide, UserSlideShapeCollection shapes, SlidePart slidePart)
     : UserSlide(layoutSlide, shapes, slidePart)
 {
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override void SaveImageTo(string file)
     {
         using var fileStream = File.Create(file);
-        this.SaveImageTo(fileStream);
+        SaveImageTo(fileStream);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override void SaveImageTo(Stream stream)
     {
-        var presPart = this.GetSdkPresentationPart();
+        var presPart = GetSdkPresentationPart();
         var pSlideSize = presPart.Presentation!.SlideSize!;
         var width = new Emus(pSlideSize.Cx!.Value).AsPixels();
         var height = new Emus(pSlideSize.Cy!.Value).AsPixels();
@@ -27,7 +27,7 @@ internal sealed class DrawingSlide(ILayoutSlide layoutSlide, UserSlideShapeColle
         using var surface = SKSurface.Create(new SKImageInfo((int)width, (int)height));
         var canvas = surface.Canvas;
 
-        this.RenderBackground(canvas);
+        RenderBackground(canvas);
         shapes.Render(canvas);
 
         using var image = surface.Snapshot();
@@ -42,7 +42,7 @@ internal sealed class DrawingSlide(ILayoutSlide layoutSlide, UserSlideShapeColle
 
     private SKColor GetSkColor()
     {
-        var hex = this.Fill.Color!.TrimStart('#');
+        var hex = Fill.Color!.TrimStart('#');
 
         // Validate hex length before parsing.
         if (hex.Length != 6 && hex.Length != 8)
@@ -55,12 +55,12 @@ internal sealed class DrawingSlide(ILayoutSlide layoutSlide, UserSlideShapeColle
 
     private void RenderBackground(SKCanvas canvas)
     {
-        var slideFill = this.Fill;
+        var slideFill = Fill;
         switch (slideFill)
         {
             case { Type: FillType.Solid, Color: not null }:
                 {
-                    var skColor = this.GetSkColor();
+                    var skColor = GetSkColor();
                     canvas.Clear(skColor);
                     break;
                 }

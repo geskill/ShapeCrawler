@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -12,9 +13,21 @@ using Position = ShapeCrawler.Positions.Position;
 
 namespace ShapeCrawler.Shapes;
 
-internal abstract class Shape(Position position, ShapeSize shapeSize, ShapeId shapeId, OpenXmlElement pShapeTreeElement) : IShape
+internal abstract class Shape(Position position, ShapeSize shapeSize, ShapeId shapeId, OpenXmlElement pShapeTreeElement)
+    : IShape
 {
     private const string ShapeIsNotTextHolderErrorMessage = "The shape is not a text holder.";
+
+    public bool Removable => false;
+
+    /// <summary>
+    ///     Gets the underlying Open XML SDK element instance for this shape, without cloning.
+    ///     Use this property for internal operations that need to read or modify the live
+    ///     element stored in the shape tree, rather than a separate copy.
+    /// </summary>
+    internal OpenXmlElement OpenXmlElement => pShapeTreeElement;
+
+    protected OpenXmlElement PShapeTreeElement => pShapeTreeElement;
 
     public virtual decimal X
     {
@@ -97,14 +110,14 @@ internal abstract class Shape(Position position, ShapeSize shapeSize, ShapeId sh
             }
 
             var placeholderValueMappings =
-                new System.Collections.Generic.Dictionary<P.PlaceholderValues, PlaceholderType>
+                new Dictionary<P.PlaceholderValues, PlaceholderType>
                 {
                     { P.PlaceholderValues.Title, ShapeCrawler.PlaceholderType.Title },
                     { P.PlaceholderValues.Chart, ShapeCrawler.PlaceholderType.Chart },
                     { P.PlaceholderValues.CenteredTitle, ShapeCrawler.PlaceholderType.Title },
                     { P.PlaceholderValues.Body, ShapeCrawler.PlaceholderType.Text },
                     { P.PlaceholderValues.Diagram, ShapeCrawler.PlaceholderType.SmartArt },
-                    { P.PlaceholderValues.ClipArt, ShapeCrawler.PlaceholderType.OnlineImage },
+                    { P.PlaceholderValues.ClipArt, ShapeCrawler.PlaceholderType.OnlineImage }
                 };
 
             if (placeholderValueMappings.TryGetValue(pPlaceholderValue, out var mappedType))
@@ -115,7 +128,7 @@ internal abstract class Shape(Position position, ShapeSize shapeSize, ShapeId sh
             // Handle string-based values
             var value = pPlaceholderValue.ToString()!;
             var stringValueMappings =
-                new System.Collections.Generic.Dictionary<string, PlaceholderType>(StringComparer.OrdinalIgnoreCase)
+                new Dictionary<string, PlaceholderType>(StringComparer.OrdinalIgnoreCase)
                 {
                     { "dt", ShapeCrawler.PlaceholderType.DateAndTime },
                     { "ftr", ShapeCrawler.PlaceholderType.Footer },
@@ -304,20 +317,9 @@ internal abstract class Shape(Position position, ShapeSize shapeSize, ShapeId sh
         }
     }
 
-    public bool Removable => false;
-
     public string SdkXPath => new XmlPath(pShapeTreeElement).XPath;
 
     public OpenXmlElement SdkOpenXmlElement => pShapeTreeElement.CloneNode(true);
-
-    /// <summary>
-    ///     Gets the underlying Open XML SDK element instance for this shape, without cloning.
-    ///     Use this property for internal operations that need to read or modify the live
-    ///     element stored in the shape tree, rather than a separate copy.
-    /// </summary>
-    internal OpenXmlElement OpenXmlElement => pShapeTreeElement;
-
-    protected OpenXmlElement PShapeTreeElement => pShapeTreeElement;
 
     public void Duplicate()
     {
@@ -325,34 +327,59 @@ internal abstract class Shape(Position position, ShapeSize shapeSize, ShapeId sh
         new SCPShapeTree(pShapeTree).Add(pShapeTreeElement);
     }
 
-    public void Remove() => pShapeTreeElement.Remove();
+    public void Remove()
+    {
+        pShapeTreeElement.Remove();
+    }
 
-    public virtual void CopyTo(P.ShapeTree pShapeTree) => new SCPShapeTree(pShapeTree).Add(pShapeTreeElement);
-
-    public virtual void SetText(string text) => throw new SCException(ShapeIsNotTextHolderErrorMessage);
-
-    public virtual void SetMarkdownText(string text) => throw new SCException(ShapeIsNotTextHolderErrorMessage);
-
-    public virtual void SetImage(string imagePath) => throw new SCException();
-
-    public virtual void SetFontName(string fontName) => throw new SCException(ShapeIsNotTextHolderErrorMessage);
-
-    public virtual void SetFontSize(decimal fontSize) =>
+    public virtual void SetText(string text)
+    {
         throw new SCException(ShapeIsNotTextHolderErrorMessage);
+    }
 
-    public virtual void SetFontColor(string colorHex) =>
+    public virtual void SetMarkdownText(string text)
+    {
         throw new SCException(ShapeIsNotTextHolderErrorMessage);
+    }
 
-    public virtual void SetVideo(Stream video) => throw new SCException(ShapeIsNotTextHolderErrorMessage);
+    public virtual void SetImage(string imagePath)
+    {
+        throw new SCException();
+    }
+
+    public virtual void SetFontName(string fontName)
+    {
+        throw new SCException(ShapeIsNotTextHolderErrorMessage);
+    }
+
+    public virtual void SetFontSize(decimal fontSize)
+    {
+        throw new SCException(ShapeIsNotTextHolderErrorMessage);
+    }
+
+    public virtual void SetFontColor(string colorHex)
+    {
+        throw new SCException(ShapeIsNotTextHolderErrorMessage);
+    }
+
+    public virtual void SetVideo(Stream video)
+    {
+        throw new SCException(ShapeIsNotTextHolderErrorMessage);
+    }
 
     public IShape GroupedShape(string name)
     {
-        if (this.GroupedShapes == null)
+        if (GroupedShapes == null)
         {
             throw new SCException("The current shape is not a group shape.");
         }
 
-        var groupedShape = this.GroupedShapes.FirstOrDefault(shape => shape.Name == name);
+        var groupedShape = GroupedShapes.FirstOrDefault(shape => shape.Name == name);
         return groupedShape ?? throw new SCException($"Grouped shape with name '{name}' not found.");
+    }
+
+    public virtual void CopyTo(P.ShapeTree pShapeTree)
+    {
+        new SCPShapeTree(pShapeTree).Add(pShapeTreeElement);
     }
 }

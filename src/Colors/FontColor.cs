@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
@@ -26,7 +27,7 @@ internal sealed class FontColor(A.Text aText) : IFontColor
                 return GetColorTypeFromSolidFill(openXmlPart, aSolidFill);
             }
 
-            var textBodyColor = this.GetTextBodyStyleColor();
+            var textBodyColor = GetTextBodyStyleColor();
             if (textBodyColor.HasValue)
             {
                 return textBodyColor.Value;
@@ -55,12 +56,12 @@ internal sealed class FontColor(A.Text aText) : IFontColor
 
             string ProcessHex(string hex)
             {
-                hex = hex.StartsWith("#", System.StringComparison.Ordinal) ? hex[1..] : hex;
+                hex = hex.StartsWith("#", StringComparison.Ordinal) ? hex[1..] : hex;
                 return hex.Length == 8 ? hex[2..] : hex;
             }
 
             // From SolidFill
-            var solidFillHex = this.GetSolidFillHex(pSlideMaster);
+            var solidFillHex = GetSolidFillHex(pSlideMaster);
             if (solidFillHex != null)
             {
                 return ProcessHex(solidFillHex);
@@ -69,21 +70,21 @@ internal sealed class FontColor(A.Text aText) : IFontColor
             // From TextBody
             var aParagraph = aText.Ancestors<A.Paragraph>().First();
             var indentLevel = new SCAParagraph(aParagraph).GetIndentLevel();
-            var textBodyHex = this.GetTextBodyHex(indentLevel);
+            var textBodyHex = GetTextBodyHex(indentLevel);
             if (textBodyHex != null)
             {
                 return ProcessHex(textBodyHex);
             }
 
             // From Shape or Referenced Shape
-            var shapeHex = this.GetShapeHex(openXmlPart);
+            var shapeHex = GetShapeHex(openXmlPart);
             if (shapeHex != null)
             {
                 return ProcessHex(shapeHex);
             }
 
             // From Common Placeholder or Presentation level
-            var defaultHex = this.GetDefaultHex(pSlideMaster, indentLevel, openXmlPart);
+            var defaultHex = GetDefaultHex(pSlideMaster, indentLevel, openXmlPart);
             return ProcessHex(defaultHex);
         }
     }
@@ -95,7 +96,7 @@ internal sealed class FontColor(A.Text aText) : IFontColor
 
         var aSolidFill = aRunProperties.GetFirstChild<A.SolidFill>();
         aSolidFill?.Remove();
-        hex = hex.StartsWith("#", System.StringComparison.Ordinal) ? hex[1..] : hex; // to skip '#'
+        hex = hex.StartsWith("#", StringComparison.Ordinal) ? hex[1..] : hex; // to skip '#'
         if (hex.Length == 8)
         {
             // ARGB or RGBA, trim to RGB
@@ -166,7 +167,7 @@ internal sealed class FontColor(A.Text aText) : IFontColor
 
         var textBodyStyleFont = new IndentFonts(listStyle).FontOrNull(indentLevel);
 
-        if (textBodyStyleFont.HasValue && this.TryFromIndentFont(textBodyStyleFont, out var textBodyColor))
+        if (textBodyStyleFont.HasValue && TryFromIndentFont(textBodyStyleFont, out var textBodyColor))
         {
             return textBodyColor.ColorHex!;
         }
@@ -181,7 +182,7 @@ internal sealed class FontColor(A.Text aText) : IFontColor
         if (pShape != null)
         {
             var sdkSlidePShapeWrap = new ShapeColor(new PresentationColor(openXmlPart), pShape);
-            string? shapeFontColorHex = sdkSlidePShapeWrap.HexOrNull();
+            var shapeFontColorHex = sdkSlidePShapeWrap.HexOrNull();
             if (shapeFontColorHex != null)
             {
                 return shapeFontColorHex;
@@ -206,7 +207,7 @@ internal sealed class FontColor(A.Text aText) : IFontColor
         // From Common Placeholder
         var pSlideMasterWrap = new SCPSlideMaster(pSlideMaster);
         var masterIndentFont = pSlideMasterWrap.BodyStyleFontOrNull(indentLevel);
-        if (this.TryFromIndentFont(masterIndentFont, out var masterColor))
+        if (TryFromIndentFont(masterIndentFont, out var masterColor))
         {
             return masterColor.ColorHex!;
         }
@@ -243,7 +244,7 @@ internal sealed class FontColor(A.Text aText) : IFontColor
 
         var textBodyStyleFont = new IndentFonts(listStyle).FontOrNull(indentLevel);
 
-        if (textBodyStyleFont.HasValue && this.TryFromIndentFont(textBodyStyleFont, out var textBodyColor))
+        if (textBodyStyleFont.HasValue && TryFromIndentFont(textBodyStyleFont, out var textBodyColor))
         {
             return textBodyColor.ColorType;
         }

@@ -12,14 +12,14 @@ internal sealed class Position(OpenXmlElement pShapeTreeElement)
     {
         get
         {
-            var emus = this.GetAOffset().X!.Value;
+            var emus = GetAOffset().X!.Value;
             return new Emus(emus).AsPoints();
         }
 
         set
         {
             var emus = new Points(value).AsEmus();
-            this.GetAOffset().X = new Int64Value(emus);
+            GetAOffset().X = new Int64Value(emus);
         }
     }
 
@@ -27,14 +27,14 @@ internal sealed class Position(OpenXmlElement pShapeTreeElement)
     {
         get
         {
-            var emus = this.GetAOffset().Y!.Value;
+            var emus = GetAOffset().Y!.Value;
             return new Emus(emus).AsPoints();
         }
 
         set
         {
             var emus = new Points(value).AsEmus();
-            this.GetAOffset().Y = new Int64Value(emus);
+            GetAOffset().Y = new Int64Value(emus);
         }
     }
 

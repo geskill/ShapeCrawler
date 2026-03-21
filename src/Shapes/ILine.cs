@@ -10,7 +10,7 @@ namespace ShapeCrawler;
 public interface ILine
 {
     /// <summary>
-    ///    Gets the start point of the line.
+    ///     Gets the start point of the line.
     /// </summary>
     Point StartPoint { get; }
 
@@ -25,23 +25,20 @@ internal sealed class Line(P.ConnectionShape pConnectionShape, LineShape parentL
     private readonly P.ConnectionShape connectionShape = pConnectionShape;
     private readonly LineShape lineShape = parentLineShape;
 
-    public Geometry GeometryType
-    {
-        get => Geometry.Line;
-    }
+    public Geometry GeometryType => Geometry.Line;
 
     public Point StartPoint
     {
         get
         {
-            var aTransform2D = this.connectionShape.GetFirstChild<P.ShapeProperties>()!.Transform2D!;
+            var aTransform2D = connectionShape.GetFirstChild<P.ShapeProperties>()!.Transform2D!;
             var horizontalFlip = aTransform2D.HorizontalFlip?.Value;
             var flipH = horizontalFlip != null && horizontalFlip.Value;
             var verticalFlip = aTransform2D.VerticalFlip?.Value;
             var flipV = verticalFlip != null && verticalFlip.Value;
 
-            var startX = flipH ? this.lineShape.X + this.lineShape.Width : this.lineShape.X;
-            var startY = flipV ? this.lineShape.Y + this.lineShape.Height : this.lineShape.Y;
+            var startX = flipH ? lineShape.X + lineShape.Width : lineShape.X;
+            var startY = flipV ? lineShape.Y + lineShape.Height : lineShape.Y;
             return new Point(startX, startY);
         }
     }
@@ -50,14 +47,14 @@ internal sealed class Line(P.ConnectionShape pConnectionShape, LineShape parentL
     {
         get
         {
-            var aTransform2D = this.connectionShape.GetFirstChild<P.ShapeProperties>()!.Transform2D!;
+            var aTransform2D = connectionShape.GetFirstChild<P.ShapeProperties>()!.Transform2D!;
             var horizontalFlip = aTransform2D.HorizontalFlip?.Value;
             var flipH = horizontalFlip != null && horizontalFlip.Value;
             var verticalFlip = aTransform2D.VerticalFlip?.Value;
             var flipV = verticalFlip != null && verticalFlip.Value;
 
-            var endX = flipH ? this.lineShape.X : this.lineShape.X + this.lineShape.Width;
-            var endY = flipV ? this.lineShape.Y : this.lineShape.Y + this.lineShape.Height;
+            var endX = flipH ? lineShape.X : lineShape.X + lineShape.Width;
+            var endY = flipV ? lineShape.Y : lineShape.Y + lineShape.Height;
             return new Point(endX, endY);
         }
     }

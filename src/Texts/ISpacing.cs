@@ -11,29 +11,31 @@ namespace ShapeCrawler;
 public interface ISpacing
 {
     /// <summary>
-    ///     Gets the number of spaces in <c>lines</c> appears between lines of text. Returns <see langword="null"/> if the spaces are not specified in lines.
+    ///     Gets the number of spaces in <c>lines</c> appears between lines of text. Returns <see langword="null" /> if the
+    ///     spaces are not specified in lines.
     /// </summary>
     double? LineSpacingLines { get; }
 
     /// <summary>
-    ///     Gets the number of spaces in <c>points</c> appears between lines of text. Returns <see langword="null"/> if the spaces are not specified in points. 
+    ///     Gets the number of spaces in <c>points</c> appears between lines of text. Returns <see langword="null" /> if the
+    ///     spaces are not specified in points.
     /// </summary>
     decimal? LineSpacing { get; }
 
     /// <summary>
-    ///    Gets or sets the number of spaces in points before the paragraph.
+    ///     Gets or sets the number of spaces in points before the paragraph.
     /// </summary>
     decimal BeforeSpacing { get; set; }
 
     /// <summary>
-    ///    Gets or sets the number of spaces in points after the paragraph.
+    ///     Gets or sets the number of spaces in points after the paragraph.
     /// </summary>
     decimal AfterSpacing { get; set; }
 }
 
 internal sealed class Spacing(A.Paragraph aParagraph) : ISpacing
 {
-    public double? LineSpacingLines => this.GetLineSpacingLines();
+    public double? LineSpacingLines => GetLineSpacingLines();
 
     public decimal? LineSpacing
     {
@@ -61,7 +63,7 @@ internal sealed class Spacing(A.Paragraph aParagraph) : ISpacing
 
             return hundredsOfPoints / 100m;
         }
-        set => this.SetBeforeSpacingPoints(value);
+        set => SetBeforeSpacingPoints(value);
     }
 
     public decimal AfterSpacing

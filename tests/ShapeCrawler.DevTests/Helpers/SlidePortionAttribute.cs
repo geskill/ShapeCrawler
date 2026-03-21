@@ -37,10 +37,7 @@ public class SlidePortionAttribute(
 
         var parameters = new TestCaseParameters(new[] { portion1, expectedResult });
 
-        if (!string.IsNullOrEmpty(this.testName))
-        {
-            parameters.TestName = this.testName;
-        }
+        if (!string.IsNullOrEmpty(testName)) parameters.TestName = testName;
 
         yield return new NUnitTestCaseBuilder().BuildTestMethod(method, suite, parameters);
     }

@@ -14,57 +14,42 @@ namespace ShapeCrawler.Paragraphs;
 /// </summary>
 internal sealed class ParagraphHorizontalAlignment
 {
-    private static readonly HashSet<string> LeftAlignmentAliases = new(StringComparer.Ordinal)
-    {
-        "l",
-        "left"
-    };
+    private static readonly HashSet<string> LeftAlignmentAliases = new(StringComparer.Ordinal) { "l", "left" };
 
-    private static readonly HashSet<string> CenterAlignmentAliases = new(StringComparer.Ordinal)
-    {
-        "ctr",
-        "center"
-    };
+    private static readonly HashSet<string> CenterAlignmentAliases = new(StringComparer.Ordinal) { "ctr", "center" };
 
-    private static readonly HashSet<string> RightAlignmentAliases = new(StringComparer.Ordinal)
-    {
-        "r",
-        "right"
-    };
+    private static readonly HashSet<string> RightAlignmentAliases = new(StringComparer.Ordinal) { "r", "right" };
 
     private static readonly HashSet<string> JustifyAlignmentAliases = new(StringComparer.Ordinal)
     {
-        "just",
-        "justlow",
-        "dist",
-        "thaidist"
+        "just", "justlow", "dist", "thaidist"
     };
 
     private readonly A.Paragraph aParagraph;
     private readonly SCAParagraph scAParagraph;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="ParagraphHorizontalAlignment"/> class.
+    ///     Initializes a new instance of the <see cref="ParagraphHorizontalAlignment" /> class.
     /// </summary>
     /// <param name="aParagraph">DrawingML paragraph.</param>
     internal ParagraphHorizontalAlignment(A.Paragraph aParagraph)
     {
         this.aParagraph = aParagraph;
-        this.scAParagraph = new SCAParagraph(aParagraph);
+        scAParagraph = new SCAParagraph(aParagraph);
     }
 
     /// <summary>
-    ///     Returns the effective horizontal alignment or <see langword="null"/> when it is not defined anywhere.
+    ///     Returns the effective horizontal alignment or <see langword="null" /> when it is not defined anywhere.
     /// </summary>
     internal TextHorizontalAlignment? ValueOrNull()
     {
-        var explicitAlignment = this.ExplicitAlignmentOrNull();
+        var explicitAlignment = ExplicitAlignmentOrNull();
         if (explicitAlignment.HasValue)
         {
             return explicitAlignment.Value;
         }
 
-        return this.ReferencedAlignmentOrNull();
+        return ReferencedAlignmentOrNull();
     }
 
     private static TextHorizontalAlignment ToHorizontalAlignment(A.TextAlignmentTypeValues value)
@@ -263,7 +248,7 @@ internal sealed class ParagraphHorizontalAlignment
 
     private TextHorizontalAlignment? ExplicitAlignmentOrNull()
     {
-        var aTextAlignmentType = this.aParagraph.ParagraphProperties?.Alignment?.Value;
+        var aTextAlignmentType = aParagraph.ParagraphProperties?.Alignment?.Value;
         if (aTextAlignmentType is null)
         {
             return null;
@@ -274,7 +259,7 @@ internal sealed class ParagraphHorizontalAlignment
 
     private TextHorizontalAlignment? ReferencedAlignmentOrNull()
     {
-        if (!this.TryGetReferencedAlignmentContext(
+        if (!TryGetReferencedAlignmentContext(
                 out var listStyle,
                 out var placeholderShape,
                 out var openXmlPart,
@@ -300,7 +285,7 @@ internal sealed class ParagraphHorizontalAlignment
         openXmlPart = null!;
         indentLevel = 0;
 
-        var pShape = this.aParagraph.Ancestors<P.Shape>().FirstOrDefault();
+        var pShape = aParagraph.Ancestors<P.Shape>().FirstOrDefault();
         if (pShape is null)
         {
             return false;
@@ -312,7 +297,7 @@ internal sealed class ParagraphHorizontalAlignment
             return false;
         }
 
-        indentLevel = this.scAParagraph.GetIndentLevel();
+        indentLevel = scAParagraph.GetIndentLevel();
         listStyle = textBody.ListStyle;
 
         var placeholderShapeOrNull = pShape.NonVisualShapeProperties?.ApplicationNonVisualDrawingProperties?
@@ -323,7 +308,7 @@ internal sealed class ParagraphHorizontalAlignment
         }
 
         placeholderShape = placeholderShapeOrNull;
-        var openXmlPartOrNull = this.aParagraph.Ancestors<OpenXmlPartRootElement>().FirstOrDefault()?.OpenXmlPart;
+        var openXmlPartOrNull = aParagraph.Ancestors<OpenXmlPartRootElement>().FirstOrDefault()?.OpenXmlPart;
         if (openXmlPartOrNull is null)
         {
             return false;
