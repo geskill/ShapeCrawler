@@ -1,5 +1,8 @@
 # Changelog  
 
+## Version 0.78.5 - 2026-03-21
+🐞Resolved potential security vulnerabilities
+
 ## Version 0.78.4 - 2026-03-14
 🐞Resolved potential security vulnerabilities
 
