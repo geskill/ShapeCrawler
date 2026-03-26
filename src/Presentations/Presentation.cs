@@ -47,6 +47,10 @@ public sealed class Presentation : IPresentation
             this.PresDocument.CoreFilePropertiesPart != null
                 ? new PresentationProperties(this.PresDocument.CoreFilePropertiesPart.OpenXmlPackage.PackageProperties)
                 : new PresentationProperties(new DefaultPackageProperties());
+        this.ExtendedProperties =
+            this.PresDocument.ExtendedFilePropertiesPart != null
+                ? new PresentationExtendedProperties(this.PresDocument.ExtendedFilePropertiesPart)
+                : new PresentationExtendedProperties();
     }
 
     /// <summary>
@@ -71,6 +75,10 @@ public sealed class Presentation : IPresentation
             this.PresDocument.CoreFilePropertiesPart != null
                 ? new PresentationProperties(this.PresDocument.CoreFilePropertiesPart.OpenXmlPackage.PackageProperties)
                 : new PresentationProperties(new DefaultPackageProperties());
+        this.ExtendedProperties =
+            this.PresDocument.ExtendedFilePropertiesPart != null
+                ? new PresentationExtendedProperties(this.PresDocument.ExtendedFilePropertiesPart)
+                : new PresentationExtendedProperties();
     }
 
     /// <summary>
@@ -94,6 +102,10 @@ public sealed class Presentation : IPresentation
                 ? new PresentationProperties(this.PresDocument.CoreFilePropertiesPart.OpenXmlPackage.PackageProperties)
                 : new PresentationProperties(new DefaultPackageProperties());
         this.Properties.Modified = SCSettings.TimeProvider.UtcNow;
+        this.ExtendedProperties =
+            this.PresDocument.ExtendedFilePropertiesPart != null
+                ? new PresentationExtendedProperties(this.PresDocument.ExtendedFilePropertiesPart)
+                : new PresentationExtendedProperties();
     }
 
     /// <summary>
@@ -135,6 +147,9 @@ public sealed class Presentation : IPresentation
 
     /// <inheritdoc />
     public IPresentationProperties Properties { get; }
+
+    /// <inheritdoc />
+    public IPresentationExtendedProperties ExtendedProperties { get; }
 
     /// <summary>
     ///     Starts a fluent creation of a new presentation.
