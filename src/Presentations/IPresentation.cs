@@ -47,11 +47,6 @@ public interface IPresentation : IDisposable
     IPresentationProperties Properties { get; }
 
     /// <summary>
-    ///     Gets extended presentation properties.
-    /// </summary>
-    IPresentationExtendedProperties ExtendedProperties { get; }
-
-    /// <summary>
     ///     Gets slide by number.
     /// </summary>
     IUserSlide Slide(int number);
