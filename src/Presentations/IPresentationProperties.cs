@@ -243,16 +243,29 @@ internal class PresentationProperties : IPresentationProperties
         get => extendedFilePropertiesPart?.Properties?.Company?.Text;
         set
         {
-            if (extendedFilePropertiesPart?.Properties != null)
+            if (extendedFilePropertiesPart == null)
             {
-                if (extendedFilePropertiesPart.Properties.Company == null)
-                {
-                    extendedFilePropertiesPart.Properties.Company = new Company { Text = value ?? string.Empty };
-                }
-                else
-                {
-                    extendedFilePropertiesPart.Properties.Company.Text = value ?? string.Empty;
-                }
+                throw new InvalidOperationException("Extended file properties part is missing.");
+            }
+
+            if (extendedFilePropertiesPart.Properties == null)
+            {
+                extendedFilePropertiesPart.Properties = new Properties();
+            }
+
+            var properties = extendedFilePropertiesPart.Properties;
+
+            if (value is null)
+            {
+                properties.Company = null;
+            }
+            else if (properties.Company == null)
+            {
+                properties.Company = new Company { Text = value };
+            }
+            else
+            {
+                properties.Company.Text = value;
             }
         }
     }
