@@ -845,10 +845,10 @@ public class PresentationTests : SCTest
     }
 
     [Test]
-    public void Slide_CompanyName()
+    public void Properties_CompanyName()
     {
         // Arrange
-        var pres = new Presentation( TestAsset( "010.pptx" ) );
+        var pres = new Presentation(TestAsset("010.pptx"));
 
         // Act
         var companyName = pres.Properties.Company;
